@@ -1,0 +1,236 @@
+enum Architecture = x32 | x64
+enum FamilyType = Bootstrapping | Computing | General | GPU | IO | Memory | Networking | Storage
+enum DiskTechnologyType = SSD | EBS
+
+abstract int : integer
+    [this > 0]
+
+abstract InstanceType
+    hardware ->> HardwareConfiguration
+    network ->> Network ?
+    family ->> FamilyType
+
+abstract HardwareConfiguration
+    memorySize: integer
+        [this > 0 && this < 200]
+    computeUnit ->> ComputeUnit ?
+    attachedDiks ->> Disk ?
+
+abstract ComputeUnit
+    numberOfUnits : integer
+    busSize ->> Architecture
+    processor ->> PhysicalProcessor
+
+
+abstract Disk
+    size : integer
+        [this > 0]
+    iops : integer
+        [this > 0]
+    technology ->> DiskTechnologyType
+    type ->> DiskType
+    
+    [
+        this.size >= this.type.minSize && 
+        this.size <= this.type.maxSize
+    ]
+    
+abstract DiskType
+    minSize : integer
+        [this > 0]
+    maxSize : integer
+        [this > 0]
+    [this.minSize < maxSize]
+        
+abstract GeneralDisk : DiskType
+
+abstract ProvisionedDisk : DiskType
+    maxIOPS : integer
+    maxRatioIOPSDiskSize : integer
+
+abstract PhysicalProcessor
+    name : string
+    frequency : integer
+    
+abstract Network
+    throughput : integer
+    
+abstract Provider
+    //name ->> string
+    
+abstract Instance    
+  type ->> InstanceType ?
+
+// ------------------------------------------------
+// ---       configurations (products)          ---
+// ------------------------------------------------
+
+google: Provider
+    //[name = "Google Compute Engine"]
+
+ec2: Provider
+    //[name = "Amazon Elastic Computing Cloud"]
+
+a64: Architecture
+    x64
+
+// -------------------------------------------------------------
+// ---                   Family Types                        ---
+// -------------------------------------------------------------
+bootstrapping : FamilyType
+    Bootstrapping
+    
+computing: FamilyType
+    Computing
+
+general: FamilyType
+    General    
+
+gpu: FamilyType
+    GPU
+    
+io: FamilyType
+    IO
+
+memory: FamilyType
+    Memory
+
+storage: FamilyType
+    Storage
+
+
+// -------------------------------------------------------------
+// ---                 Physical processors                   ---
+// -------------------------------------------------------------
+SandyBridgeEs2670v2: PhysicalProcessor
+    [name = "Intel Xeon ES-2670 V2"]
+    [frequency = 25]
+
+IvyBridgeES2680v2: PhysicalProcessor
+    [name = "Intel Xeon ES-2680 V2"]
+    [frequency = 28]
+    
+IvyBridge26: PhysicalProcessor
+    [name = "Intel Ivy Bridge Xeon 2.6GHz"]
+    [frequency = 26]
+    
+// -------------------------------------------------------------
+// ---                     Compute Unit                      ---
+// -------------------------------------------------------------
+IvyBridge262Cores: ComputeUnit
+    [numberOfUnits = 2]
+    [busSize = a64]
+    [processor = IvyBridge26]
+    
+IvyBridge264Cores: ComputeUnit
+    [numberOfUnits = 4]
+    [busSize = a64]
+    [processor = IvyBridge26]    
+
+IvyBridge268Cores: ComputeUnit
+    [numberOfUnits = 8]
+    [busSize = a64]
+    [processor = IvyBridge26]    
+    
+IvyBridge2616Cores: ComputeUnit
+    [numberOfUnits = 16]
+    [busSize = a64]
+    [processor = IvyBridge26]    
+
+IvyBridge268016Cores: ComputeUnit
+    [numberOfUnits = 16]
+    [busSize = a64]
+    [processor = IvyBridgeES2680v2]
+    
+IvyBridge268032Cores: ComputeUnit
+    [numberOfUnits = 32]
+    [busSize = a64]
+    [processor = IvyBridgeES2680v2]
+    
+SandyBridge2670251Core: ComputeUnit
+    [numberOfUnits = 1]
+    [busSize = a64]
+    [processor = SandyBridgeEs2670v2]
+
+SandyBridge2670252Cores: ComputeUnit
+    [numberOfUnits = 2]
+    [busSize = a64]
+    [processor = SandyBridgeEs2670v2]
+
+SandyBridge2670254Cores: ComputeUnit
+    [numberOfUnits = 4]
+    [busSize = a64]
+    [processor = SandyBridgeEs2670v2]
+
+SandyBridge2670258Cores: ComputeUnit
+    [numberOfUnits = 8]
+    [busSize = a64]
+    [processor = SandyBridgeEs2670v2] 
+
+SandyBridge26702516Cores: ComputeUnit
+    [numberOfUnits = 16]
+    [busSize = a64]
+    [processor = SandyBridgeEs2670v2]
+
+SandyBridge26702532Cores: ComputeUnit
+    [numberOfUnits = 32]
+    [busSize = a64]
+    [processor = SandyBridgeEs2670v2]
+
+
+// -------------------------------------------------------------
+// ---             Hardware Configuration                    ---
+// -------------------------------------------------------------
+
+net1GB: Network
+    [throughput = 1]
+
+net10GB: Network
+    [throughput = 9]
+    
+// -------------------------------------------------------------
+// ---             Hardware Configuration                    ---
+// -------------------------------------------------------------
+
+hcc38xlarge : HardwareConfiguration
+    [memorySize = 60]
+    [computeUnit = IvyBridge268032Cores]
+
+hcr38xlarge: HardwareConfiguration
+    [memorySize = 244]
+    [computeUnit = SandyBridge26702532Cores]
+    
+hci28xlarge: HardwareConfiguration
+    [memorySize = 104]
+    [computeUnit = SandyBridge26702532Cores]
+
+// Google hardware configuration
+    
+hcn1hcpu16: HardwareConfiguration
+    [memorySize = 14]
+    [computeUnit = IvyBridge2616Cores]
+    
+hcn1hmem16: HardwareConfiguration
+    [memorySize = 104]
+    [computeUnit = IvyBridge2616Cores]    
+
+c38xlarge: InstanceType
+    [hardware = hcc38xlarge]
+    [network = net10GB]
+    [family = computing]
+
+r38xlarge: InstanceType
+    [hardware = hcr38xlarge]
+    [network = net10GB]
+    [family = memory]
+
+n1_highcpu_16 : InstanceType
+    [hardware = hcn1hcpu16]
+    [network = net1GB]
+    [family = computing]
+
+n1_highmem_16: InstanceType
+    [hardware = hci28xlarge]
+    [network = net1GB]
+    [family = memory]
+    

@@ -1,0 +1,642 @@
+<!--
+
+        Copyright (C) 2013-2014  the original author or authors.
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License,
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
+<style>.identifier{}
+.keyword{font-weight:bold}
+.reference{}
+.code { background-color: lightgray; padding: 5px 5px 5px 5px; border: 1px solid darkgray; margin-bottom: 15px; 
+        font-family: Pragmata, Menlo, 'DejaVu LGC Sans Mono', 'DejaVu Sans Mono', Consolas, 'Everson Mono', 'Lucida Console', 'Andale Mono', 'Nimbus Mono L', 'Liberation Mono', FreeMono, 'Osaka Monospaced', Courier, 'New Courier', monospace; }
+.standalonecomment { color: green; font-style:italic }
+.inlinecomment { color: green; padding-left:20px; font-style:italic }
+.error{background-color: yellow; color: red }
+.indent{padding-left:20px}
+a[href$='Lookup failed'] {color: red}
+a[href$='Uid not found'] {color: red}
+a[href$='Ambiguous name'] {color: yellow}
+
+</style></head>
+<body>
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Feature">Feature</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_cost">cost</span><span class="keyword"> -></span> <a href="#integer"><span class="reference">integer</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> >= 0 <span class="keyword">]</span></div>
+  </div>
+</div>
+
+<div class="standalonecomment">// =====================================================================</div>
+<div class="standalonecomment">// Primitive types: </div>
+<div class="standalonecomment">// =====================================================================		</div>
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_Architecture">Architecture</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_x32">x32</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_x64">x64</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_Platform">Platform</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_LINUX">LINUX</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WINDOWS">WINDOWS</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_HypervisorType">HypervisorType</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_OVM">OVM</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_XEN">XEN</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_VirtualizationType">VirtualizationType</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_HVM">HVM</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PARAVIRTUAL">PARAVIRTUAL</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_PhysicalProcessor">PhysicalProcessor</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_IntelOpteron">IntelOpteron</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_IntelXeon">IntelXeon</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_IntelSandyBridge">IntelSandyBridge</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_IntelIvyBridge">IntelIvyBridge</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_StorageType">StorageType</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_STANDARD">STANDARD</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_PROVISIONED">PROVISIONED</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_OperatingSystem">OperatingSystem</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_CENTOS">CENTOS</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_DEBIAN">DEBIAN</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_REDHAT">REDHAT</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_SUSE">SUSE</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_UBUNTU">UBUNTU</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_WINDOWS_2008_SERVER">WINDOWS_2008_SERVER</span></div>
+</div>
+
+<div class="standalonecomment">// ==================================================================================</div>
+<div class="standalonecomment">// Hardware primitive types: Memory, Storage, ComputeUnit, HardwareConfiguration</div>
+<div class="standalonecomment">// ==================================================================================</div>
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Memory">Memory</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_size">size</span><span class="keyword"> :</span> <a href="#integer"><span class="reference">integer</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> > 0 <span class="keyword">]</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Storage">Storage</span>
+  <div class="indent">
+  <span class="claferDecl" id="c1_size">size</span><span class="keyword"> :</span> <a href="#integer"><span class="reference">integer</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> > 0 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_type">type</span><span class="keyword"> -></span> <a href="#c0_StorageType"><span class="reference">StorageType</span></a></div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_StorageTechnologyType">StorageTechnologyType</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_SSD">SSD</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_EBS">EBS</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_ComputeUnit">ComputeUnit</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_speed">speed</span><span class="keyword"> :</span> <a href="#integer"><span class="reference">integer</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> > 0 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_cores">cores</span><span class="keyword"> ->></span> <a href="#integer"><span class="reference">integer</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> > 0 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_unit">unit</span><span class="keyword"> :</span> <a href="#integer"><span class="reference">integer</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> > 0 <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_processor">processor</span><span class="keyword"> :</span> <a href="#c0_PhysicalProcessor"><span class="reference">PhysicalProcessor</span></a></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_HardwareConfiguration">HardwareConfiguration</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_memory">memory</span><span class="keyword"> :</span> <a href="#c0_Memory"><span class="reference">Memory</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_computeUnit">computeUnit</span><span class="keyword"> :</span> <a href="#c0_ComputeUnit"><span class="reference">ComputeUnit</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_storages">storages</span><span class="keyword"> -></span> <a href="#c0_Storage"><span class="reference">Storage</span></a> +</div>
+</div>
+
+<div class="standalonecomment">// ==================================================================================</div>
+<div class="standalonecomment">// Location primitive types</div>
+<div class="standalonecomment">// ==================================================================================</div>
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Zone">Zone</span>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_Status">Status</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_UP">UP</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_DOWN">DOWN</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_location">location</span><span class="keyword"> -></span> <a href="#c0_Location"><span class="reference">Location</span></a></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> in <a href="#c0_location"><span class="reference">location</span></a>.<a href="#c0_zones"><span class="reference">zones</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Location">Location</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_zones">zones</span><span class="keyword"> -></span> <a href="#c0_Zone"><span class="reference">Zone</span></a> +</div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_Region">Region</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_ASIA">ASIA</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_SOUTH_AMERICA">SOUTH_AMERICA</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_NORTH_AMERICA">NORTH_AMERICA</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_AFRICA">AFRICA</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_EUROPE">EUROPE</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_ANTARCTICA">ANTARCTICA</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_AUSTRALIA">AUSTRALIA</span></div>
+  </div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Locations">Locations</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_locations">locations</span><span class="keyword"> -></span> <a href="#c0_Location"><span class="reference">Location</span></a> +</div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_PriceType">PriceType</span>
+  <div class="indent">
+  <span class="claferDecl" id="c0_ON_DEMAND">ON_DEMAND</span> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_SPOT">SPOT</span> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_RESERVED">RESERVED</span> ?</div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Provider">Provider</span>
+  <div class="indent">
+  `<a href="#c0_Locations"><span class="reference">Locations</span></a></div>
+    <div class="indent">
+    `<a href="#c0_PriceType"><span class="reference">PriceType</span></a></div>
+ 
+</div>
+
+<div class="standalonecomment">// ------------------</div>
+<div class="standalonecomment">// Image prototype</div>
+<div class="standalonecomment">// ------------------</div>
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Image">Image</span><span class="keyword"> :</span> <a href="#c0_Feature"><span class="reference">Feature</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_architecture">architecture</span><span class="keyword"> -></span> <a href="#c0_Architecture"><span class="reference">Architecture</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_provider">provider</span><span class="keyword"> -></span> <a href="#c0_Provider"><span class="reference">Provider</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_location">location</span><span class="keyword"> -></span> <a href="#c0_Location"><span class="reference">Location</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> in <a href="#c0_provider"><span class="reference">provider</span></a>.<a href="#c1_Locations"><span class="reference">Locations</span></a>.<a href="#c0_locations"><span class="reference">locations</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_hypervisor">hypervisor</span><span class="keyword"> -></span> <a href="#c0_HypervisorType"><span class="reference">HypervisorType</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_virtualization">virtualization</span><span class="keyword"> -></span> <a href="#c0_VirtualizationType"><span class="reference">VirtualizationType</span></a></div>
+</div>
+
+<div class="standalonecomment">// ------------------</div>
+<div class="standalonecomment">// InstanceType prototype</div>
+<div class="standalonecomment">// ------------------</div>
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_InstanceType">InstanceType</span><span class="keyword"> :</span> <a href="#c0_Feature"><span class="reference">Feature</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_hardware">hardware</span><span class="keyword"> :</span> <a href="#c0_HardwareConfiguration"><span class="reference">HardwareConfiguration</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_provider">provider</span><span class="keyword"> :</span> <a href="#c0_Provider"><span class="reference">Provider</span></a></div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c0_PurposeUsage">PurposeUsage</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_BOOTSTRAP">BOOTSTRAP</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_CPU">CPU</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_GENERAL">GENERAL</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_GPU">GPU</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_I_O">I_O</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_MEMORY">MEMORY</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_NETWORK">NETWORK</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_availability">availability</span><span class="keyword"> -></span> <a href="#c0_Location"><span class="reference">Location</span></a>
+    <div class="indent">
+    <span class="keyword">[</span> <a href="#this"><span class="reference">this</span></a> in <a href="#c1_provider"><span class="reference">provider</span></a>.<a href="#c1_Locations"><span class="reference">Locations</span></a>.<a href="#c0_locations"><span class="reference">locations</span></a> <span class="keyword">]</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c2_size">size</span>
+    <div class="indent">
+    <span class="claferDecl" id="c0_MICRO">MICRO</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_MILLI">MILLI</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_SMALL">SMALL</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_MEDIUM">MEDIUM</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_LARGE">LARGE</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_X2LARGE">X2LARGE</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_X4LARGE">X4LARGE</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_X8LARGE">X8LARGE</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_X16LARGE">X16LARGE</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c0_X32LARGE">X32LARGE</span></div>
+  </div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_MICRO"><span class="reference">MICRO</span></a> => <a href="#c0_BOOTSTRAP"><span class="reference">BOOTSTRAP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_MILLI"><span class="reference">MILLI</span></a> => <a href="#c0_BOOTSTRAP"><span class="reference">BOOTSTRAP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_BOOTSTRAP"><span class="reference">BOOTSTRAP</span></a> &lt;=&gt; <a href="#c0_MICRO"><span class="reference">MICRO</span></a> || <a href="#c0_MILLI"><span class="reference">MILLI</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_NetworkingPerformance">NetworkingPerformance</span><span class="keyword"> :</span> <a href="#c0_Feature"><span class="reference">Feature</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_MODERATE">MODERATE</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_HIGH">HIGH</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_LOW">LOW</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_VERY_LOW">VERY_LOW</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">xor</span> <span class="claferDecl" id="c0_AmazonNetworkingPerformance">AmazonNetworkingPerformance</span><span class="keyword"> :</span> <a href="#c0_NetworkingPerformance"><span class="reference">NetworkingPerformance</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_TEN_GIGABITS">TEN_GIGABITS</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="keyword">or</span> <span class="claferDecl" id="c0_Features">Features</span><span class="keyword"> :</span> <a href="#c0_Feature"><span class="reference">Feature</span></a>
+  <div class="indent">
+  <span class="claferDecl" id="c0_CLUSTER">CLUSTER</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_EBS_OPTIMIZED">EBS_OPTIMIZED</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_NETWORKING_OPTIMIZED">NETWORKING_OPTIMIZED</span></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_FREE_TIER">FREE_TIER</span></div>
+</div>
+
+
+<div>
+<span class="keyword">abstract</span> <span class="claferDecl" id="c0_Instance">Instance</span>
+  <div class="indent">
+  <span class="claferDecl" id="c1_type">type</span><span class="keyword"> -></span> <a href="#c0_InstanceType"><span class="reference">InstanceType</span></a></div>
+  <div class="indent">
+  <span class="keyword">xor</span> <span class="claferDecl" id="c2_PriceType">PriceType</span>
+    <div class="indent">
+    <span class="claferDecl" id="c1_ON_DEMAND">ON_DEMAND</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c1_SPOT">SPOT</span></div>
+    <div class="indent">
+    <span class="claferDecl" id="c1_RESERVED">RESERVED</span></div>
+  </div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_image">image</span><span class="keyword"> -></span> <a href="#c0_Image"><span class="reference">Image</span></a></div>
+  <div class="indent">
+  <span class="claferDecl" id="c0_features">features</span><span class="keyword"> -></span> <a href="#c0_Features"><span class="reference">Features</span></a> ?</div>
+  <div class="indent">
+  <span class="claferDecl" id="c1_cost">cost</span><span class="keyword"> -></span> <a href="#integer"><span class="reference">integer</span></a> = <a href="#c0_image"><span class="reference">image</span></a>.<a href="#c0_cost"><span class="reference">cost</span></a> + sum <a href="#c0_Features"><span class="reference">Features</span></a>.<a href="#c0_cost"><span class="reference">cost</span></a></div>
+</div>
+
+<div class="standalonecomment">// -----------------------------------</div>
+<div class="standalonecomment">// Provider instances</div>
+<div class="standalonecomment">// -----------------------------------</div>
+
+<div>
+<span class="claferDecl" id="c0_Amazon">Amazon</span><span class="keyword"> :</span> <a href="#c0_Provider"><span class="reference">Provider</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_AmazonLocations"><span class="reference">AmazonLocations</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ON_DEMAND"><span class="reference">ON_DEMAND</span></a>, <a href="#c0_SPOT"><span class="reference">SPOT</span></a>, <a href="#c0_RESERVED"><span class="reference">RESERVED</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_Google">Google</span><span class="keyword"> :</span> <a href="#c0_Provider"><span class="reference">Provider</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_GoogleLocations"><span class="reference">GoogleLocations</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ON_DEMAND"><span class="reference">ON_DEMAND</span></a> <span class="keyword">]</span></div>
+</div>
+
+<div class="standalonecomment">// -----------------------------------</div>
+<div class="standalonecomment">// Locations instances</div>
+<div class="standalonecomment">// -----------------------------------</div>
+
+<div>
+<span class="claferDecl" id="c0_GoogleLocations">GoogleLocations</span><span class="keyword"> :</span> <a href="#c0_Locations"><span class="reference">Locations</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_us"><span class="reference">us</span></a>, <a href="#c0_europe"><span class="reference">europe</span></a>, <a href="#c0_asia"><span class="reference">asia</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_AmazonLocations">AmazonLocations</span><span class="keyword"> :</span> <a href="#c0_Locations"><span class="reference">Locations</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_us_east_1"><span class="reference">us_east_1</span></a>, <a href="#c0_us_west_1"><span class="reference">us_west_1</span></a>, <a href="#c0_us_west_2"><span class="reference">us_west_2</span></a>, <a href="#c0_eu_west_1"><span class="reference">eu_west_1</span></a>, <a href="#c0_ap_southeast_1"><span class="reference">ap_southeast_1</span></a>, <a href="#c0_ap_southeast_2"><span class="reference">ap_southeast_2</span></a>, <a href="#c0_ap_northeast_1"><span class="reference">ap_northeast_1</span></a>, <a href="#c0_sa_east_1"><span class="reference">sa_east_1</span></a> <span class="keyword">]</span></div>
+</div>
+
+<div class="standalonecomment">// -----------------------------------</div>
+<div class="standalonecomment">// Location instances</div>
+<div class="standalonecomment">// -----------------------------------</div>
+
+<div>
+<span class="claferDecl" id="c0_us">us</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_central1_a"><span class="reference">us_central1_a</span></a>, <a href="#c0_us_central1_b"><span class="reference">us_central1_b</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_NORTH_AMERICA"><span class="reference">NORTH_AMERICA</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_europe">europe</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_europe_west1_a"><span class="reference">europe_west1_a</span></a>, <a href="#c0_europe_west1_b"><span class="reference">europe_west1_b</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_EUROPE"><span class="reference">EUROPE</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_asia">asia</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_asia_east1_a"><span class="reference">asia_east1_a</span></a>, <a href="#c0_asia_east1_b"><span class="reference">asia_east1_b</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ASIA"><span class="reference">ASIA</span></a> <span class="keyword">]</span></div>
+</div>
+
+<div class="standalonecomment">// -----------------------------------</div>
+
+<div>
+<span class="claferDecl" id="c0_us_east_1">us_east_1</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_NORTH_AMERICA"><span class="reference">NORTH_AMERICA</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_us_west_1">us_west_1</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_NORTH_AMERICA"><span class="reference">NORTH_AMERICA</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_us_west_2">us_west_2</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_NORTH_AMERICA"><span class="reference">NORTH_AMERICA</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_eu_west_1">eu_west_1</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_EUROPE"><span class="reference">EUROPE</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_ap_southeast_1">ap_southeast_1</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ASIA"><span class="reference">ASIA</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_ap_southeast_2">ap_southeast_2</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_AUSTRALIA"><span class="reference">AUSTRALIA</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_ap_northeast_1">ap_northeast_1</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_ASIA"><span class="reference">ASIA</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_sa_east_1">sa_east_1</span><span class="keyword"> :</span> <a href="#c0_Location"><span class="reference">Location</span></a>
+  <span class="inlinecomment">// [endpoint = "ec2.us-east-1.amazonaws.com"]</span>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_zones"><span class="reference">zones</span></a> = <a href="#c0_us_east_1a"><span class="reference">us_east_1a</span></a>, <a href="#c0_us_east_1b"><span class="reference">us_east_1b</span></a>, <a href="#c0_us_east_1c"><span class="reference">us_east_1c</span></a>, <a href="#c0_us_east_1d"><span class="reference">us_east_1d</span></a> <span class="keyword">]</span></div>
+</div>
+
+<div class="standalonecomment">// -----------------------------------</div>
+<div class="standalonecomment">// zone instances</div>
+<div class="standalonecomment">// -----------------------------------</div>
+
+<div>
+<span class="claferDecl" id="c0_us_central1_a">us_central1_a</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_us"><span class="reference">us</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_us_central1_b">us_central1_b</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_us"><span class="reference">us</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_europe_west1_a">europe_west1_a</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_europe"><span class="reference">europe</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_europe_west1_b">europe_west1_b</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_europe"><span class="reference">europe</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_asia_east1_a">asia_east1_a</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_asia"><span class="reference">asia</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_asia_east1_b">asia_east1_b</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_asia"><span class="reference">asia</span></a> <span class="keyword">]</span></div>
+</div>
+
+<div class="standalonecomment">// -----------------------------------</div>
+
+<div>
+<span class="claferDecl" id="c0_us_east_1a">us_east_1a</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_us_east_1"><span class="reference">us_east_1</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_us_east_1b">us_east_1b</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_us_east_1"><span class="reference">us_east_1</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_us_east_1c">us_east_1c</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_us_east_1"><span class="reference">us_east_1</span></a> <span class="keyword">]</span></div>
+</div>
+
+
+<div>
+<span class="claferDecl" id="c0_us_east_1d">us_east_1d</span><span class="keyword"> :</span> <a href="#c0_Zone"><span class="reference">Zone</span></a>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_UP"><span class="reference">UP</span></a> <span class="keyword">]</span></div>
+  <div class="indent">
+  <span class="keyword">[</span> <a href="#c0_location"><span class="reference">location</span></a> = <a href="#c0_us_east_1"><span class="reference">us_east_1</span></a> <span class="keyword">]</span></div>
+</div>
+
+</body>
+</html>

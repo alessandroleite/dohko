@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.excalibur</groupId>
+		<artifactId>super-pom</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>fm</artifactId>
+	<packaging>jar</packaging>
+	<name>${project.groupId}::${project.artifactId}</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<internal.snapshots.repo.path>file://${project.basedir}/../maven-repo/snapshots</internal.snapshots.repo.path>
+		<internal.release.repo.path>file://${project.basedir}/../maven-repo/releases</internal.release.repo.path>
+		<license-header-file>${project.basedir}/../HEADER</license-header-file>
+		<checkstyle.file>${project.basedir}/../checkstyle.xml</checkstyle.file>		
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>choco</groupId>
+			<artifactId>choco-solver</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.excalibur</groupId>
+			<artifactId>excalibur-core</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.clafer</groupId>
+		    <artifactId>chocosolver</artifactId>
+		</dependency>
+		
+	</dependencies>
+</project>

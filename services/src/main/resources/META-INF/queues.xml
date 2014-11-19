@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        Copyright (C) 2013-2014  the original author or authors.
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License,
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+	http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd"
+	default-autowire="byType">
+
+	<!-- <rabbit:connection-factory id="connectionFactory" 
+	                           host="${org.excalibur.rabbit.host}" 
+	                           username="${org.excalibur.rabbit.username}" 
+	                           password="${org.excalibur.rabbit.password}" 
+	                           cache-mode="CONNECTION"
+	                           connection-cache-size="${org.excalibur.rabbit.connection.cache.size}"/> -->
+	                           
+	<rabbit:connection-factory id="connectionFactory" 
+	                           host="${org.excalibur.rabbit.host}" 
+	                           username="${org.excalibur.rabbit.username}" 
+	                           password="${org.excalibur.rabbit.password}"/>                           
+	                           
+    <rabbit:admin connection-factory="connectionFactory" id="rabbitAdmin" />	                           
+	                           
+	<rabbit:listener-container connection-factory="connectionFactory"
+	                            acknowledge="auto" 
+                                message-converter="jsonWithJaxbSupportMessageConverter"
+                                id="newInstancesListener"
+                                concurrency="${org.excalibur.rabbit.queues.instances.concurrency.number}">
+          <rabbit:listener ref="newInstancesHandler" method="handleNewInstances" queues="newInstancesQueue" />
+    </rabbit:listener-container>
+
+	<rabbit:queue name="${org.excalibur.rabbit.queues.instances.name}" id="newInstancesQueue" />
+	
+	<rabbit:template id="newInstancesAmqpTemplate" 	                 
+	                 connection-factory="connectionFactory"
+		             correlation-key="excalibur_instances_reply_correlation" 
+		             queue="${org.excalibur.rabbit.queues.instances.name}" 
+		             routing-key="${org.excalibur.rabbit.queues.instances.routing.key}"
+		             exchange="${org.excalibur.rabbit.queues.instances.exchange}"
+		             retry-template="retryTemplate"
+		             message-converter="jsonWithJaxbSupportMessageConverter"/>
+		             
+	<rabbit:topic-exchange name="${org.excalibur.rabbit.queues.instances.exchange}" id="newInstanceExchange">
+	   <rabbit:bindings>
+	       <rabbit:binding queue="newInstancesQueue" pattern="${org.excalibur.rabbit.queues.instances.exchange.pattern}"/>
+	   </rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<!-- Deployment -->	
+	
+	<rabbit:listener-container connection-factory="connectionFactory"
+	                            acknowledge="auto" 
+                                message-converter="jsonWithJaxbSupportMessageConverter"
+                                id="deploymentListener"
+                                concurrency="${org.excalibur.rabbit.queues.deployment.concurrent.number}">
+          <rabbit:listener ref="deploymentHandler" method="handle" queues="deploymentQueue" />
+    </rabbit:listener-container>
+
+	<rabbit:queue name="${org.excalibur.rabbit.queues.deployment.name}" id="deploymentQueue" />
+	
+	<rabbit:template id="deploymentAmqpTemplate" 	                 
+	                 connection-factory="connectionFactory"
+		             correlation-key="excalibur_deployment_reply_correlation" 
+		             queue="${org.excalibur.rabbit.queues.deployment.name}" 
+		             routing-key="${org.excalibur.rabbit.queues.deployment.routing.key}"
+		             exchange="${org.excalibur.rabbit.queues.deployment.exchange}"
+		             retry-template="retryTemplate"
+		             message-converter="jsonWithJaxbSupportMessageConverter"/>
+		             
+	<rabbit:topic-exchange name="${org.excalibur.rabbit.queues.deployment.exchange}" id="deploymentExchange">
+	   <rabbit:bindings>
+	       <rabbit:binding queue="deploymentQueue" pattern="${org.excalibur.rabbit.queues.deployment.exchange.pattern}"/>
+	   </rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<!-- Tasks -->
+	
+	<rabbit:listener-container connection-factory="connectionFactory"
+	                            acknowledge="auto" 
+                                message-converter="jsonWithJaxbSupportMessageConverter"
+                                id="taskListener"
+                                concurrency="10" max-concurrency="20">
+          <rabbit:listener ref="taskHandler" method="handle" queues="taskQueue" />
+    </rabbit:listener-container>
+
+	<rabbit:queue name="${org.excalibur.rabbit.queues.task.name}" id="taskQueue" />
+	
+	<rabbit:template id="taskAmqpTemplate" 	                 
+	                 connection-factory="connectionFactory"
+		             correlation-key="excalibur_task_reply_correlation" 
+		             queue="${org.excalibur.rabbit.queues.task.name}" 
+		             routing-key="${org.excalibur.rabbit.queues.task.routing.key}"
+		             exchange="${org.excalibur.rabbit.queues.task.exchange}"
+		             retry-template="retryTemplate"
+		             message-converter="jsonWithJaxbSupportMessageConverter"/>
+		             
+	<rabbit:topic-exchange name="${org.excalibur.rabbit.queues.task.exchange}" id="taskExchange">
+	   <rabbit:bindings>
+	       <rabbit:binding queue="taskQueue" pattern="${org.excalibur.rabbit.queues.task.exchange.pattern}"/>
+	   </rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<!--  -->
+	
+	<!-- Instance configuration -->	
+	
+	<rabbit:listener-container connection-factory="connectionFactory"
+	                            acknowledge="auto" 
+                                message-converter="jsonWithJaxbSupportMessageConverter"
+                                id="instanceConfigurationListener"
+                                concurrency="${org.excalibur.rabbit.queues.instance.configuration.concurrency.number}"
+                                max-concurrency="${org.excalibur.rabbit.queues.instance.configuration.max.concurrency}">
+          <rabbit:listener ref="instanceConfigurationHandler" method="handleInstanceConfigurationTasks" queues="instanceConfigurationQueue" />
+    </rabbit:listener-container>
+
+	<rabbit:queue name="${org.excalibur.rabbit.queues.instance.configuration.name}" id="instanceConfigurationQueue" />
+	
+	<rabbit:template id="instanceConfigurationAmqpTemplate" 	                 
+	                 connection-factory="connectionFactory"
+		             correlation-key="excalibur_instance_instance_configuration_reply_correlation" 
+		             queue="${org.excalibur.rabbit.queues.instance.configuration.name}" 
+		             routing-key="${org.excalibur.rabbit.queues.instance.configuration.routing.key}"
+		             exchange="${org.excalibur.rabbit.queues.instance.configuration.exchange}"
+		             retry-template="retryTemplate"
+		             message-converter="jsonWithJaxbSupportMessageConverter"/>
+		             
+	<rabbit:topic-exchange name="${org.excalibur.rabbit.queues.instance.configuration.exchange}" id="instanceConfigurationExchange">
+	   <rabbit:bindings>
+	       <rabbit:binding queue="instanceConfigurationQueue" pattern="${org.excalibur.rabbit.queues.instance.configuration.exchange.pattern}"/>
+	   </rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<!-- Application's execution -->	
+	
+	<rabbit:listener-container connection-factory="connectionFactory"
+	                            acknowledge="auto" 
+                                message-converter="jsonWithJaxbSupportMessageConverter"
+                                id="applicationExecListener"
+                                concurrency="${org.excalibur.rabbit.queues.application.execution.concurrency.number}"
+                                max-concurrency="${org.excalibur.rabbit.queues.application.execution.max.concurrency}">
+          <rabbit:listener ref="worker" method="execute" queues="applicationExecutionQueue" />
+    </rabbit:listener-container>
+
+	<rabbit:queue name="${org.excalibur.rabbit.queues.application.execution.name}" id="applicationExecutionQueue" />
+	
+	<rabbit:template id="applicationExecutionAmqpTemplate" 	                 
+	                 connection-factory="connectionFactory"
+		             correlation-key="excalibur_application_execution_reply_correlation" 
+		             queue="${org.excalibur.rabbit.queues.application.execution.name}" 
+		             routing-key="${org.excalibur.rabbit.queues.application.execution.routing.key}"
+		             exchange="${org.excalibur.rabbit.queues.application.execution.exchange}"
+		             retry-template="retryTemplate"
+		             message-converter="jsonWithJaxbSupportMessageConverter"/>
+		             
+	<rabbit:topic-exchange name="${org.excalibur.rabbit.queues.application.execution.exchange}" id="applicationExecutionExchange">
+	   <rabbit:bindings>
+	       <rabbit:binding queue="applicationExecutionQueue" pattern="${org.excalibur.rabbit.queues.application.execution.exchange.pattern}"/>
+	   </rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<!--  -->
+		       
+    <bean id="jsonWithJaxbSupportMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter">
+       <property name="jsonObjectMapper">
+          <bean class="org.excalibur.jackson.databind.JsonJaxbObjectMapper"/>
+       </property>
+    </bean>
+    
+	<bean id="retryTemplate" class="org.springframework.retry.support.RetryTemplate">
+		<property name="backOffPolicy">
+			<bean class="org.springframework.retry.backoff.ExponentialBackOffPolicy">
+				<property name="initialInterval" value="500" />
+				<property name="multiplier" value="10.0" />
+				<property name="maxInterval" value="10000" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="queueStatsProcessor" class="org.excalibur.aqmp.handler.QueueStatsProcessor" depends-on="applicationExecutionQueue" autowire="byType"/>
+
+</beans>

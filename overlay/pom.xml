@@ -1,0 +1,125 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.excalibur</groupId>
+		<artifactId>super-pom</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>overlay</artifactId>
+	<packaging>jar</packaging>
+	<name>${project.groupId}::${project.artifactId}</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<internal.snapshots.repo.path>file://${basedir}/../maven-repo/snapshots</internal.snapshots.repo.path>
+		<internal.release.repo.path>file://${basedir}/../maven-repo/releases</internal.release.repo.path>
+		<license-header-file>${basedir}/../HEADER</license-header-file>
+		<checkstyle.file>${basedir}/../checkstyle.xml</checkstyle.file>
+		<metrics.version>3.0.1</metrics.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+			<version>1.46</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.xeustechnologies</groupId> <artifactId>jcl-core</artifactId> 
+			<version>2.1.1</version> </dependency> -->
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.jxta</groupId>
+			<artifactId>jxta-jxse</artifactId>
+			<version>2.5</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jetty</groupId>
+					<artifactId>jetty</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
+			<scope>compile</scope> </dependency> -->
+
+		<dependency>
+			<groupId>org.excalibur</groupId>
+			<artifactId>monitoring</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+			<version>${metrics.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<activation>
+				<property>
+					<name>standalone</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.4</version>
+						<configuration>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									<mainClass>br.cic.unb.chord.main.Main</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Implementation-Build>${buildNumber}</Implementation-Build>
+									<mode>development</mode>
+								</manifestEntries>
+							</archive>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<appendAssemblyId>false</appendAssemblyId>
+									<finalName>${project.finalName}</finalName>
+									<descriptorRefs>
+										<descriptorRef>jar-with-dependencies</descriptorRef>
+									</descriptorRefs>
+									<attach>true</attach>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+</project>

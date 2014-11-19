@@ -1,0 +1,92 @@
+
+enum Architecture = x32 | x64
+enum FamilyType = Bootstrapping | Computing | General | GPU | IO | Memory | Networking
+enum DiskTechnologyType = SSD | EBS
+
+abstract int : integer
+
+abstract InstanceType
+	hardware ->> HardwareConfiguration
+	network ->> Network
+	family ->> FamilyType
+
+abstract HardwareConfiguration
+	computeUnit ->> ComputeUnit
+	attachedDiks ->> Disk 0..*
+
+abstract ComputeUnit
+	numberOfUnits : integer
+	giglaFlops : integer
+	peakPerformance: integer
+	busSize ->> Architecture
+	processor ->> PhysicalProcessor
+
+
+abstract Disk
+    size : integer
+        [this > 0]
+    iops : integer
+        [this > 0]
+    technology ->> DiskTechnologyType
+    type ->> DiskType
+    
+    [
+        this.size >= this.type.minSize && 
+        this.size <= this.type.maxSize
+    ]
+    
+
+abstract DiskType
+    minSize : integer
+        [this > 0]
+    maxSize : integer
+        [this > 0]
+    
+    [this.minSize < maxSize]
+        
+abstract GeneralDisk : DiskType
+
+abstract ProvisionedDisk : DiskType
+    maxIOPS : integer
+    maxRatioIOPSDiskSize : integer
+
+abstract PhysicalProcessor
+    name : string
+    frequency : int
+    
+abstract Network
+    throughput : integer
+    
+    
+// ------------------------------------------------
+// ---       configurations (products)          ---
+// ------------------------------------------------
+
+Xeon101: PhysicalProcessor
+    [name = "Intel Xeon 1.01 GHz"]
+    [frequency = 101]
+
+n1: Network
+    [throughput = 100]
+
+a64: Architecture
+    x64
+
+fBootstrapping : FamilyType
+    Bootstrapping
+    
+c1: ComputeUnit
+    [numberOfUnits = 1]
+    [giglaFlops = 3]
+    [peakPerformance = 20]
+    [busSize = a64]
+    [processor = Xeon101]
+
+h1: HardwareConfiguration
+    [computeUnit = c1]
+
+f1: InstanceType
+    [hardware = h1]
+    [network = n1]
+    [family = fBootstrapping]
+    

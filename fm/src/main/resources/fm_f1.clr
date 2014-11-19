@@ -1,0 +1,335 @@
+abstract Feature
+	cost -> integer
+		[this >= 0]
+
+// =====================================================================
+// Primitive types: 
+// =====================================================================		
+
+abstract xor Architecture
+	x32
+	x64
+
+abstract xor Platform	
+	LINUX
+	WINDOWS
+
+abstract xor HypervisorType
+    OVM
+    XEN
+
+abstract xor VirtualizationType    
+   HVM
+   PARAVIRTUAL
+
+abstract xor PhysicalProcessor
+	IntelOpteron
+	IntelXeon
+	IntelSandyBridge
+	IntelIvyBridge		
+
+abstract xor StorageType
+	STANDARD
+	PROVISIONED	
+
+abstract xor OperatingSystem
+	CENTOS
+	DEBIAN
+	REDHAT
+	SUSE
+	UBUNTU
+	WINDOWS_2008_SERVER
+
+
+// ==================================================================================
+// Hardware primitive types: Memory, Storage, ComputeUnit, HardwareConfiguration
+// ==================================================================================
+
+abstract Memory
+	size : integer
+		[this > 0]
+
+abstract Storage
+	size : integer
+		[this > 0]
+	type -> StorageType
+	xor StorageTechnologyType
+    	SSD
+    	EBS
+
+abstract ComputeUnit
+	speed : integer
+		[this > 0]
+	cores ->> integer
+		[this > 0]
+	unit : integer
+		[this > 0]
+	processor : PhysicalProcessor
+
+abstract HardwareConfiguration
+	memory: Memory
+	computeUnit : ComputeUnit
+	storages -> Storage +
+	
+// ==================================================================================
+// Location primitive types
+// ==================================================================================
+
+abstract Zone	
+	xor Status
+	    UP
+	    DOWN
+	location -> Location
+	[this in location.zones]
+
+abstract Location	
+	zones -> Zone +
+	xor Region
+	    ASIA
+	    SOUTH_AMERICA
+	    NORTH_AMERICA
+	    AFRICA
+	    EUROPE
+	    ANTARCTICA
+	    AUSTRALIA
+
+abstract Locations
+   locations -> Location +
+   
+abstract PriceType 
+    ON_DEMAND ?
+    SPOT ?
+    RESERVED ?
+
+abstract Provider	
+    `Locations
+	`PriceType 
+	
+
+// ------------------
+// Image prototype
+// ------------------
+
+abstract Image : Feature
+	architecture -> Architecture	
+	location -> Location	
+	hypervisor -> HypervisorType
+	virtualization -> VirtualizationType	
+	
+	
+// ------------------
+// InstanceType prototype
+// ------------------
+
+abstract InstanceType : Feature
+	hardware : HardwareConfiguration
+	provider : Provider
+	xor PurposeUsage		
+		BOOTSTRAP
+		CPU
+		GENERAL
+		GPU
+		I_O
+		MEMORY
+		NETWORK
+	availability -> Location
+	    [this in provider.Locations.locations]
+	xor size
+			MICRO
+			MILLI
+			SMALL
+			MEDIUM
+			LARGE
+			X2LARGE
+			X4LARGE
+			X8LARGE
+			X16LARGE
+			X32LARGE
+	[MICRO => BOOTSTRAP]	
+	[MILLI => BOOTSTRAP]
+	[BOOTSTRAP <=> MICRO || MILLI]
+
+abstract xor NetworkingPerformance : Feature
+	MODERATE
+	HIGH
+	LOW
+	VERY_LOW
+
+abstract xor AmazonNetworkingPerformance : NetworkingPerformance
+	TEN_GIGABITS		
+
+abstract or Features : Feature
+	CLUSTER
+	EBS_OPTIMIZED
+	NETWORKING_OPTIMIZED
+	FREE_TIER		
+	
+abstract Instance
+	type -> InstanceType
+	xor PriceType
+	    ON_DEMAND
+	    SPOT
+	    RESERVED
+	image -> Image
+	features -> Features ?	
+	cost -> integer = image.cost + sum Features.cost	
+
+// -----------------------------------
+// Provider instances
+// -----------------------------------
+
+Amazon : Provider
+  [AmazonLocations]
+  [ON_DEMAND, SPOT, RESERVED]
+
+
+Google : Provider
+  [GoogleLocations]
+  [ON_DEMAND]  
+
+
+// -----------------------------------
+// Locations instances
+// -----------------------------------
+    
+GoogleLocations : Locations
+    [ us, europe, asia ]
+  
+AmazonLocations : Locations
+    [
+      us_east_1, us_west_1, us_west_2, 
+      eu_west_1,
+      ap_southeast_1, ap_southeast_2,
+      ap_northeast_1, 
+      sa_east_1
+    ]
+
+// -----------------------------------
+// Location instances
+// -----------------------------------
+
+us : Location
+	[zones = us_central1_a , us_central1_b]
+	[NORTH_AMERICA]
+
+europe : Location
+	[zones = europe_west1_a , europe_west1_b]
+	[EUROPE]
+
+asia : Location
+	[zones = asia_east1_a , asia_east1_b]
+	[ASIA]
+
+// -----------------------------------
+us_east_1 : Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[NORTH_AMERICA]
+
+us_west_1 : Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[NORTH_AMERICA]	
+
+us_west_2 : Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[NORTH_AMERICA]
+	
+eu_west_1 : Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[EUROPE]
+
+ap_southeast_1 : Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[ASIA]
+
+ap_southeast_2 : Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[AUSTRALIA] 
+
+ap_northeast_1	: Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[ASIA]
+
+sa_east_1 : Location
+	// [endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d] 	
+
+// -----------------------------------
+// zone instances
+// -----------------------------------
+
+us_central1_a  : Zone
+	[UP]
+	[location = us]
+
+us_central1_b  : Zone
+	[UP]
+	[location = us]
+
+europe_west1_a : Zone
+	[UP]
+	[location = europe]
+
+europe_west1_b : Zone
+	[UP]
+	[location = europe]
+
+asia_east1_a   : Zone
+	[UP]
+	[location = asia]
+
+asia_east1_b   : Zone
+	[UP]
+	[location = asia]
+
+// -----------------------------------
+
+us_east_1a : Zone
+	[UP]
+//	[location = us_east_1]
+
+us_east_1b : Zone 
+	[UP]
+	[location = us_east_1]
+
+us_east_1c : Zone 
+	[UP]
+	[location = us_east_1]
+
+us_east_1d : Zone
+	[UP]
+	[location = us_east_1]
+
+// ---------------------------------
+
+m1: Memory
+  [size = 375]
+  
+c1: ComputeUnit
+  [speed = 120]
+  [cores = 1]
+  [unit = 1]
+  [processor = IntelSandyBridge]
+  
+
+s1: Storage
+  [size = 10]
+  [type = STANDARD]
+  [SSD]
+
+m3MediumHardware : HardwareConfiguration
+  [memory = m1]
+  [computeUnit = c1]
+
+m3Medium : InstanceType
+	[hardware = m3MediumHardware]
+    [provider = Amazon]
+    [MEMORY]
+    [availability = us_east_1]
+    [MEDIUM]

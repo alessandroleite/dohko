@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.excalibur</groupId>
+	<artifactId>super-pom</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>${project.groupId}::${project.artifactId}</name>
+	<inceptionYear>2013</inceptionYear>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<source.version>1.7</source.version>
+
+		<internal.snapshots.repo.path>file://${project.basedir}/maven-repo/snapshots</internal.snapshots.repo.path>
+		<internal.release.repo.path>file://${project.basedir}/maven-repo/releases</internal.release.repo.path>
+		<license-header-file>${project.basedir}/HEADER</license-header-file>
+		<checkstyle.file>${project.basedir}/checkstyle.xml</checkstyle.file>
+
+		<ajdt.version>1.7.2</ajdt.version>
+		<aspectjrt.version>1.8.0</aspectjrt.version>
+		<aspectjweaver.version>1.8.0</aspectjweaver.version>
+		<aspectjtools.version>1.8.0</aspectjtools.version>
+		<aspectj-maven-plugin.version>1.5</aspectj-maven-plugin.version>
+
+		<guava.version>16.0</guava.version>
+		<jscience.version>4.3.1</jscience.version>
+		<commons-lang.version>2.6</commons-lang.version>
+		<commons-io.version>2.4</commons-io.version>
+		<biojava.version>3.1.0-SNAPSHOT</biojava.version>
+		<jcommander.version>1.30</jcommander.version>
+		<gson.version>2.2.4</gson.version>
+
+		<h2database.version>1.3.173</h2database.version>
+		<!-- <jersey.version>2.5.1</jersey.version> -->
+		<jersey.version>2.8</jersey.version>
+
+		<!-- <org.eclipse.jetty.version>9.1.1.v20140108</org.eclipse.jetty.version> 
+			Jetty 9 requires Java 1.7 -->
+		<org.eclipse.jetty.version>8.1.14.v20131031</org.eclipse.jetty.version>
+		<commons-logging.version>1.1.1</commons-logging.version>
+		<jdbi.version>2.51</jdbi.version>
+		<spring.version>3.2.8.RELEASE</spring.version>
+		<spring.retry.version>1.0.3.RELEASE</spring.retry.version>
+		<infinispan-core.version>6.0.2.Final</infinispan-core.version>
+		<jsch.version>0.1.50</jsch.version>
+		<jsch.agentproxy.version>0.0.7</jsch.agentproxy.version>
+		<org.apache.sshd.version>0.9.0</org.apache.sshd.version>
+		<sigar.version>1.6.4</sigar.version>
+		<!-- <ganymed-ssh2.version>261</ganymed-ssh2.version> -->
+		<ganymed-ssh2.version>262</ganymed-ssh2.version>
+		<slf4j-log4j12.version>1.7.6</slf4j-log4j12.version>
+
+		<!--<choco.version>3.1.2-SNAPSHOT</choco.version> -->
+		<choco.version>3.2.0</choco.version>
+		<!-- <choco.version>2.1.5</choco.version> -->
+		<clafer.choco.version>0.3.6.1</clafer.choco.version>
+
+		<commons.dbcp.version>1.4</commons.dbcp.version>
+		<jackson-module-jaxb-annotations.version>2.4.0</jackson-module-jaxb-annotations.version> <!-- 2.2.0 -->
+		<jackson-dataformat-yaml.version>2.4.0</jackson-dataformat-yaml.version>
+
+		<commons-exec.version>1.2</commons-exec.version>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License as published by the Free
+					Software Foundation; either version 2.1 of the License, or (at your
+					option) any later version.</name>
+			<url>http://www.fsf.org/licensing/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<repositories>
+		<repository>
+			<id>github-snapshot-repo</id>
+			<url>https://github.com/alessandroleite/maven-repository/raw/master/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>github-release-repo</id>
+			<url>https://github.com/alessandroleite/maven-repository/raw/master/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>biojava</id>
+			<url>http://biojava.org/download/maven/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+
+		<repository>
+			<id>choco.repos</id>
+			<url>http://www.emn.fr/z-info/choco-repo/mvn/repository/</url>
+		</repository>
+
+		<repository>
+			<id>internal-snapshots-repo</id>
+			<name>Internal Maven repository of snapshots artifacts</name>
+			<url>${internal.snapshots.repo.path}</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+
+		<repository>
+			<id>internal-release-repo</id>
+			<name>Internal Maven repository of release artifacts</name>
+			<url>${internal.release.repo.path}</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+
+
+	<distributionManagement>
+		<repository>
+			<id>deploy-release-repo</id>
+			<name>deploy-release-repo</name>
+			<url>${deploy-repo.url}/releases</url>
+		</repository>
+
+		<snapshotRepository>
+			<id>deploy-snapshot-repo</id>
+			<name>deploy-snapshot-repo</name>
+			<url>${deploy-repo.url}/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<modules>
+		<module>aws-compute</module>
+		<module>bio</module>
+		<module>core</module>
+		<module>discovery</module>
+		<module>discovery-client</module>
+		<module>fm</module>
+		<module>google-compute</module>
+		<module>hybrid-overlay</module>
+		<module>monitoring</module>
+		<module>overlay</module>
+		<module>services</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.10</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- Excalibur libraries -->
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>excalibur-aws-compute</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>bio</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>excalibur-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>discovery</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>discovery-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>fm</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>excalibur-google-compute</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>overlay</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>monitoring</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.excalibur</groupId>
+				<artifactId>hybrid-overlay</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Choco -->
+
+			<dependency>
+				<groupId>choco</groupId>
+				<artifactId>choco-solver</artifactId>
+				<version>${choco.version}</version>
+			</dependency>
+
+			<!-- Clafer -->
+			<dependency>
+				<groupId>org.clafer</groupId>
+				<artifactId>chocosolver</artifactId>
+				<version>${clafer.choco.version}</version>
+			</dependency>
+
+			<!-- AspectJ -->
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>${aspectjrt.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>${aspectjweaver.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jscience</groupId>
+				<artifactId>jscience</artifactId>
+				<version>${jscience.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.beust</groupId>
+				<artifactId>jcommander</artifactId>
+				<version>${jcommander.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>${commons-lang.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.biojava</groupId>
+				<artifactId>biojava3-sequencing</artifactId>
+				<version>${biojava.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>${gson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>${h2database.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${commons-logging.version}</version>
+			</dependency>
+
+			<!-- jersey dependencies -->
+			<!-- https://jersey.java.net/documentation/latest/modules-and-dependencies.html -->
+
+			<dependency>
+				<groupId>org.glassfish.jersey.core</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.jersey.connectors</groupId>
+				<artifactId>jersey-grizzly-connector</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.jersey.connectors</groupId>
+				<artifactId>jersey-apache-connector</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.jersey.connectors</groupId>
+				<artifactId>jersey-jetty-connector</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
+
+			<!-- Comment this to remove JSON support -->
+			<!-- <dependency> <groupId>org.glassfish.jersey.media</groupId> <artifactId>jersey-media-moxy</artifactId> 
+				<version>${jersey.version}</version> </dependency> -->
+
+			<dependency>
+				<groupId>org.glassfish.jersey.media</groupId>
+				<artifactId>jersey-media-json-jackson</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.jersey.ext</groupId>
+				<artifactId>jersey-spring3</artifactId>
+				<version>${jersey.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-beans</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-web</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-servlet</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-grizzly2-http</artifactId>
+				<version>${jersey.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>guava</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-jaxb-annotations</artifactId>
+				<version>${jackson-module-jaxb-annotations.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.dataformat</groupId>
+				<artifactId>jackson-dataformat-yaml</artifactId>
+				<version>${jackson-dataformat-yaml.version}</version>
+			</dependency>
+
+			<!-- Jetty dependencies -->
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-webapp</artifactId>
+				<version>${org.eclipse.jetty.version}</version>
+			</dependency>
+
+			<!-- Spring dependencies -->
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aspects</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.retry</groupId>
+				<artifactId>spring-retry</artifactId>
+				<version>${spring.retry.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jdbi</groupId>
+				<artifactId>jdbi</artifactId>
+				<version>${jdbi.version}</version>
+			</dependency>
+
+			<!-- Infinispan -->
+			<dependency>
+				<groupId>org.infinispan</groupId>
+				<artifactId>infinispan-core</artifactId>
+				<version>${infinispan-core.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j-log4j12.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j-log4j12.version}</version>
+				<scope>compile</scope>
+			</dependency>
+
+			<!-- Jsch dependencies -->
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>${jsch.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch.agentproxy.sshj</artifactId>
+				<version>${jsch.agentproxy.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch.agentproxy.connector-factory</artifactId>
+				<version>${jsch.agentproxy.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch.agentproxy.jsch</artifactId>
+				<version>${jsch.agentproxy.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ch.ethz.ganymed</groupId>
+				<artifactId>ganymed-ssh2</artifactId>
+				<version>${ganymed-ssh2.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.sshd</groupId>
+				<artifactId>sshd-core</artifactId>
+				<version>${org.apache.sshd.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.hyperic</groupId>
+				<artifactId>sigar</artifactId>
+				<version>${sigar.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>${commons.dbcp.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-exec</artifactId>
+				<version>${commons-exec.version}</version>
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
+	<build>
+		<defaultGoal>package</defaultGoal>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>2.10</version>
+					<inherited>true</inherited>
+					<configuration>
+						<configLocation>${checkstyle.file}</configLocation>
+						<headerLocation>${license-header-file}</headerLocation>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.github.koraktor</groupId>
+					<artifactId>mavanagaiata</artifactId>
+					<inherited>true</inherited>
+					<executions>
+						<execution>
+							<id>load-git-branch</id>
+							<goals>
+								<goal>branch</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<inherited>true</inherited>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+				<inherited>true</inherited>
+				<configuration>
+					<header>${license-header-file}</header>
+					<excludes>
+						<exclude>License.txt</exclude>
+						<exclude>**/.so</exclude>
+						<exclude>**/.travis.yml</exclude>
+						<exclude>**/.gitignore</exclude>
+						<exclude>**/.checkstyle</exclude>
+						<exclude>**/HEADER</exclude>
+						<exclude>**/README.md</exclude>
+						<exclude>**/checkstyle.xml</exclude>
+						<exclude>**/.jks</exclude>
+						<exclude>**/.keystore</exclude>
+						<exclude>**/jaxb.index</exclude>
+						<exclude>**/excalibur.keystore</exclude>
+						<exclude>**/excalibur.jks</exclude>
+						<exclude>**/.p12</exclude>
+					</excludes>
+					<strictCheck>true</strictCheck>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<inherited>true</inherited>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<source>${source.version}</source>
+					<target>${source.version}</target>
+					<showDeprecation>true</showDeprecation>
+					<showWarnings>true</showWarnings>
+					<lineLength>180</lineLength>
+					<verbose>false</verbose>
+					<XaddSerialVersionUID>true</XaddSerialVersionUID>
+					<compilerArgument>-Xlint:all</compilerArgument>
+				</configuration>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<!--<goals> <goal>jar-no-fork</goal> </goals> -->
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12</version>
+				<configuration>
+					<argLine>-XX:-UseSplitVerifier</argLine> <!-- Cobertura and Java 7 http://goo.gl/M5w1v -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<additionalProjectnatures>
+						<projectnature>org.eclipse.jdt.core.javanature</projectnature>
+						<projectnature>org.maven.ide.eclipse.maven2Nature</projectnature>
+						<projectnature>org.eclipse.m2e.core.maven2Nature</projectnature>
+						<projectnature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</projectnature>
+					</additionalProjectnatures>
+					<additionalBuildcommands>
+						<buildcommand>org.maven.ide.eclipse.maven2Builder</buildcommand>
+						<buildcommand>org.eclipse.m2e.core.maven2Builder</buildcommand>
+						<buildcommand>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</buildcommand>
+						<forceRecheck>true</forceRecheck>
+					</additionalBuildcommands>
+					<additionalConfig>
+						<file>
+							<name>.checkstyle</name>
+							<content>
+							  <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+							<fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="true">
+							  <local-check-config name="${project.groupId}-checkstyle" location="${checkstyle.file}" type="external" description="">
+							    <additional-data name="protect-config-file" value="false"/>
+							  </local-check-config>
+							  <fileset name="all" enabled="true" check-config-name="${project.groupId}-checkstyle" local="true">
+							    <file-match-pattern match-pattern="." include-pattern="true"/>
+							  </fileset>
+							</fileset-config>
+					        ]]>
+							</content>
+						</file>
+					</additionalConfig>
+					<classpathContainers>
+						<classpathContainer>org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER</classpathContainer>
+						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+					</classpathContainers>
+					<useProjectReferences>true</useProjectReferences>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<projectNameTemplate>[artifactId]-[version]</projectNameTemplate> <!-- [groupId]- -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+					<configLocation>${checkstyle.file}</configLocation>
+					<headerLocation>${license-header-file}</headerLocation>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.2</version>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>

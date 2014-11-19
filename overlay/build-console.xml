@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+        Copyright (C) 2013-2014  the original author or authors.
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License,
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+-->
+<project default="create-jar" name="build-akkord-console" basedir=".">
+
+
+	<path id="app.classpath.compile">
+		<fileset dir="${basedir}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="app.classpath.execute">
+		<fileset dir="${basedir}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset file="${basedir}/dist/p2p-service.jar" />
+	</path>
+
+	<target name="init">
+		<delete dir="${basedir}/dist/lib" failonerror="false" />
+		<delete dir="${basedir}/build/classes" failonerror="false" />
+		<delete file="${basedir}/dist/p2p-service.jar" />
+		<mkdir dir="${basedir}/dist/lib" />
+		<mkdir dir="${basedir}/build/classes" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="${basedir}/src" destdir="${basedir}/build/classes" debug="on" classpathref="app.classpath.compile" />
+	</target>
+
+	<target name="create-jar" depends="compile">
+		<jar destfile="${basedir}/dist/p2p-service.jar">
+			<manifest>
+				<attribute name="Main-Class" value="br.cic.unb.chord.main.Main" />
+				<attribute name="Class-Path" value=". lib/objenesis-1.1.jar lib/log4j-1.2.14.jar lib/bcprov-jdk14.jar lib/jcl-core-2.1.1.jar lib/jxta.jar lib/looks-2.2.0.jar lib/mbf-common-1.0.0.jar" />
+			</manifest>
+			<fileset dir="${basedir}/build/classes" />
+		</jar>
+
+		<copy file="${basedir}/lib/objenesis-1.1.jar" todir="${basedir}/dist/lib" />
+		<copy file="${basedir}/lib/log4j-1.2.14.jar" todir="${basedir}dist/lib" />
+		<copy file="${basedir}/lib/bcprov-jdk14.jar" todir="${basedir}/dist/lib" />
+		<copy file="${basedir}/lib/jcl-core-2.1.1.jar" todir="${basedir}/dist/lib" />
+		<copy file="${basedir}/lib/jxta.jar" todir="${basedir}/dist/lib" />
+		<copy file="${basedir}/lib/looks-2.2.0.jar" todir="${basedir}/dist/lib" />
+		<copy file="${basedir}/lib/mbf-common-1.0.0.jar" todir="${basedir}/dist/lib" />
+	</target>
+
+
+	<target name="start-bootstrap" depends="create-jar">
+		<java fork="true" classname="br.cic.unb.chord.main.Main" classpathref="app.classpath.execute" maxmemory="1024M">
+			<jvmarg value="-Xms512M -Xmx512M -XX:PermSize=128M -XX:MaxPermSize=256M -server"/>
+			<sysproperty key="node.address" value="164.41.14.236"/>
+			<sysproperty key="node.port" 	value="9000"/>
+			<sysproperty key="app.config.properties.file" value="/Users/alessandro/projetos/unb/p2p-akkord-1.2/dist/bin/app.config.properties"/>
+		</java>
+	</target>
+</project>

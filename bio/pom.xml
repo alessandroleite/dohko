@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.excalibur</groupId>
+		<artifactId>super-pom</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>bio</artifactId>
+	<packaging>jar</packaging>
+	<name>${project.groupId}::${project.artifactId}</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<internal.snapshots.repo.path>file://${basedir}/../maven-repo/snapshots</internal.snapshots.repo.path>
+		<internal.release.repo.path>file://${basedir}/../maven-repo/releases</internal.release.repo.path>
+		<license-header-file>${basedir}/../HEADER</license-header-file>
+		<checkstyle.file>${basedir}/../checkstyle.xml</checkstyle.file>
+		<biojava.version>3.0.8</biojava.version>
+	</properties>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.excalibur</groupId>
+			<artifactId>excalibur-core</artifactId>
+			<scope>compile</scope>
+		</dependency>	
+		
+		<!--<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava3-sequencing</artifactId>
+			<scope>compile</scope>
+		</dependency>-->
+		
+		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava3-alignment</artifactId>
+			<scope>compile</scope>
+			<version>${biojava.version}</version>
+		</dependency>		
+		
+	</dependencies>
+
+</project>

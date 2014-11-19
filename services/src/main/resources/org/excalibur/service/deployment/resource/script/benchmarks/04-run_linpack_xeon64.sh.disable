@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+#     Copyright (C) 2013-2014  the original author or authors.
+#
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License,
+#     any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+
+#
+export KMP_AFFINITY=nowarnings,compact
+
+cd ~/linpack_10.3.4/benchmarks/linpack
+
+wget https://dl.dropboxusercontent.com/u/30869358/linpack/lininput2_xeon64
+
+#date
+#date > lin_xeon64.txt
+
+#./xlinpack_xeon64 lininput2_xeon64 >> n1-highmem-2.result.txt
+./xlinpack_xeon64 lininput2_xeon64
+
+#./xlinpack_xeon64 lininput2_xeon64 >> n1-standard-16.result.txt
+
+#date >> lin_xeon64.txt
+echo -n "Done: "
+date

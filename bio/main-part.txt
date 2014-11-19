@@ -1,0 +1,61 @@
+====
+        Copyright (C) 2013-2014  the original author or authors.
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License,
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>
+====
+
+public static void main(String[] args)
+    {
+        String[] ids = new String[] { "Q21691", "Q7TMA5", "O48771" };
+        try
+        {
+            alignPairLocal(ids[0], ids[1]);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private static void alignPairLocal(String id1, String id2) throws Exception
+    {
+        ProteinSequence s1 = getSequenceForId(id1), s2 = getSequenceForId(id2), s3 = getSequenceForId("O48771");
+        SubstitutionMatrix<AminoAcidCompound> matrix = SubstitutionMatrixHelper.getBlosum65();
+
+        System.out.println(new Date());
+        double[] allPairsScores = Alignments.getAllPairsScores(Lists.newArrayList(s1, s2, s3), PairwiseSequenceScorerType.LOCAL,
+                new SimpleGapPenalty(), matrix);
+        System.out.println(new Date());
+
+        System.out.println(Arrays.toString(allPairsScores));
+        System.out.println("-------------------------");
+
+        PairwiseSequenceAligner<ProteinSequence, AminoAcidCompound> smithWaterman = Alignments.getPairwiseAligner(s1, s2,
+                PairwiseSequenceAlignerType.LOCAL, new SimpleGapPenalty(), matrix);
+
+        System.out.println(new Date());
+        SequencePair<ProteinSequence, AminoAcidCompound> pair = smithWaterman.getPair();
+        System.out.println(new Date());
+        System.out.println("-------------------------");
+
+        System.out.printf("%n%s vs %s%n%s", pair.getQuery().getAccession(), pair.getTarget().getAccession(), pair);
+    }
+
+    private static ProteinSequence getSequenceForId(String uniProtId) throws Exception
+    {
+        URL uniprotFasta = new URL(String.format("http://www.uniprot.org/uniprot/%s.fasta", uniProtId));
+        ProteinSequence seq = FastaReaderHelper.readFastaProteinSequence(uniprotFasta.openStream()).get(uniProtId);
+        System.out.printf("id : %s %s%n%s%n", uniProtId, seq, seq.getOriginalHeader());
+        return seq;
+    }

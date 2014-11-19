@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        Copyright (C) 2013-2014  the original author or authors.
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License,
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd"
+	default-autowire="byType">
+	
+	<import resource="classpath*:META-INF/global-beans.xml"/>
+    
+	<jdbc:initialize-database data-source="dataSource" enabled="#{systemProperties.getProperty('org.excalibur.database.initialize', 'false')}" ignore-failures="ALL">
+		<jdbc:script location="classpath*:META-INF/db-test-user-data.sql" />
+	</jdbc:initialize-database>
+	
+	<bean id="xmppConfiguration" class="org.excalibur.core.cloud.service.xmpp.server.XmppConfiguration">
+	  <property name="domain" 		value="${org.excalibur.xmpp.server.domain}"/>
+	  <property name="tcpPort" 		value="${org.excalibur.xmpp.server.tcp.port}"/>
+	  <property name="s2SPort" 		value="${org.excalibur.xmpp.server.s2.port}"/>
+	  <property name="certificate" 	value="${org.excalibur.xmpp.certificate.file}"/>
+	  <property name="password" 	value="${org.excalibur.xmpp.certificate.password}"/>
+	</bean>
+	
+	<bean id="xmppServer" class="org.excalibur.core.cloud.service.xmpp.server.XmppServer" init-method="start" destroy-method="stop">
+		<!-- <constructor-arg value="${org.excalibur.xmpp.server.domain}"/> -->
+		<constructor-arg ref="xmppConfiguration"/>
+	</bean> 
+	
+	<bean id="xmppService" class="org.excalibur.service.xmpp.service.XmppService" destroy-method="closeAllSessions">
+		<constructor-arg ref="xmppServer"/>
+		<constructor-arg value="#{systemProperties.getProperty('org.excalibur.server.host')}"/>
+	</bean>
+	
+	<bean id="provider" class="org.excalibur.service.beans.factory.ProviderFactoryBean"                depends-on="providerRepository"/>
+	<bean id="providerDetails" class="org.excalibur.service.beans.factory.ProviderDetailsFactoryBean"  depends-on="provider"/>
+	
+	<bean id="overlay" class="org.excalibur.service.spring.config.OverlayFactoryBean">
+	  <property name="host"             value="${org.excalibur.server.host}"/>
+	  <property name="port"             value="${org.excalibur.overlay.port}"/>
+	  <property name="bootstrapAddress" value="${org.excalibur.overlay.bootstrap.address}"/>
+	  <property name="bootstrapPort"    value="${org.excalibur.overlay.bootstrap.port}"/>
+	  <property name="bootstrap"        value="${org.excalibur.overlay.is.bootstrap}"/>
+    </bean>
+    
+    <bean id="discoveryService" class="org.excalibur.discovery.service.p2p.DiscoveryServiceImpl">
+	    <constructor-arg ref="overlay"/>
+	</bean>
+	
+	<!-- <bean id="instanceMonitor" class="org.excalibur.core.compute.monitoring.monitors.resources.InstanceStateMonitor">
+	    <constructor-arg ref="instanceService"/>
+	    <constructor-arg ref="dbi"/>
+	</bean>
+	
+	<bean id="instanceAmazonMonitorJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="instanceMonitor" />
+		<property name="targetMethod" value="monitorUserInstances" />
+		<property name="concurrent" value="false" />
+		<property name="arguments" value="amazon"/>
+		<property name="group" value="amazon"/>
+	</bean>
+	 
+	<bean id="instanceMonitorTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+	    <property name="jobDetail" ref="instanceAmazonMonitorJob" />
+        1 minute
+        <property name="startDelay" value="60000" />
+        repeat every 5 minutes
+        <property name="repeatInterval" value="300000" />
+    </bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" autowire="no">
+		<property name="jobDetails">
+			<list>
+				<ref bean="instanceAmazonMonitorJob" />
+			</list>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="instanceMonitorTrigger" />
+			</list>
+		</property>
+	</bean>   -->
+	
+	<!-- http://stackoverflow.com/questions/15223297/spring-social-superclass-has-no-null-constructors-but-no-arguments-were-given -->
+	
+	<import resource="classpath*:META-INF/jobs.xml"/>
+	<import resource="classpath*:META-INF/queues.xml"/>
+</beans>

@@ -1,0 +1,67 @@
+abstract Component
+    energy ->> integer
+    [energy >= 0]
+    cost ->> integer
+    [cost >= 0]
+    usability ->> integer
+
+abstract androidPhone
+    hardware : Component
+        [energy = 0]
+        [cost = 0]
+        [usability = 0]
+        screen : Component
+            [energy = 0]
+            [cost = 0]
+            [usability = 0]
+            xor material : Component
+                [energy = 0]
+                [cost = 0]
+                [usability = 0]
+                oled : Component
+                    [energy = 6]
+                    [cost = 4]
+                    [usability = 2]
+                amoled : Component
+                    [energy = 4 ]
+                    [cost = 3]
+                    [usability = 2]
+                lcd : Component
+                    [energy = 3 ]
+                    [cost = 1]
+                    [usability = 1]
+        keyboard : Component ?
+            [energy = 1]
+            [cost = 2]
+            [usability = 5]
+        keyboardLight : Component ?
+            [energy = 1]
+            [cost = 0]
+            [usability = 3]
+            [one keyboard]
+        or location : Component ?
+            [energy = 0]
+            gps : Component
+                [energy = 2]
+                [cost = 1]
+                [usability = 2]
+            agps : Component
+                [energy = 1]
+                [cost = 1]
+                [usability = 2]
+    software : Component
+        [energy = 0]
+        [cost = 0]
+        [usability = 0]
+    
+    total_energy ->> integer = sum Component.energy
+    total_cost ->> integer = sum Component.cost
+    total_usability ->> integer = sum Component.usability
+
+androidPhoneInstance : androidPhone
+
+<< min androidPhoneInstance.total_energy>>
+<< max androidPhoneInstance.total_usability>>
+<< min androidPhoneInstance.total_cost>>
+
+https://github.com/gsdlab/clafer/wiki/Group-Cardinality

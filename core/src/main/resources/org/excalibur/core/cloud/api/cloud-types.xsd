@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+        Copyright (C) 2013-2014  the original author or authors.
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License,
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+-->
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="instance" type="instance"/>
+  <xs:element name="instance-configuration" type="instance-configuration"/>
+  <xs:element name="instance-disks" type="volumes"/>
+  <xs:element name="instance-hardware-configuration" type="instance-hardware-configuration"/>
+  <xs:element name="instance-location" type="instance-location"/>
+  <xs:element name="instance-state" type="instanceStateDetails"/>
+  <xs:element name="instance-type" type="instance-type"/>
+  <xs:element name="instance-volume" type="instanceVolume"/>
+  <xs:element name="key" type="key"/>
+  <xs:element name="keypair" type="keypair"/>
+  <xs:element name="managed-property" type="managedProperty"/>
+  <xs:element name="provider" type="providerSupport"/>
+  <xs:element name="state-type" type="instanceStateType"/>
+  <xs:element name="storage-type" type="storageType"/>
+  <xs:element name="user" type="user"/>
+  <xs:element name="volume" type="volume"/>
+  <xs:element name="volume-type" type="volume-type"/>
+  <xs:element name="zone" type="zone"/>
+
+  <xs:complexType name="instance">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="instance-name" type="xs:string" minOccurs="0"/>
+      <xs:element name="image-id" type="xs:string" minOccurs="0"/>
+      <xs:element ref="instance-type" minOccurs="0"/>
+      <xs:element name="location" type="zone" minOccurs="0"/>
+      <xs:element ref="instance-state" minOccurs="0"/>
+      <xs:element name="cost" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="disks" type="volumes" minOccurs="0"/>
+      <xs:element name="instance-launch-time" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="instance-group" type="instance-location" minOccurs="0"/>
+      <xs:element ref="instance-configuration" minOccurs="0"/>
+      <xs:element name="owner" type="user" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="instance-type">
+    <xs:sequence>
+      <xs:element name="family_type" type="family-type" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="hardware-configuration" type="instance-hardware-configuration" minOccurs="0"/>
+      <xs:element ref="provider" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="instance-hardware-configuration">
+    <xs:complexContent>
+      <xs:extension base="managedProperty">
+        <xs:sequence>
+          <xs:element name="generation" type="xs:int" minOccurs="0"/>
+          <xs:element name="maximum-instances-allowed" type="xs:int" minOccurs="0"/>
+          <xs:element name="compute-units" type="xs:int" minOccurs="0"/>
+          <xs:element name="cpu-cores" type="xs:int" minOccurs="0"/>
+          <xs:element name="ram-size-gb" type="xs:double" minOccurs="0"/>
+          <xs:element name="storage-size-gb" type="xs:long" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="managedProperty">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="providerSupport">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="max-resource-per-type" type="xs:int" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="service-class" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="zone">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="status" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="instanceStateDetails">
+    <xs:sequence>
+      <xs:element name="state" type="instanceStateType" minOccurs="0"/>
+      <xs:element name="time" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="volumes" final="extension restriction">
+    <xs:sequence>
+      <xs:element name="volume" type="instanceVolume" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="instanceVolume">
+    <xs:sequence>
+      <xs:element ref="volume" minOccurs="0"/>
+      <xs:element name="device" type="xs:string"/>
+      <xs:element name="device-type" type="storageType"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="volume">
+    <xs:sequence>
+      <xs:element name="owner" type="user" minOccurs="0"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="type" type="volume-type" minOccurs="0"/>
+      <xs:element name="size-gb" type="xs:int" minOccurs="0"/>
+      <xs:element name="iops" type="xs:int" minOccurs="0"/>
+      <xs:element ref="zone" minOccurs="0"/>
+      <xs:element name="created-in" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="deleted-in" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="user">
+    <xs:sequence>
+      <xs:element name="keys" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="key" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="username" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="key">
+    <xs:sequence>
+      <xs:element name="private-key-material" type="xs:string" minOccurs="0"/>
+      <xs:element name="public-key-material" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="privateKeyMaterial" type="xs:string" minOccurs="0"/>
+      <xs:element name="publicKeyMaterial" type="xs:string" minOccurs="0"/>
+      <xs:element ref="user" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="volume-type">
+    <xs:sequence>
+      <xs:element ref="provider"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="min-size-gb" type="xs:int"/>
+      <xs:element name="max-size-gb" type="xs:int" minOccurs="0"/>
+      <xs:element name="min-iops" type="xs:int"/>
+      <xs:element name="max-iops" type="xs:int" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="instance-location">
+    <xs:sequence>
+      <xs:element name="group" type="xs:string" minOccurs="0"/>
+      <xs:element name="zone_" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="instance-configuration">
+    <xs:sequence>
+      <xs:element name="keyname" type="xs:string" minOccurs="0"/>
+      <xs:element name="key-pair" type="keypair" minOccurs="0"/>
+      <xs:element name="platform" type="xs:string" minOccurs="0"/>
+      <xs:element name="username" type="xs:string" minOccurs="0"/>
+      <xs:element name="private-ip" type="xs:string" minOccurs="0"/>
+      <xs:element name="public-dns-name" type="xs:string" minOccurs="0"/>
+      <xs:element name="public-ip" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="keypair">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="fingerprint" type="xs:string" minOccurs="0"/>
+      <xs:element name="material" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="family-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GENERAL"/>
+      <xs:enumeration value="COMPUTE"/>
+      <xs:enumeration value="GPU"/>
+      <xs:enumeration value="MEMORY"/>
+      <xs:enumeration value="STORAGE"/>
+      <xs:enumeration value="BOOTSTRAP"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="instanceStateType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PENDING"/>
+      <xs:enumeration value="PROVISIONING"/>
+      <xs:enumeration value="STAGING"/>
+      <xs:enumeration value="RUNNING"/>
+      <xs:enumeration value="SHUTTING_DOWN"/>
+      <xs:enumeration value="STOPPING"/>
+      <xs:enumeration value="STOPPED"/>
+      <xs:enumeration value="TERMINATED"/>
+      <xs:enumeration value="CREATED"/>
+      <xs:enumeration value="UPDATED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="storageType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ROOT"/>
+      <xs:enumeration value="INSTANCE_STORAGE"/>
+      <xs:enumeration value="EBS"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+

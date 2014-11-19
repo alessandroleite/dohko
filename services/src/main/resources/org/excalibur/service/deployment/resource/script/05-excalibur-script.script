@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+#     Copyright (C) 2013-2014  the original author or authors.
+#
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License,
+#     any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+
+
+APP_HOME_DIR=$HOME/excalibur
+APP_DATA_DIR=$HOME/.excalibur
+APP_DATABASE_DIR=$APP_DATA_DIR/database
+LOG_DIR=$APP_HOME_DIR/logs
+INIT_DATABASE=false
+IMPORT_VMIS=false
+APP_PID=0
+
+mkdir -p $APP_HOME_DIR/logs
+rm -f excalibur.pid
+
+cd $APP_HOME_DIR
+
+function check_if_application_exists_and_configures_if_necessary()
+{
+  if [ ! -d "$APP_HOME_DIR" ]; then
+     mkdir -p $APP_HOME_DIR
+  fi
+  
+  if [ ! -d "$APP_HOME_DIR/lib" ]; then
+  
+     echo "Application does not exist ...."  
+     cd $APP_HOME_DIR
+     
+     wget https://<a public URL/excalibur.tar.gz>
+     tar xzvf excalibur.tar.gz
+     rm -rf __MACOSX excalibur.tar.gz
+     
+     chmod +x *.sh     
+  fi
+  
+  if [ -d "$APP_HOME_DIR/lib" ]; then
+    echo "Excalibur was configured..."
+  fi
+}
+
+function restart_db_server()
+{
+  eval "(sh $APP_HOME_DIR/stop-db.sh)"
+  eval "(sh $APP_HOME_DIR/stop-db-console.sh)"
+  eval "(sh $APP_HOME_DIR/start-db.sh) &"
+  eval "(sh $APP_HOME_DIR/start-db-console.sh) &"
+}
+
+function start_app()
+{
+	eval "(nohup java -Xms512M -Xmx2048M -server -cp .:excalibur-services-1.0.0-SNAPSHOT.jar -javaagent:excalibur-services-1.0.0-SNAPSHOT.jar -Dcom.amazonaws.sdk.disableCertChecking=true -Dorg.excalibur.application.database.dir=$APP_DATABASE_DIR -Dorg.excalibur.application.data.dir=$APP_DATA_DIR -Dh2.serverCachedObjects=10000 -Dorg.excalibur.environment.local=false -Dorg.excalibur.server.host=${[configuration.publicIpAddress]} -Dorg.excalibur.server.host.internal=${[configuration.privateIpAddress]}  -Dorg.excalibur.overlay.port=9091 -Dorg.excalibur.overlay.is.bootstrap=false -Dorg.excalibur.overlay.bootstrap.address=23.21.21.151 -Dorg.excalibur.overlay.bootstrap.port=9091 -Dorg.excalibur.rabbit.host=${[configuration.privateIpAddress]} -Dorg.excalibur.provider.region.zone.name=${[location.name]} -Dorg.excalibur.database.initialize=$INIT_DATABASE -Dorg.excalibur.config.import.vmi=$IMPORT_VMIS -Dorg.excalibur.logs.dir=$LOG_DIR org.excalibur.service.Main) &"
+	APP_PID=$!
+}
+
+echo "Checking if excalibur was configured..."
+
+check_if_application_exists_and_configures_if_necessary
+
+echo "Restarting db...."
+restart_db_server
+
+echo "Starting application...."
+start_app
+
+echo "$APP_PID" >> excalibur.pid

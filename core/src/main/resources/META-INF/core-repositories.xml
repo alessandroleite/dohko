@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        Copyright (C) 2013-2014  the original author or authors.
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License,
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd"
+	default-autowire="byType">
+	
+    <context:property-placeholder location="classpath*:META-INF/*.properties"/>
+	<context:component-scan base-package="org.excalibur" />
+	
+	<context:spring-configured />
+	<context:annotation-config />
+	
+	<bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath*:META-INF/*.properties</value>
+            </list>
+        </property>
+        <property name="localOverride" value="true"/>
+    </bean>
+	
+	<bean id="systemPrereqs" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" depends-on="applicationProperties">
+	   <property name="targetObject" value="#{@systemProperties}" />
+	   <property name="targetMethod" value="putAll" />
+	   <property name="arguments">
+		  <ref bean="applicationProperties" />
+	   </property>
+    </bean>
+
+	<!-- <bean id="dataSource"
+		class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+		<property name="targetDataSource" ref="dataSourceTarget" />
+	</bean> -->
+    
+    <!-- dataSourceTarget -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <property name="maxIdle" value="${jdbc.idle}"/>
+        <property name="maxWait" value="${jdbc.maxWaitMillis}"/>
+        <property name="removeAbandoned" value="${jdbc.removeAbandoned}"/>
+        <property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeoutInSeconds}"/>
+        <property name="logAbandoned" value="${jdbc.logAbandoned}"/>
+        <property name="testOnReturn" value="${jdbc.testOnReturn}"/>
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}"/>
+        <property name="testWhileIdle" value="${jdbc.testWhileIdle}"/>
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+    </bean>
+    
+	<jdbc:initialize-database data-source="dataSource" enabled="#{systemProperties.getProperty('org.excalibur.database.initialize', 'false')}" 
+	    ignore-failures="ALL">
+		<jdbc:script location="classpath*:org/excalibur/core/repository/data/0-db-schema.sql" />
+		<jdbc:script location="classpath*:org/excalibur/core/repository/data/compute/ec2/*.sql" />
+		<jdbc:script location="classpath*:org/excalibur/core/repository/data/compute/google/*.sql" />
+	</jdbc:initialize-database>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	    <property name="dataSource" ref="dataSourceTarget" />
+    </bean> -->
+
+	<bean id="dbi" class="org.skife.jdbi.v2.spring.DBIFactoryBean" autowire="byName" depends-on="dataSource"/>
+
+	<!-- <bean class="org.excalibur.service.spring.config.AutowireCandidateResolverConfigurer"/> -->
+	
+	<bean id="deploymentRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.deployment.domain.repository.DeploymentRepository"/>
+	</bean>
+	
+	<bean id="instanceRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.InstanceRepository"/>
+	</bean>
+	
+	<bean id="instanceTypeRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.InstanceTypeRepository"/>
+	</bean>
+		
+	<bean id="regionRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.RegionRepository"/>
+	</bean>
+	
+	<bean id="geographicRegionRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.GeographicRegionRepository"/>
+	</bean>
+	
+	<bean id="scriptStatementRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.execution.domain.repository.ScriptStatementRepository"/>
+	</bean>
+	
+	<bean id="applicationDescriptionRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.execution.domain.repository.ApplicationDescriptionRepository"/>
+	</bean>
+	
+	<bean id="applicationExecutionResultRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.execution.domain.repository.ApplicationExecutionResultRepository"/>
+	</bean>
+	
+	<bean id="providerRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.ProviderRepository"/>
+	</bean>
+	
+	<bean id="taskRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.workflow.repository.TaskRepository"/>
+	</bean>
+	
+	<bean id="jobRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi" />
+	   <constructor-arg value="org.excalibur.core.execution.domain.repository.JobRepository" />
+    </bean>
+    
+    <bean id="jobTaskRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi" />
+	   <constructor-arg value="org.excalibur.core.execution.domain.repository.TaskRepository" />
+    </bean>
+	
+	<bean id="userRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.UserRepository"/>
+	</bean>
+	
+	<bean id="virtualMachineImageRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.VirtualMachineImageRepository"/>
+	</bean>
+	
+	<bean id="instanceTagRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.domain.repository.InstanceTagRepository"/>
+	</bean>
+	
+	<bean id="workflowRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi"/>
+	   <constructor-arg value="org.excalibur.core.workflow.repository.WorkflowRepository"/>
+	</bean>
+	
+</beans>

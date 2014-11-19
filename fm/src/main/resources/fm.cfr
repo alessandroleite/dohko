@@ -1,0 +1,346 @@
+abstract Feature
+	cost -> integer
+		[this >= 0]
+
+// =====================================================================
+// Primitive types: 
+// =====================================================================		
+
+abstract xor Architecture
+	x32
+	x64
+
+abstract xor Platform	
+	LINUX
+	WINDOWS
+
+abstract xor HypervisorType
+    OVM
+    XEN
+
+abstract xor VirtualizationType    
+   HVM
+   PARAVIRTUAL
+
+abstract xor PhysicalProcessor
+	IntelOpteron
+	IntelXeon
+	IntelSandyBridge
+	IntelIvyBridge		
+
+abstract xor StorageType
+	STANDARD
+	PROVISIONED	
+
+abstract xor OperatingSystem
+	CENTOS
+	DEBIAN
+	REDHAT
+	SUSE
+	UBUNTU
+	WINDOWS_2008_SERVER
+
+
+// ==================================================================================
+// Hardware primitive types: Memory, Storage, ComputeUnit, HardwareConfiguration
+// ==================================================================================
+
+abstract Memory
+	size : integer
+		[this > 0]
+
+abstract Storage
+	size : integer
+		[this > 0]
+	type -> StorageType
+	xor StorageTechnologyType
+    	SSD
+    	EBS
+
+abstract ComputeUnit
+	speed : integer
+		[this > 0]
+	cores ->> integer
+		[this > 0]
+	unit : integer
+		[this > 0]
+	processor : PhysicalProcessor
+
+abstract HardwareConfiguration
+	memory: Memory
+	computeUnit : ComputeUnit
+	storages -> Storage +
+
+// ===============================================================
+// Cloud type primitives: Zone, Location, Provider, Service
+// ===============================================================
+
+abstract Zone	
+	xor Status
+		UP
+		DOWN
+	location -> Location
+	[this in location.zones]
+
+abstract Location	
+	endpoint : string
+	zones -> Zone +
+		[this.location = Location]
+	xor region -> Regions
+
+
+// ------------------
+// Regions definition
+// ------------------
+
+abstract Regions
+	ASIA
+	SOUTH_AMERICA
+	NORTH_AMERICA
+	AFRICA
+	EUROPE
+	ANTARCTICA
+	AUSTRALIA
+
+// ------------------
+// Service prototype
+// ------------------
+
+abstract Service
+	provider -> Provider
+	[this in provider.services]
+
+// ------------------
+// Compute prototype
+// ------------------
+
+abstract Compute : Service
+	instanceTypes -> InstanceType +	
+
+// ------------------
+// Provider prototype
+// ------------------
+
+abstract Provider	
+	locations -> Location +		
+	priceTypes -> PriceType +
+	services -> Service +
+		[this.provider = Provider]
+
+// ------------------
+// Image prototype
+// ------------------
+
+abstract Image : Feature
+	name : string
+	endpoint : string
+	architecture : Architecture	
+	location : Location	
+	hypervisor : HypervisorType
+	virtualization : VirtualizationType
+
+// ------------------
+// InstanceType prototype
+// ------------------
+
+abstract InstanceType : Feature
+	name : string
+	hardware : HardwareConfiguration
+	provider : Provider
+	xor PurposeUsage		
+		BOOTSTRAP
+		CPU
+		GENERAL
+		GPU
+		I_O
+		MEMORY
+		NETWORK
+	availability -> Location 
+		[this in provider.locations]
+	xor size
+			MICRO
+			MILLI
+			SMALL
+			MEDIUM
+			LARGE
+			X2LARGE
+			X4LARGE
+			X8LARGE
+			X16LARGE
+			X32LARGE
+	[MICRO => BOOTSTRAP]	
+	[MILLI => BOOTSTRAP]
+	[BOOTSTRAP <=> MICRO || MILLI]
+
+abstract xor NetworkingPerformance : Feature
+	MODERATE
+	HIGH
+	LOW
+	VERY_LOW
+	TEN_GIGABITS
+
+abstract or Features : Feature
+	CLUSTER
+	EBS_OPTIMIZED
+	NETWORKING_OPTIMIZED
+	FREE_TIER		
+
+abstract xor PriceType
+	ON_DEMAND
+	SPOT : Feature
+		min_value ->> integer
+			[this > 0 && this <= max_value]
+		max_value ->> integer
+			[this > 0 && this <= min_value]	
+	RESERVED
+		
+abstract Instance
+	type -> InstanceType
+	priceType -> PriceType
+	image -> Image
+	features -> Features ?	
+	cost -> integer = image.cost + sum Features.cost
+
+// ===============================================================
+// Instances constraints:
+// ===============================================================
+[Instance.features.NETWORKING_OPTIMIZED <=> Instance.image.virtualization.PARAVIRTUAL]
+
+// [Instance.features.CLUSTER <=> C3 || I2 || CR1 || G2 || HS1]
+// [Instance.features.FREE_TIER <=> PARAVIRTUAL]
+
+// ===============================================================
+// Instances constraints:
+// ===============================================================
+
+[LINUX <=> CENTOS || DEBIAN || REDHAT || SUSE || UBUNTU ]
+[WINDOWS <=> WINDOWS_2008_SERVER ]
+
+
+// -----------------------------------
+// Provider instances
+// -----------------------------------
+
+amazon : Provider
+	[locations = us_east_1]
+    [ON_DEMAND, SPOT, RESERVED] 
+    
+google : Provider
+    [locations = us, europe, asia]
+    [ON_DEMAND]
+
+// -----------------------------------
+// Location instances
+// -----------------------------------
+
+us : Location
+	[zones = us_central1_a , us_central1_b]
+	[NORTH_AMERICA]
+
+europe : Location
+	[zones = europe_west1_a , europe_west1_b]
+	[EUROPE]
+
+asia : Location
+	[zones = asia_east1_a , asia_east1_b]
+	[ASIA]
+
+// -----------------------------------
+us_east_1 : Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[NORTH_AMERICA]
+
+us_west_2 : Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[NORTH_AMERICA]
+
+us_west_1 : Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[NORTH_AMERICA]	
+
+eu_west_1 : Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[EUROPE]
+
+ap_southeast_1 : Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[ASIA]
+
+ap_southeast_2 : Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[AUSTRALIA] 
+
+ap_northeast_1	: Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d]
+	[ASIA]
+
+sa_east_1 : Location
+	[endpoint = "ec2.us-east-1.amazonaws.com"]
+	[zones = us_east_1a , us_east_1b , us_east_1c, us_east_1d] 	
+
+// -----------------------------------
+// Location instances
+// -----------------------------------
+
+us_central1_a  : Zone
+	[UP]
+	[location = us]
+
+us_central1_b  : Zone
+	[UP]
+	[location = us]
+
+europe_west1_a : Zone
+	[UP]
+	[location = europe]
+
+europe_west1_b : Zone
+	[UP]
+	[location = europe]
+
+asia_east1_a   : Zone
+	[UP]
+	[location = asia]
+
+asia_east1_b   : Zone
+	[UP]
+	[location = asia]
+
+// -----------------------------------
+
+us_east_1a : Zone
+	[UP]
+	[location = us_east_1]
+
+us_east_1b : Zone 
+	[UP]
+	[location = us_east_1]
+
+us_east_1c : Zone 
+	[UP]
+	[location = us_east_1]
+
+us_east_1d : Zone
+	[UP]
+	[location = us_east_1]
+
+
+
+	
+	
+	
+f1Micro : InstanceType
+    [name = "f1.micro"]
+    [hardware.memory.size = 60]
+    [hardware.computeUnit.speed = 10]
+    [hardware.computeUnit.number = 1]
+    [hardware.computeUnit.processor = IntelOpteron]    
+    [Google]
+    [BOOTSTRAP]    
