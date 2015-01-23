@@ -135,9 +135,8 @@
 		<!-- compile -->
 
 		<dependency>
-			<groupId>org.excalibur</groupId>
-			<artifactId>monitoring</artifactId>
-			<scope>compile</scope>
+			<groupId>computer-objects</groupId>
+			<artifactId>computer-objects</artifactId>
 		</dependency>
 
 		<dependency>
