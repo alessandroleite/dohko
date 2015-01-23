@@ -71,6 +71,8 @@
 		<jackson-dataformat-yaml.version>2.4.0</jackson-dataformat-yaml.version>
 
 		<commons-exec.version>1.2</commons-exec.version>
+		<computer-objects.version>1.0.0-SNAPSHOT</computer-objects.version>
+		<junit.version>4.11</junit.version>
 	</properties>
 
 	<licenses>
@@ -166,7 +168,6 @@
 		<module>fm</module>
 		<module>google-compute</module>
 		<module>hybrid-overlay</module>
-		<module>monitoring</module>
 		<module>overlay</module>
 		<module>services</module>
 	</modules>
@@ -177,8 +178,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.10</version>
-				<scope>test</scope>
+				<version>${junit.version}</version>
 			</dependency>
 
 			<!-- Excalibur libraries -->
@@ -241,6 +241,12 @@
 				<groupId>org.excalibur</groupId>
 				<artifactId>hybrid-overlay</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>computer-objects</groupId>
+				<artifactId>computer-objects</artifactId>
+				<version>${computer-objects.version}</version>
 			</dependency>
 
 			<!-- Choco -->
