@@ -20,7 +20,7 @@
 		<internal.release.repo.path>file://${basedir}/../maven-repo/releases</internal.release.repo.path>
 		<license-header-file>${basedir}/../HEADER</license-header-file>
 		<checkstyle.file>${basedir}/../checkstyle.xml</checkstyle.file>
-		<biojava.version>3.0.8</biojava.version>
+		<biojava.version>4.0.0</biojava.version>
 	</properties>
 
 
@@ -35,21 +35,14 @@
 			<groupId>org.excalibur</groupId>
 			<artifactId>excalibur-core</artifactId>
 			<scope>compile</scope>
-		</dependency>	
-		
-		<!--<dependency>
-			<groupId>org.biojava</groupId>
-			<artifactId>biojava3-sequencing</artifactId>
-			<scope>compile</scope>
-		</dependency>-->
+		</dependency>
 		
 		<dependency>
 			<groupId>org.biojava</groupId>
-			<artifactId>biojava3-alignment</artifactId>
+			<artifactId>biojava-alignment</artifactId>
 			<scope>compile</scope>
 			<version>${biojava.version}</version>
-		</dependency>		
-		
+		</dependency>
 	</dependencies>
 
 </project>

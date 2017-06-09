@@ -16,14 +16,13 @@
  */
 package org.excalibur.bio.sequencing.tasks;
 
-
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.biojava3.alignment.Alignments;
-import org.biojava3.alignment.Alignments.PairwiseSequenceScorerType;
-import org.biojava3.alignment.SimpleGapPenalty;
-import org.biojava3.core.sequence.ProteinSequence;
+import org.biojava.nbio.alignment.Alignments;
+import org.biojava.nbio.alignment.Alignments.PairwiseSequenceScorerType;
+import org.biojava.nbio.alignment.SimpleGapPenalty;
+import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.excalibur.bio.sequencing.SequencePair;
 
 import com.google.common.collect.Lists;
@@ -31,8 +30,7 @@ import com.google.common.collect.Lists;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.isNullOrEmpty;
-
-import static org.biojava3.alignment.SubstitutionMatrixHelper.getBlosum65;
+import static org.biojava.nbio.alignment.SubstitutionMatrixHelper.getBlosum65;
 
 
 public class LocalPairsScoreCallable implements Callable<double[]>
