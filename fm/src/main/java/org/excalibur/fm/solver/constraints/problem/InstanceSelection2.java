@@ -16,16 +16,6 @@
  */
 package org.excalibur.fm.solver.constraints.problem;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Lists.*;
-import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.unmodifiableList;
-import static org.excalibur.fm.solver.constraints.Vars.CORES;
-import static org.excalibur.fm.solver.constraints.Vars.COST;
-import static org.excalibur.fm.solver.constraints.Vars.CPU;
-import static org.excalibur.fm.solver.constraints.Vars.MEMORY;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +28,20 @@ import org.excalibur.fm.solver.constraints.Vars;
 import solver.Solver;
 import solver.constraints.ICF;
 import solver.constraints.LCF;
-import solver.search.solution.Solution;
 import solver.variables.BoolVar;
 import solver.variables.IntVar;
 import solver.variables.VF;
+
+import static com.google.common.base.Preconditions.*;
+import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.unmodifiableList;
+
+import static org.excalibur.fm.solver.constraints.Vars.CORES;
+import static org.excalibur.fm.solver.constraints.Vars.COST;
+import static org.excalibur.fm.solver.constraints.Vars.CPU;
+import static org.excalibur.fm.solver.constraints.Vars.MEMORY;
+
 
 public class InstanceSelection2
 {
@@ -262,7 +262,7 @@ public class InstanceSelection2
             IntVar var = variables_.get(c.getVariable().getName()).getVar();
             checkState(var != null, String.format("Invalid variable: [%s]!", c.getVariable().getName()));
 
-            solver_.post(ICF.arithm(var, c.getOperator().getOp(), c.getValue()));
+            solver_.post(ICF.arithm(var, c.getOperator().getSymbol(), c.getValue()));
         }
     }
     
@@ -300,18 +300,18 @@ public class InstanceSelection2
         return checkNotNull(var);
     }
     
-    private List<InstanceType> getSolutions(List<Solution> solutions)
-    {
-        final List<InstanceType> types = newArrayList();
-        
-        for (int i = 0; i < solutions.size(); i++)
-        {
-            Solution s = solutions.get(i);
-
-            InstanceType instanceType = this.types_.get(s.getIntVal(index_));
-            types.add(instanceType);
-        }
-        
-        return types;
-    }
+//    private List<InstanceType> getSolutions(List<Solution> solutions)
+//    {
+//        final List<InstanceType> types = newArrayList();
+//        
+//        for (int i = 0; i < solutions.size(); i++)
+//        {
+//            Solution s = solutions.get(i);
+//
+//            InstanceType instanceType = this.types_.get(s.getIntVal(index_));
+//            types.add(instanceType);
+//        }
+//        
+//        return types;
+//    }
 }

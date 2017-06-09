@@ -109,7 +109,7 @@ import static org.excalibur.core.execution.domain.TaskStatus.*;
 import static org.excalibur.core.io.utils.IOUtils2.*;
 import static org.excalibur.core.io.utils.ZipUtil.*;
 
-
+@SuppressWarnings("unused")
 public class NodeManager implements Closeable
 {
     private static final Logger LOG = LoggerFactory.getLogger(NodeManager.class.getName());
@@ -129,7 +129,7 @@ public class NodeManager implements Closeable
     @Autowired
     private XmppService xmppService;
     
-    @Autowired
+	@Autowired
     private DiscoveryService discoveryService_;
     
     @Autowired
@@ -214,7 +214,7 @@ public class NodeManager implements Closeable
 
                             request.setKeyPairs(
                                     new KeyPairs().setPrivateKey(new KeyPair().setKeyName(key.getName()).setKeyMaterial(key.getPrivateKeyMaterial()))
-                                            .setPublicKey(new KeyPair().setKeyName(key.getName()).setKeyMaterial(key.getPublicKeyMaterial())))
+                                                  .setPublicKey(new KeyPair().setKeyName(key.getName()).setKeyMaterial(key.getPublicKeyMaterial())))
                                    .setOwner(owner)
                                    .setManager(thisNode_)
                                    .setWorker(worker)
@@ -577,7 +577,7 @@ public class NodeManager implements Closeable
                 WebTarget target = client.target(String.format("http://%s:%s/application",
                         request.getManager().getConfiguration().getPublicIpAddress(), 8080));
                 
-                String output = Base64.encodeBase64String(compress(readLinesQuietly(request.getApplication().getOuputFile())));
+                String output = new String(Base64.encodeBase64(compress(readLinesQuietly(request.getApplication().getOuputFile()))));
                 
                 ApplicationExecutionResult result = new ApplicationExecutionResult();
                 result.setApplication(request.getApplication())

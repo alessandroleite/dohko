@@ -33,7 +33,7 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception>
     @Override
     public Response toResponse(Exception exception)
     {
-//        LOG.error("Invalid RESTFul request. Error message: [{}]", exception.getMessage(), exception);
+        LOG.error("Invalid RESTFul request. Error message: [{}]", exception.getMessage(), exception);
         return Response.status(Status.BAD_REQUEST).entity(exception.getMessage()).type(MediaType.TEXT_PLAIN_TYPE).build();
     }
 }

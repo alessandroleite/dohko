@@ -625,6 +625,8 @@
 						<exclude>**/excalibur.keystore</exclude>
 						<exclude>**/excalibur.jks</exclude>
 						<exclude>**/.p12</exclude>
+						<exclude>**/.vagrant</exclude>
+						<exclude>**/devlab/**</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>

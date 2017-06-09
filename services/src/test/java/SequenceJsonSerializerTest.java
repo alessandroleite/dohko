@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 
 public class SequenceJsonSerializerTest

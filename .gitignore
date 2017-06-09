@@ -8,3 +8,4 @@ bin
 .checkstyle
 *.bak
 logs/
+.vagrant

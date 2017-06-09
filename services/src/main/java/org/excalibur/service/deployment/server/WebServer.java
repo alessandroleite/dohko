@@ -16,8 +16,6 @@
  */
 package org.excalibur.service.deployment.server;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,6 +29,8 @@ import org.excalibur.service.manager.NodeManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public final class WebServer implements Closeable
 {

@@ -23,10 +23,8 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
 import org.excalibur.core.execution.domain.Application;
-import org.excalibur.core.execution.service.ApplicationExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,8 +32,8 @@ public class Worker
 {
     private static final Logger LOG = LoggerFactory.getLogger(Worker.class.getName());
     
-    @Autowired
-    private ApplicationExecutionService applicationExecutionService;
+//    @Autowired
+//    private ApplicationExecutionService applicationExecutionService;
     
     public void execute(final Application application, ExecuteResultHandler executeResultHandler) throws ExecuteException, IOException
     {

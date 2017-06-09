@@ -22,11 +22,10 @@ public class NetworkTest
 
     public static void main(String[] args) throws Exception
     {
-
-        Enumeration intfs = NetworkInterface.getNetworkInterfaces();
+        Enumeration<NetworkInterface> intfs = NetworkInterface.getNetworkInterfaces();
         while (intfs.hasMoreElements())
         {
-            NetworkInterface intf = (NetworkInterface) intfs.nextElement();
+            NetworkInterface intf = intfs.nextElement();
             System.out.println(intf.isUp());
         }
 
