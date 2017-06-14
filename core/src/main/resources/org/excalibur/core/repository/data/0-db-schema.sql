@@ -714,3 +714,4 @@ insert into instance_state_type values (8, 'TERMINATED');
 
 insert into provider (id, name, class_name, ub_instances_per_type) values (1, 'amazon', 'org.excalibur.service.aws.ec2.EC2', 20);
 insert into provider (id, name, class_name, ub_instances_per_type) values (2, 'google', 'org.excalibur.driver.google.compute.GoogleCompute', 20);
+insert into provider (id, name, class_name, ub_instances_per_type) values (3, 'local',  'org.excalibur.core.cloud.api.compute.local.LocalCompute', 1);
