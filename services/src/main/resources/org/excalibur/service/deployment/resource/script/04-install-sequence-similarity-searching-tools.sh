@@ -16,28 +16,33 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 
-
-
 cd $HOME
-SSEARCH_HOME=$HOME/fasta-36.3.6d
+SSEARCH_HOME=/opt/fasta-36.3.6d
 
 echo "Compiles and installs the SSEARCH tools in $SSEARCH_HOME"
 
 sudo apt-get install zlib1g-dev -qy
 sudo apt-get install libz-dev -qy
-#sudo apt-get install unzip -qy
 sudo apt-get update -qy
 sudo apt-get clean
 
-wget http://faculty.virginia.edu/wrpearson/fasta/fasta3.tar.gz
-tar -xvf fasta3.tar.gz
+wget -qO- http://faculty.virginia.edu/wrpearson/fasta/fasta3/fasta-36.3.6d.tar.gz | tar xzvf - -C /opt
 
 cd $SSEARCH_HOME/src
 
 make -f ../make/Makefile.linux64 all
 
-echo "SSEARCH_HOME=$SSEARCH_HOME/bin" >> $HOME/.profile
-echo 'PATH=$SSEARCH_HOME:$PATH' >> $HOME/.profile
+{ \
+	echo '#!/bin/sh'; \
+	echo 'set -e'; \
+	echo ; \
+	echo "export SSEARCH_HOME=$SSEARCH_HOME" ; \
+	echo 'PATH=$SSEARCH_HOME:$PATH'
+	echo ; \
+} >> /etc/ssearch
+
+#echo "SSEARCH_HOME=$SSEARCH_HOME/bin" >> $HOME/.profile
+#echo 'PATH=$SSEARCH_HOME:$PATH' >> $HOME/.profile
 
 cd $HOME
 wget https://www.dropbox.com/s/k6qviz9rgsxxijf/uniprot_sprot.fasta.gz
@@ -46,10 +51,11 @@ rm -rf __MACOSX/
 
 #
 mkdir $HOME/sequences
-cd $HOME/sequences
-wget https://www.dropbox.com/s/ugm0y9pppimg6pl/sequences.tar.gz
-tar -xzvf sequences.tar.gz
+#cd $HOME/sequences
+wget -qO- https://www.dropbox.com/s/ugm0y9pppimg6pl/sequences.tar.gz | tar xzvf - -C $HOME/sequences
+#tar -xzvf sequences.tar.gz
 rm -rf __MACOSX
+rm .*.fasta
 
 mkdir $HOME/scores
 
