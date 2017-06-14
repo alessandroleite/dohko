@@ -20,11 +20,14 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.base.Strings;
 
 import static com.google.common.collect.Lists.*;
 
@@ -44,8 +47,14 @@ public class Applications implements Iterable<Application>, Serializable, Clonea
     {
         if (application != null)
         {
+        	if (Strings.isNullOrEmpty(application.getId()))
+        	{
+        		application.setId(UUID.randomUUID().toString());
+        	}
+        	
             this.applications_.add(application);
         }
+        
         return this;
     }
 

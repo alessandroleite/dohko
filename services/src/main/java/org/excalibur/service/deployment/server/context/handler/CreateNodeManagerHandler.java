@@ -16,10 +16,6 @@
  */
 package org.excalibur.service.deployment.server.context.handler;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.base.Strings.*;
-import static org.excalibur.core.cloud.api.compute.ComputeServiceBuilder.builder;
-
 import java.lang.reflect.Field;
 import java.util.Collections;
 
@@ -31,11 +27,17 @@ import net.vidageek.mirror.dsl.Mirror;
 import org.excalibur.core.cloud.api.VirtualMachine;
 import org.excalibur.core.cloud.api.compute.ComputeService;
 import org.excalibur.core.services.InstanceService;
+
 import org.excalibur.service.manager.Configuration;
 import org.excalibur.service.manager.NodeManager;
 import org.excalibur.service.manager.NodeManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Strings.*;
+import static org.excalibur.core.cloud.api.compute.ComputeServiceBuilder.builder;
+import static org.excalibur.core.util.SystemUtils2.*;
 
 public class CreateNodeManagerHandler extends AbstractApplicationInitializedHandler
 {
@@ -51,11 +53,15 @@ public class CreateNodeManagerHandler extends AbstractApplicationInitializedHand
         {
             thisNode = service.getInstanceWithName(configuration.getHostName(), configuration.getZone().getName());
         }
+        
+        if (!getBooleanProperty("org.excalibur.environment.local", false))
+        {
+        	checkNotNull(thisNode, "Node %s not found on region/zone %s/%s of provider %s", 
+                    configuration.getHostName(), configuration.getZone().getRegion(), configuration.getZone().getName());
 
-        checkNotNull(thisNode, "Node %s not found on region/zone %s/%s of provider %s", 
-                configuration.getHostName(), configuration.getZone().getRegion(), configuration.getZone().getName());
-
-        context.getBean(InstanceService.class).insertOrUpdateInstances(Collections.singleton(thisNode));
+            context.getBean(InstanceService.class).insertOrUpdateInstances(Collections.singleton(thisNode));
+        }
+        
         NodeManager manager = new NodeManager(configuration, thisNode, service);
 
         this.configure(manager, context);

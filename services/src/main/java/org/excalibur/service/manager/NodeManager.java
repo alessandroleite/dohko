@@ -169,13 +169,15 @@ public class NodeManager implements Closeable
     public NodeManager (Configuration configuration, VirtualMachine node, ComputeService computeService)
     {
         this.configuration_ = checkNotNull(configuration);
-        this.thisNode_ = checkNotNull(node, "node must node be null!");
+        this.thisNode_ = checkNotNull(node, "node must not be null!");
         this.jid_ = new JID(String.format("%s@%s", thisNode_.getName(), getProperty("org.excalibur.xmpp.server.domain")));
         this.computeService_ = checkNotNull(computeService);
         
         dispatcher_ = DynamicExecutors.newListeningDynamicScalingThreadPool(this.thisNode_.getName(), getRuntime().availableProcessors());
         this.taskDispatcher_ = DynamicExecutors.newListeningDynamicScalingThreadPool("task-" + this.thisNode_.getName() + "-executor", 
                 getRuntime().availableProcessors());
+        
+        idleInstances_.offer(thisNode_);
         
         dispatcher_.submit(new Callable<Void>()
         {
@@ -199,8 +201,7 @@ public class NodeManager implements Closeable
                                     worker.getConfiguration().getPublicIpAddress());
                             
                             WebTarget target = client.target(String.format("http://%s:%s/application", 
-                                    worker.getConfiguration().getPublicIpAddress(),
-                                    8080));
+                                    worker.getConfiguration().getPublicIpAddress(), 8080));
                             
 
                             ApplicationExecutionRequest request = new ApplicationExecutionRequest()
@@ -360,7 +361,9 @@ public class NodeManager implements Closeable
                         result.getExitValue(), 
                         task.getId(), 
                         result.getElapsedTime(), 
-                        new String(uncompress(Base64.decodeBase64(result.getOutput().getBytes())))
+                        !Strings.isNullOrEmpty(result.getOutput()) ? 
+                        		new String(uncompress(Base64.decodeBase64(result.getOutput().getBytes())))
+                        		: ""
                 );
             }
         }
@@ -577,7 +580,12 @@ public class NodeManager implements Closeable
                 WebTarget target = client.target(String.format("http://%s:%s/application",
                         request.getManager().getConfiguration().getPublicIpAddress(), 8080));
                 
-                String output = new String(Base64.encodeBase64(compress(readLinesQuietly(request.getApplication().getOuputFile()))));
+                String output = "";
+                
+                if (request.getApplication().getOuputFile() != null)
+                {
+                	output = new String(Base64.encodeBase64(compress(readLinesQuietly(request.getApplication().getOuputFile()))));
+                }
                 
                 ApplicationExecutionResult result = new ApplicationExecutionResult();
                 result.setApplication(request.getApplication())

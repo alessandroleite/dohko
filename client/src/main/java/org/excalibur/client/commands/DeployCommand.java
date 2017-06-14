@@ -18,6 +18,7 @@ package org.excalibur.client.commands;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.UUID;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.Response;
 
 import org.excalibur.core.Command;
 import org.excalibur.core.cloud.api.Cloud;
+import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
 import org.excalibur.core.execution.domain.Requirements;
 import org.excalibur.discovery.ws.ext.YamlMapperProvider;
@@ -35,6 +37,7 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
 
 import com.beust.jcommander.ParametersDelegate;
+import com.google.common.base.Strings;
 
 public class DeployCommand implements Command
 {
@@ -87,6 +90,14 @@ public class DeployCommand implements Command
                 {
                     applicationDescriptor.getRequirements().setNumberOfInstancesPerCloud(requirements.getNumberOfInstancesPerCloud());
                 }
+            }
+            
+            for (Application application: applicationDescriptor.getApplications())
+            {
+            	if (Strings.isNullOrEmpty(application.getId()))
+            	{
+            		application.setId(UUID.randomUUID().toString());
+            	}
             }
         }
         

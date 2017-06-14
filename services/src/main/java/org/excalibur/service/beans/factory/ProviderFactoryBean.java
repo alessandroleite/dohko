@@ -34,7 +34,7 @@ public class ProviderFactoryBean implements FactoryBean<ProviderSupport>
     public ProviderFactoryBean(String name)
     {
         this.name_ = name;
-        checkState(!isNullOrEmpty(this.name_));
+        checkState(!isNullOrEmpty(this.name_), "Provider bean'name is null!. Please configure a provider through the variable: org.excalibur.provider.name");
     }
 
     public ProviderFactoryBean()

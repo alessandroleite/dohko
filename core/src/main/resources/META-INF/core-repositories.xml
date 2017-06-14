@@ -85,6 +85,7 @@
 		<jdbc:script location="classpath*:org/excalibur/core/repository/data/0-db-schema.sql" />
 		<jdbc:script location="classpath*:org/excalibur/core/repository/data/compute/ec2/*.sql" />
 		<jdbc:script location="classpath*:org/excalibur/core/repository/data/compute/google/*.sql" />
+		<jdbc:script location="classpath*:org/excalibur/core/repository/data/compute/local/*.sql" />
 	</jdbc:initialize-database>
 
 	<tx:annotation-driven transaction-manager="transactionManager" />

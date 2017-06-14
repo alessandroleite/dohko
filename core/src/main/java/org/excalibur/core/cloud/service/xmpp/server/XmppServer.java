@@ -80,7 +80,7 @@ public class XmppServer
         }
         catch (FileNotFoundException e)
         {
-            LOG.error("File {} not found! Trying to look for in application dir!", configuration.getCertificate().getPath());
+            LOG.error("File {} not found! Trying to look for in the application dir!", configuration.getCertificate().getPath());
             
             File certificateHomeDir = new File(SystemUtils2.getApplicationDataDir(), configuration.getCertificate().getName());
             

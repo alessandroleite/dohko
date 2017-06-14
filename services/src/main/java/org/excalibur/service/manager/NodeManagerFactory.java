@@ -25,7 +25,7 @@ import com.google.common.base.Preconditions;
 
 public final class NodeManagerFactory
 {
-    private final static AtomicReference<NodeManager> manager_ = new AtomicReference<NodeManager>();
+    private final static AtomicReference<NodeManager> MANAGER = new AtomicReference<NodeManager>();
     private static final CountDownLatch LATCH = new CountDownLatch(1);
     
     private NodeManagerFactory()
@@ -35,7 +35,7 @@ public final class NodeManagerFactory
     
     public static void setManager(NodeManager manager)
     {
-        if (manager_.compareAndSet(null, manager))
+        if (MANAGER.compareAndSet(null, manager))
         {
             LATCH.countDown();
         }
@@ -46,10 +46,10 @@ public final class NodeManagerFactory
         try
         {
             LATCH.await();
-            NodeManager manager = manager_.get();
+            NodeManager manager = MANAGER.get();
             Preconditions.checkArgument(manager!= null, "call setManager(manager)");
             
-            return manager_.get();
+            return MANAGER.get();
             
         }
         catch (InterruptedException e)
