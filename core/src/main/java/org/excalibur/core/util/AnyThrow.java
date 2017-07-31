@@ -30,8 +30,7 @@ public final class AnyThrow
      * Wraps an exception with an {@link Exception} as {@link RuntimeException} without creating a new {@link RuntimeException}. This is useful to
      * avoid polluting the log with unnecessary stack traces.
      * 
-     * @param exception
-     *            The exception to be wrapped as an unchecked exception.
+     * @param exception The exception to be wrapped as an unchecked exception.
      */
     public static void throwUncheked(Throwable exception)
     {

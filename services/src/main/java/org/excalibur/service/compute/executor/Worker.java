@@ -22,10 +22,12 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
+import org.apache.commons.exec.ExecuteStreamHandler;
 import org.excalibur.core.execution.domain.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class Worker
@@ -35,7 +37,7 @@ public class Worker
 //    @Autowired
 //    private ApplicationExecutionService applicationExecutionService;
     
-    public void execute(final Application application, ExecuteResultHandler executeResultHandler) throws ExecuteException, IOException
+    public void execute(final Application application, ExecuteResultHandler executeResultHandler, ExecuteStreamHandler streamHandler) throws ExecuteException, IOException
     {
         final String commandLine = application.getExecutableCommandLine();
         
@@ -43,6 +45,7 @@ public class Worker
         CommandLine command = new CommandLine("/bin/sh");
         command.addArgument("-c", false);
         command.addArgument(commandLine, false);
+        executor.setStreamHandler(streamHandler);
         executor.execute(command, System.getenv(), executeResultHandler);
         
         LOG.debug("Launched the execution of task: [{}], uuid: [{}]", commandLine, application.getId());

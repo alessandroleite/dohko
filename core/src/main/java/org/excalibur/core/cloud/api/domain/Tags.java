@@ -125,9 +125,9 @@ public class Tags implements Serializable, Cloneable, Iterable<Tag>
     }
 
     @Override
-    protected Tags clone()
+    public Tags clone()
     {
-        Tags clone = null;
+        Tags clone;
 
         try
         {

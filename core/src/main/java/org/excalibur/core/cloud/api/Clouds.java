@@ -16,41 +16,46 @@
  */
 package org.excalibur.core.cloud.api;
 
-import static com.google.common.collect.Lists.newCopyOnWriteArrayList;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import static com.google.common.collect.Lists.*;
+import static com.google.common.base.Joiner.*;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "clouds")
 public class Clouds implements Iterable<Cloud>, Serializable, Cloneable
 {
-    /**
+	/**
      *  Serial code version <code>serialVersionUID</code> for serialization.
      */
-    private static final long serialVersionUID = -5688566455639450988L;
-    
+	private static final long serialVersionUID = 8318092973518116800L;
+	
     @XmlElement(name = "cloud")
     private final List<Cloud> clouds_ = newCopyOnWriteArrayList();
 
-    public Clouds add(Cloud cloud)
+    @Nonnull
+    public Clouds add(@Nullable final Cloud cloud)
     {
         if (cloud != null)
         {
-            this.clouds_.add(cloud);
+            clouds_.add(cloud);
         }
 
         return this;
     }
 
-    public Clouds addAll(Iterable<Cloud> clouds)
+    @Nonnull
+    public Clouds addAll(@Nullable final Iterable<Cloud> clouds)
     {
         if (clouds != null)
         {
@@ -62,13 +67,14 @@ public class Clouds implements Iterable<Cloud>, Serializable, Cloneable
         return this;
     }
     
-    public Clouds remove(Cloud cloud)
+    @Nonnull
+    public Clouds remove(@Nullable final Cloud cloud)
     {
         this.clouds_.remove(cloud);
-        
         return this;
     }
 
+    @Nonnull
     public List<Cloud> getClouds()
     {
         return Collections.unmodifiableList(this.clouds_);
@@ -77,22 +83,22 @@ public class Clouds implements Iterable<Cloud>, Serializable, Cloneable
     @Override
     public Iterator<Cloud> iterator()
     {
-        return this.getClouds().iterator();
+        return getClouds().iterator();
     }
 
     public int size()
     {
-        return this.clouds_.size();
+        return clouds_.size();
     }
 
     public boolean isEmpty()
     {
-        return this.clouds_.isEmpty();
+        return clouds_.isEmpty();
     }
 
     public void clear()
     {
-        this.clouds_.clear();
+        clouds_.clear();
     }
     
     @Override
@@ -122,6 +128,6 @@ public class Clouds implements Iterable<Cloud>, Serializable, Cloneable
     @Override
     public String toString()
     {
-        return this.clouds_.toString();
+        return on(",").join(clouds_);
     }
 }

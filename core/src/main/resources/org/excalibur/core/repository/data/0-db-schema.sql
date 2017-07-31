@@ -582,7 +582,9 @@ create table task
   worker_name varchar(60),
   exit_value integer,
   elapsed_time_ns bigint,
-  result text
+  result text,
+  sysout text, 
+  syserr text
 );
 
 create unique index idx_task_uuid on task(uuid);

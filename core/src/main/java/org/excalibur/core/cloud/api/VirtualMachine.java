@@ -420,4 +420,34 @@ public class VirtualMachine implements Serializable, Cloneable
                 .omitNullValues()
                 .toString();
     }
+    
+    @Override
+    public VirtualMachine clone()  
+    {
+    	VirtualMachine clone;
+    	
+		try 
+		{
+			clone = (VirtualMachine) super.clone();
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			clone = new VirtualMachine()
+					     .setConfiguration(configuration_ != null ? configuration_.clone() : null)
+					     .setCost(getCost())
+					     .setId(getId())
+					     .setImageId(getImageId())
+					     .setLaunchTime(getLaunchTime())
+					     .setLocation(getLocation() != null ? getLocation().clone() : null)
+					     .setName(getName())
+					     .setOwner(getOwner() != null ? getOwner().clone() : null)
+					     .setPlacement(getPlacement() != null ? getPlacement().clone(): null)
+					     .setState(getState() != null ? getState().clone() : null)
+					     .setTags(getTags() != null ? getTags().clone(): null)
+					     .setType(getType() != null ? getType().clone(): null)
+					     .setUserData(getUserData());			
+		}
+    	
+    	return clone;
+    }
 }

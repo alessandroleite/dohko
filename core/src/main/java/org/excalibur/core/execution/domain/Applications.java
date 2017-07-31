@@ -16,6 +16,8 @@
  */
 package org.excalibur.core.execution.domain;
 
+import static com.google.common.collect.Lists.newCopyOnWriteArrayList;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,13 +28,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-
-import static com.google.common.collect.Lists.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "applications")
+@XmlType(name="applications")
 public class Applications implements Iterable<Application>, Serializable, Cloneable
 {
     /**
@@ -40,7 +43,8 @@ public class Applications implements Iterable<Application>, Serializable, Clonea
      */
     private static final long serialVersionUID = -6374024874372518109L;
     
-    @XmlElement(name = "application")
+//    @XmlElements(@XmlElement(name = "application", type = Application.class))
+    @XmlElement(name="application", type= Application.class)
     private final List<Application> applications_ = newCopyOnWriteArrayList();
 
     public Applications add(Application application)
@@ -80,6 +84,11 @@ public class Applications implements Iterable<Application>, Serializable, Clonea
     {
         return Collections.unmodifiableList(this.applications_);
     }
+    
+	public Optional<Application> first() 
+	{
+		return applications_.isEmpty() ? Optional.<Application>absent() : Optional.fromNullable(applications_.get(0));
+	}
 
     @Override
     public Iterator<Application> iterator()

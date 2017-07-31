@@ -14,14 +14,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package org.excalibur.service.application.resource;
-
+package org.excalibur.core.execution.job;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.cloud.api.VirtualMachine;
 import org.excalibur.core.domain.User;
@@ -31,12 +31,13 @@ import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application-exec-result")
-public class ApplicationExecutionResult implements Serializable
+@XmlType(name = "application-exec-result")
+public class ApplicationExecutionResult implements Serializable, Cloneable
 {
-    /**
+	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-    private static final long serialVersionUID = 8969247666358299673L;
+	private static final long serialVersionUID = 7247006771249750432L;
 
     @XmlElement(name = "id", nillable = false, required = true)
     private String id;
@@ -59,6 +60,7 @@ public class ApplicationExecutionResult implements Serializable
     @XmlElement(name = "exit-value")
     private int exitValue_;
     
+    @XmlElement(name = "failure-reason")
     private String failureReason_;
     
     @XmlElement(name = "worker", required = true)
@@ -66,6 +68,12 @@ public class ApplicationExecutionResult implements Serializable
     
     @XmlElement(name = "output")
     private String output_;
+    
+    @XmlElement(name = "sysout")
+    private String sysout_;
+    
+    @XmlElement(name = "syserr")
+    private String syserr_;
     
 
     /**
@@ -247,19 +255,90 @@ public class ApplicationExecutionResult implements Serializable
         return this;
     }
     
-    @Override
+    
+    /**
+	 * @return the sysout
+	 */
+	public String getSysout() 
+	{
+		return sysout_;
+	}
+
+	/**
+	 * @param sysout the sysout to set
+	 * @return this instance
+	 */
+	public ApplicationExecutionResult setSysout(String sysout) 
+	{
+		this.sysout_ = sysout;
+		return this;
+	}
+
+	/**
+	 * @return the syserr
+	 */
+	public String getSyserr() 
+	{
+		return syserr_;
+	}
+
+	/**
+	 * @param syserr the syserr to set
+	 * @return this instance
+	 */
+	public ApplicationExecutionResult setSyserr(String syserr) 
+	{
+		this.syserr_ = syserr;
+		return this;
+	}
+
+	@Override
     public String toString()
     {
         return Objects.toStringHelper(this)
-                .add("id", this.getId())
-                .add("job id", this.getJobId())
-                .add("owner", this.getUser())
-                .add("task", this.getApplication())
-                .add("worker", this.getWorker())
-                .add("exit value", this.getExitValue())
-                .add("failure reason", this.getFailureReason())
-                .add("elapsed time(ns)", this.getElapsedTime())
-                .add("elapsed time(ms)", this.getElapsedTimeMillis())
-                .omitNullValues().toString();
+                .add("id", getId())
+                .add("job id", getJobId())
+                .add("owner", getUser())
+                .add("task", getApplication())
+                .add("worker", getWorker())
+                .add("exit value", getExitValue())
+                .add("failure reason", getFailureReason())
+                .add("elapsed time(ns)", getElapsedTime())
+                .add("elapsed time(ms)", getElapsedTimeMillis())
+                .add("system output", getSysout())
+                .add("system err output", getSyserr())
+                .omitNullValues()
+                .toString();
     }
+	
+	
+	@Override
+	protected ApplicationExecutionResult clone()  
+	{
+		ApplicationExecutionResult clone;
+		
+		try 
+		{
+			clone = (ApplicationExecutionResult) super.clone();
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			clone = new ApplicationExecutionResult()
+					.setApplication(getApplication() != null ? getApplication().clone(): null)
+					.setElapsedTime(getElapsedTime())
+					.setElapsedTimeMillis(getElapsedTimeMillis())
+					.setExitValue(getExitValue())
+					.setFailureReason(getFailureReason())
+					.setId(getId())
+					.setJobId(getJobId())
+					.setOutput(getOutput())
+					.setSyserr(getSyserr())
+					.setSysout(getSysout())
+					.setUser(getUser() != null ? getUser().clone(): null)
+					.setWorker(getWorker());
+					
+		}
+		
+		return clone;
+	}
 }

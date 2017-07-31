@@ -201,7 +201,7 @@ public class DeployCommandOptions
 
     public static enum CloudProvidersEnum
     {
-        AZURE("microsoft"), EC2("amazon"), GCE("google");
+        AZURE("microsoft"), EC2("amazon"), GCE("google"), LOCAL("local");
 
         private final String provider_;
 

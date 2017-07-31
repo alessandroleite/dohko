@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -42,7 +42,7 @@ import static org.excalibur.core.util.YesNoEnum.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application")
-@XmlType(name = "application", propOrder = {"id_", "name_", "commandLine_", "files_" })
+@XmlType(name = "application", propOrder = {"id_", "name_", "commandLine_", "preconditions_", "files_" })
 public class Application implements Serializable, Cloneable
 {
     /**
@@ -58,7 +58,6 @@ public class Application implements Serializable, Cloneable
      */
     @XmlElement(name = "id", required = true, nillable = false)
     private String id_;
-    
 
     /**
      * Application's name.
@@ -69,9 +68,11 @@ public class Application implements Serializable, Cloneable
     @XmlElement(name = "command-line", required = true, nillable = false)
     private String commandLine_;
 
-    @XmlElementWrapper(name = "files")
-    @XmlElement(name = "file")
+    @XmlElement(name = "files")
     private final List<AppData> files_ = new ArrayList<AppData>();
+    
+    @XmlElement(name = "preconditions")
+    private final List<Precondition> preconditions_ = new ArrayList<>();
     
     @XmlTransient
     private ApplicationDescriptor job_;
@@ -113,6 +114,22 @@ public class Application implements Serializable, Cloneable
         }
 
         return this;
+    }
+    
+    public Application addPrecondition(Precondition precondition)
+    {
+    	if (precondition != null)
+    	{
+    		preconditions_.add(precondition);
+    	}
+    	
+    	return this;
+    }
+    
+    public Application removePrecondition(Precondition precondition)
+    {
+    	preconditions_.remove(precondition);
+    	return this;
     }
 
     public Application setData(AppData appData)
@@ -256,8 +273,19 @@ public class Application implements Serializable, Cloneable
         this.plainText_ = plainText;
         return this;
     }
+    
+    /**
+     * Returns a read-only view of the preconditions of this application
+     * 
+	 * @return the preconditions a read-only view of the preconditions of this application. It is never <code>null</code>
+	 */
+    @Nonnull
+	public List<Precondition> getPreconditions() 
+	{
+		return Collections.unmodifiableList(preconditions_);
+	}
 
-    @Override
+	@Override
     public Application clone()
     {
         Object cloned;
@@ -269,11 +297,11 @@ public class Application implements Serializable, Cloneable
         catch (CloneNotSupportedException e)
         {
             cloned = new Application()
-                    .addAll(this.getFiles())
-                    .setCommandLine(this.commandLine_)
-                    .setId(this.getId())
-                    .setName(this.getName())
-                    .setJob(this.getJob());
+                    .addAll(getFiles())
+                    .setCommandLine(commandLine_)
+                    .setId(getId())
+                    .setName(getName())
+                    .setJob(getJob());
         }
 
         return (Application) cloned;

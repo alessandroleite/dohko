@@ -17,6 +17,8 @@
 package org.excalibur.core.execution.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,9 +37,11 @@ import static com.google.common.base.Objects.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application-descriptor")
-@XmlType(name = "application-descriptor", propOrder = { "id_", "name_", "description_", "user_", "requirements_", "clouds_", "applications_",
+@XmlType(name = "application-descriptor", propOrder = { 
+		"id_", "name_", "description_", "user_", "requirements_", 
+		"preconditions_", "clouds_", "applications_",
         "createdIn_", "finishedIn_", "onFinished_" })
-public class ApplicationDescriptor implements Serializable
+public class ApplicationDescriptor implements Serializable, Cloneable
 {
     /**
      * Serial code version <code>serialVersionUID</code> for serialization.
@@ -61,6 +65,9 @@ public class ApplicationDescriptor implements Serializable
 
     @XmlElement(name = "requirements", nillable = false, required = true)
     private Requirements requirements_;
+    
+    @XmlElement(name = "preconditions")
+    private final List<Precondition> preconditions_ = new ArrayList<>();
 
     @XmlElement(name = "clouds")
     private final Clouds clouds_ = new Clouds();
@@ -83,7 +90,7 @@ public class ApplicationDescriptor implements Serializable
     @XmlElement(name = "on-finish", required = true, nillable = false)
     private FinishAction onFinished_ = FinishAction.NONE;
     
-
+    
     public ApplicationDescriptor()
     {
         super();
@@ -201,6 +208,40 @@ public class ApplicationDescriptor implements Serializable
         this.onFinished_ = onFinished;
         return this;
     }
+    
+    public ApplicationDescriptor addPrecondition(Precondition precondition)
+    {
+    	if (precondition != null)
+    	{
+    		preconditions_.add(precondition);
+    	}
+    	
+    	return this;
+    }
+    
+    public ApplicationDescriptor addPreconditions(Precondition ...preconditions)
+    {
+    	if (preconditions != null)
+    	{
+    		for (Precondition precondition: preconditions)
+    		{
+    			preconditions_.add(precondition);
+    		}
+    	}
+    	
+    	return this;
+    }
+    
+    
+    public ApplicationDescriptor removePrecondition(Precondition precondition)
+    {
+    	if (precondition != null)
+    	{
+    		preconditions_.remove(precondition);
+    	}
+    	
+    	return this;
+    }
 
     /**
      * @return the user
@@ -239,20 +280,20 @@ public class ApplicationDescriptor implements Serializable
     }
 
     /**
-     * @return the application
+     * @return the applications
      */
     public Applications getApplications()
     {
-        return applications_ == null ? new Applications(): this.applications_;
+        return applications_ == null ? new Applications(): applications_;
     }
 
     /**
-     * @param application
-     *            the application to set
+     * @param applications the application to set
+     * @return this instance
      */
     public ApplicationDescriptor setApplications(Applications applications)
     {
-        this.applications_ = applications;
+        applications_ = applications;
         return this;
     }
 
@@ -342,16 +383,44 @@ public class ApplicationDescriptor implements Serializable
     public String toString()
     {
         return toStringHelper(this)
-                .add("id", this.getId())
+                .add("id", getId())
                 .add("name", getName())
-                .add("created-in", this.getCreatedIn())
-                .add("finished-in", this.getFinishedIn())
-                .add("user", this.getUser())
-                .add("requirements", this.getRequirements())
+                .add("created-in", getCreatedIn())
+                .add("finished-in", getFinishedIn())
+                .add("user", getUser())
+                .add("requirements", getRequirements())
                 .add("description", getDescription())
-                .add("clouds", this.getClouds())
-                .add("applications", this.getApplications())
+                .add("clouds", getClouds())
+                .add("applications", getApplications())
                 .omitNullValues()
                 .toString();
+    }
+    
+    @Override
+    public ApplicationDescriptor clone() 
+    {
+    	ApplicationDescriptor clone;
+    	
+    	try 
+    	{
+			clone = (ApplicationDescriptor) super.clone();
+		} 
+    	catch (CloneNotSupportedException e) 
+    	{
+    		clone = new ApplicationDescriptor()
+    				      .setApplications(getApplications().clone())
+    				      .setCreatedIn(getCreatedIn())
+    				      .setDescription(getDescription())
+    				      .setFinishedIn(getFinishedIn())
+    				      .setId(getId())
+    				      .setInternalId(getInternalId())
+    				      .setName(getName())
+    				      .setOnFinished(getOnFinished())
+    				      .setPlainText(getPlainText())
+    				      .setRequirements(getRequirements().clone())
+    				      .setUser(getUser().clone());
+		}
+    	
+    	return clone;
     }
 }

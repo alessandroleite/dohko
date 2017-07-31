@@ -35,11 +35,11 @@ import org.excalibur.core.util.DateUtils2;
 @XmlRootElement(name="instance-state")
 public class InstanceStateDetails implements Serializable, Cloneable
 {
-    /**
+	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-    private static final long serialVersionUID = 5004558708433059941L;
-   
+	private static final long serialVersionUID = -2674747359845703922L;
+
     @XmlAttribute(name = "id")
     private Integer           id_;
     
@@ -184,5 +184,26 @@ public class InstanceStateDetails implements Serializable, Cloneable
                   .add("time", DateUtils2.toUTC(getTime()))
                   .omitNullValues()
                   .toString();
+    }
+    
+    @Override
+    protected InstanceStateDetails clone() 
+    {
+    	InstanceStateDetails clone;
+    	
+		try 
+		{
+			clone = (InstanceStateDetails) super.clone();
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			clone = new InstanceStateDetails()
+					.setId(getId())
+					.setInstance(getInstance())
+					.setState(getState())
+					.setTime(getTime());
+		}
+    	
+    	return clone;
     }
 }

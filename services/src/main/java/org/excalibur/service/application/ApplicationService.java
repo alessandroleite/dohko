@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
+import org.excalibur.core.util.AnyThrow;
 import org.excalibur.core.util.JAXBContextFactory;
 import org.excalibur.discovery.domain.ResourceDetails;
 import org.excalibur.discovery.service.DiscoveryService;
@@ -40,6 +41,7 @@ public class ApplicationService
         }
         catch (JAXBException e)
         {
+        	AnyThrow.throwUncheked(e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

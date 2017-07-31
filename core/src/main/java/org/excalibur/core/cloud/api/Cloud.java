@@ -27,15 +27,18 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.cloud.api.domain.Region;
 
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Objects.*;
+import static com.google.common.base.Joiner.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "cloud")
+@XmlType(name = "cloud", propOrder = {"name_", "provider_", "accessKey_", "regions_", "instanceTypes_"})
 public class Cloud implements Serializable, Cloneable
 {
     /**
@@ -202,8 +205,8 @@ public class Cloud implements Serializable, Cloneable
         return toStringHelper(this)
                 .add("name", getName())
                 .add("provider", getProvider())
-                .add("access-key", this.getAccessKey())
-                .add("regions", getRegions())
+                .add("access-key", getAccessKey())
+                .add("regions", on(",").join(getRegions()))
                 .omitNullValues()
                 .toString();
     }
@@ -219,8 +222,14 @@ public class Cloud implements Serializable, Cloneable
         }
         catch (CloneNotSupportedException e)
         {
-            cloned = new Cloud().setAccessKey(this.accessKey_.clone()).setName(this.getName()).setProvider(this.provider_.clone());
+            cloned = new Cloud()
+            		.setAccessKey(accessKey_.clone())
+            		.setName(getName())
+            		.setProvider(provider_.clone());
         }
+        
+        cloned.setAccessKey(accessKey_.clone())
+              .setProvider(provider_.clone());
         
         cloned.regions_.clear();
         cloned.instanceTypes_.clear();

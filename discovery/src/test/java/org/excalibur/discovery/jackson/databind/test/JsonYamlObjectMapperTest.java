@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 

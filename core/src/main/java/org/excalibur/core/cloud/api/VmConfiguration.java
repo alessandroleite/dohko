@@ -250,4 +250,29 @@ public class VmConfiguration implements Serializable, Cloneable
                 .omitNullValues()
                 .toString();
     }
+    
+    @Override
+    protected VmConfiguration clone()  
+    {
+    	VmConfiguration clone;
+    	
+		try 
+		{
+			clone = (VmConfiguration) super.clone();
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			clone = new VmConfiguration()
+					   .setCredentials(getCredentials() != null ? getCredentials().clone(): null)
+					   .setKeyName(getKeyName())
+					   .setKeyPairs(getKeyPairs() != null ? getKeyPairs().clone() : null)
+					   .setPlatform(getPlatform())
+					   .setPlatformUserName(getPlatformUserName())
+					   .setPrivateIpAddress(getPrivateIpAddress())
+					   .setPublicDnsName(getPublicDnsName())
+					   .setPublicIpAddress(getPublicIpAddress());
+		}
+    	
+    	return clone;
+    }
 }

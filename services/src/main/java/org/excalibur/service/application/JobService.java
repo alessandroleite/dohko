@@ -24,6 +24,7 @@ import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
 import org.excalibur.core.execution.domain.repository.JobRepository;
 import org.excalibur.core.execution.domain.repository.TaskRepository;
+import org.excalibur.core.execution.job.ApplicationExecutionResult;
 import org.excalibur.core.services.UserService;
 import org.excalibur.core.util.AnyThrow;
 import org.excalibur.jackson.databind.JsonYamlObjectMapper;
@@ -65,6 +66,11 @@ public class JobService
         }
         
         return jobs;
+    }
+    
+    public List<ApplicationExecutionResult> getJobTasksResult(String jobId)
+    {
+    	return taskRepository_.getJobTasksResult(jobId);
     }
     
     protected ApplicationDescriptor completJobState(final ApplicationDescriptor job)
@@ -121,9 +127,9 @@ public class JobService
         return completeTaskState(this.taskRepository_.findByUUID(id));
     }
 
-    public void update(Application task, VirtualMachine worker, int exitValue, String uuid, long elapsedTime, String result)
+    public void update(Application task, VirtualMachine worker, int exitValue, String uuid, long elapsedTime, String result, String sysout, String syserr)
     {
-        this.taskRepository_.update(task, worker, exitValue, uuid, elapsedTime, result);
+        this.taskRepository_.update(task, worker, exitValue, uuid, elapsedTime, result, sysout, syserr);
     }
 
     public ApplicationDescriptor finishJob(String jobId, long timeInMillis)

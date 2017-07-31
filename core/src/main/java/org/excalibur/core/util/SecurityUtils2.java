@@ -16,9 +16,6 @@
  */
 package org.excalibur.core.util;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.base.Strings.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -33,6 +30,8 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -51,6 +50,9 @@ import org.excalibur.core.io.utils.IOUtils2;
 import ch.ethz.ssh2.crypto.Base64;
 
 import com.jcraft.jsch.HASH;
+
+import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Strings.*;
 
 public class SecurityUtils2
 {
@@ -83,7 +85,7 @@ public class SecurityUtils2
         throw new UnsupportedOperationException();
     }
 
-    public static UserKey generateUserKey() throws Exception
+    public static UserKey generateUserKey() throws NoSuchAlgorithmException, NoSuchProviderException, IOException 
     {
         KeyPairGenerator kpg = SecurityUtils.getKeyPairGenerator("RSA");
 

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 public class JsonYamlObjectMapper extends ObjectMapper
@@ -33,8 +34,10 @@ public class JsonYamlObjectMapper extends ObjectMapper
     {
         super(new YAMLFactory());
         
-        this.configure(SerializationFeature.INDENT_OUTPUT, true);
-        this.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        this.registerModule(new JaxbAnnotationModule());
+        configure(SerializationFeature.INDENT_OUTPUT, true);
+        enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        
+        registerModule(new JaxbAnnotationModule());
+		setAnnotationIntrospector(new JaxbAnnotationIntrospector(getTypeFactory()));
     }
 }

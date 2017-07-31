@@ -42,11 +42,9 @@ public final class Files
     /**
      * Creates and returns an instance to iterate over the lines of the given file.
      * 
-     * @param file
-     *            The file to iterate over its lines.
-     * @return A {@link Iterable} with the lines of the file.
-     * @throws IOException
-     *             If the file does not exist.
+     * @param file the file to iterate over its lines.
+     * @return a {@link Iterable} with the lines of the file.
+     * @throws IOException if the file does not exist.
      */
     public static Iterable<String> readLines(File file) throws IOException
     {
@@ -56,11 +54,9 @@ public final class Files
     /**
      * Creates and returns an instance to iterate over the lines of the file converting the given pathname string into an abstract pathname.
      * 
-     * @param pathname
-     *            The file to iterate over its lines.
-     * @return A {@link Iterable} with the lines of the file.
-     * @throws IOException
-     *             If the file does not exist.
+     * @param pathname the file to iterate over its lines.
+     * @return a {@link Iterable} with the lines of the file.
+     * @throws IOException if the file does not exist.
      */
     public static Iterable<String> readLines(String pathname) throws IOException
     {
@@ -70,11 +66,9 @@ public final class Files
     /**
      * Returns the number of lines in a {@link File} represented by {@code filename}.
      * 
-     * @param filename
-     *            A pathname.
+     * @param filename a pathname
      * @return The number of lines. It's greater or equals than zero.
-     * @throws IOException
-     *             If the file does not exists or can't be read.
+     * @throws IOException if the file does not exists or can't be read.
      */
     public static int countLines(String filename) throws IOException
     {
@@ -84,11 +78,9 @@ public final class Files
     /**
      * Returns the number of lines in a {@code file}.
      * 
-     * @param file
-     *            A file to count its number of lines.
-     * @return The number of lines. It's greater or equals than zero.
-     * @throws IOException
-     *             If the file does not exists or can't be read.
+     * @param file a file to count its number of lines.
+     * @return the number of lines. It's greater or equals than zero.
+     * @throws IOException if the file does not exists or can't be read.
      */
     public static int countLines(File file) throws IOException
     {

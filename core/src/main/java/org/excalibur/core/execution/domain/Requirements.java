@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.cloud.api.Platform;
 
@@ -30,7 +31,8 @@ import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "requirements")
-public class Requirements implements Serializable
+@XmlType(name="requirements", propOrder= {"numberOfCpuCores_", "memorySize_", "platform_", "maximalCostPerHour_", "numberOfInstancesPerCloud_"})
+public class Requirements implements Serializable, Cloneable
 {
     /**
      * Serial code version <code>serialVersionUID</code> for serialization.
@@ -47,7 +49,7 @@ public class Requirements implements Serializable
     private Platform platform_ = Platform.LINUX;
 
     @XmlElement(name = "cost", nillable = false, required = true)
-    private BigDecimal maximalCostPerHour_;
+    private BigDecimal maximalCostPerHour_ = BigDecimal.ONE;
     
     @XmlElement(name = "number-of-instances-per-cloud")
     private Integer numberOfInstancesPerCloud_;
@@ -61,8 +63,7 @@ public class Requirements implements Serializable
     }
 
     /**
-     * @param numberOfCpuCores
-     *            the numberOfCpuCores to set
+     * @param numberOfCpuCores the numberOfCpuCores to set
      */
     public Requirements setNumberOfCpuCores(Integer numberOfCpuCores)
     {
@@ -79,8 +80,7 @@ public class Requirements implements Serializable
     }
 
     /**
-     * @param memorySize
-     *            the memorySize to set
+     * @param memorySize the memorySize to set
      */
     public Requirements setMemorySize(Integer memorySize)
     {
@@ -97,8 +97,7 @@ public class Requirements implements Serializable
     }
 
     /**
-     * @param platform
-     *            the platform to set
+     * @param platform the platform to set
      */
     public Requirements setPlatform(Platform platform)
     {
@@ -115,8 +114,7 @@ public class Requirements implements Serializable
     }
 
     /**
-     * @param maximalCostPerHour
-     *            the maximalCostPerHour to set
+     * @param maximalCostPerHour the maximalCostPerHour to set
      */
     public Requirements setMaximalCostPerHour(BigDecimal maximalCostPerHour)
     {
@@ -144,8 +142,11 @@ public class Requirements implements Serializable
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.getMaximalCostPerHour(), this.getMemorySize(), this.getNumberOfCpuCores(), 
-                this.getPlatform(), this.getNumberOfInstancesPerCloud());
+        return Objects.hashCode(getMaximalCostPerHour(), 
+        		                getMemorySize(), 
+        		                getNumberOfCpuCores(), 
+        		                getPlatform(), 
+        		                getNumberOfInstancesPerCloud());
     }
 
     @Override
@@ -163,8 +164,10 @@ public class Requirements implements Serializable
 
         Requirements other = (Requirements) obj;
 
-        return Objects.equal(getMaximalCostPerHour(), other.getMaximalCostPerHour()) && Objects.equal(this.getMemorySize(), other.getMemorySize()) && 
-               Objects.equal(getNumberOfCpuCores(), other.getNumberOfCpuCores())     && Objects.equal(this.getPlatform(), other.getPlatform())     &&
+        return Objects.equal(getMaximalCostPerHour(), other.getMaximalCostPerHour()) && 
+        	   Objects.equal(getMemorySize(), other.getMemorySize())                 && 
+               Objects.equal(getNumberOfCpuCores(), other.getNumberOfCpuCores())     && 
+               Objects.equal(getPlatform(), other.getPlatform())                     &&
                Objects.equal(getNumberOfInstancesPerCloud(), other.getNumberOfInstancesPerCloud());
     }
 
@@ -173,12 +176,35 @@ public class Requirements implements Serializable
     {
         return Objects.toStringHelper(this)
                 .add("cpu", getNumberOfCpuCores())
-                .add("memory", this.getMemorySize())
-                .add("platform", this.getPlatform())
-                .add("cost/hour", this.getMaximalCostPerHour())
-                .add("number-of-instances-per-cloud", this.getNumberOfInstancesPerCloud())
+                .add("memory",  getMemorySize())
+                .add("platform",  getPlatform())
+                .add("cost/hour", getMaximalCostPerHour())
+                .add("number-of-instances-per-cloud", getNumberOfInstancesPerCloud())
                 .omitNullValues()
                 .toString();
+    }
+    
+    
+    @Override
+    public Requirements clone() 
+    {
+    	Requirements clone;
+    	
+		try 
+		{
+			clone = (Requirements) super.clone();
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			clone = new Requirements()
+					      .setMaximalCostPerHour(getMaximalCostPerHour())
+					      .setMemorySize(getMemorySize())
+					      .setNumberOfCpuCores(getNumberOfCpuCores())
+					      .setNumberOfInstancesPerCloud(getNumberOfInstancesPerCloud())
+					      .setPlatform(getPlatform());
+		}
+		
+    	return clone;
     }
 
 }

@@ -42,15 +42,11 @@ public final class IOUtils2
     /**
      * Reads all of the lines from an {@link InputStream} object. The lines include the line-termination characters, and also include other leading
      * and trailing whitespace.
-     * 
      * <p>
      * Does not close the {@code InputStream}.
      * 
-     * @param is
-     *            The stream to read from.
-     * 
-     * @throws IOException
-     *             if an I/O error occurs.
+     * @param is The stream to read from.
+     * @throws IOException if an I/O error occurs.
      */
     public static String readLines(InputStream is) throws IOException
     {
@@ -85,11 +81,9 @@ public final class IOUtils2
      * Reads all of the lines from an {@link InputStream} object. The lines include the line-termination characters, and also include other leading
      * and trailing whitespace.
      * 
-     * @param file
-     *            The {@link File} to read. Might not be <code>null</code>.
-     * @return The file's content.
-     * @throws IOException
-     *             if an I/O error occurs.
+     * @param file the {@link File} to read. Might not be <code>null</code>.
+     * @return the file's content.
+     * @throws IOException if an I/O error occurs.
      * @see #readLines(InputStream)
      */
     public static String readLines(File file) throws IOException
@@ -104,11 +98,9 @@ public final class IOUtils2
      * Reads all of the lines from an {@link InputStream} object. The lines include the line-termination characters, and also include other leading
      * and trailing whitespace.
      * 
-     * @param fileName
-     *            The file to read. Might not be <code>null</code>.
+     * @param fileName the file to read. Might not be <code>null</code>.
      * @return The file's content.
-     * @throws IOException
-     *             if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      * @see #readLines(File)
      */
     public static String readLines(String fileName) throws IOException

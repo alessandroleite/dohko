@@ -16,7 +16,6 @@
  */
 package org.excalibur.service.manager;
 
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,9 +33,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
+import org.apache.commons.exec.ExecuteStreamHandler;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.excalibur.aqmp.handler.QueueStatsProcessor;
 import org.excalibur.core.cloud.api.Cloud;
@@ -78,7 +78,7 @@ import org.excalibur.discovery.ws.ext.ObjectMapperProvider;
 import org.excalibur.jackson.databind.JsonYamlObjectMapper;
 import org.excalibur.service.application.JobService;
 import org.excalibur.service.application.resource.ApplicationExecutionRequest;
-import org.excalibur.service.application.resource.ApplicationExecutionResult;
+import org.excalibur.core.execution.job.ApplicationExecutionResult;
 import org.excalibur.service.compute.executor.Worker;
 import org.excalibur.service.deployment.service.DeploymentService;
 import org.excalibur.service.xmpp.service.XmppService;
@@ -97,6 +97,8 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import br.cic.unb.chord.io.MemoryOutputStream;
+
 import static java.lang.Runtime.*;
 import static java.lang.System.*;
 import static com.google.common.base.Preconditions.*;
@@ -108,6 +110,8 @@ import static javax.ws.rs.core.Response.Status.*;
 import static org.excalibur.core.execution.domain.TaskStatus.*;
 import static org.excalibur.core.io.utils.IOUtils2.*;
 import static org.excalibur.core.io.utils.ZipUtil.*;
+
+import static org.apache.commons.codec.binary.Base64.*;
 
 @SuppressWarnings("unused")
 public class NodeManager implements Closeable
@@ -166,7 +170,7 @@ public class NodeManager implements Closeable
     
     private final JsonYamlObjectMapper YAML_MAPPER = new JsonYamlObjectMapper();
     
-    public NodeManager (Configuration configuration, VirtualMachine node, ComputeService computeService)
+    public NodeManager (final Configuration configuration, final VirtualMachine node, final ComputeService computeService)
     {
         this.configuration_ = checkNotNull(configuration);
         this.thisNode_ = checkNotNull(node, "node must not be null!");
@@ -361,9 +365,9 @@ public class NodeManager implements Closeable
                         result.getExitValue(), 
                         task.getId(), 
                         result.getElapsedTime(), 
-                        !Strings.isNullOrEmpty(result.getOutput()) ? 
-                        		new String(uncompress(Base64.decodeBase64(result.getOutput().getBytes())))
-                        		: ""
+                        !Strings.isNullOrEmpty(result.getOutput()) ? new String(uncompress(decodeBase64(result.getOutput().getBytes()))) : "",
+                        result.getSysout(), 
+                        result.getSyserr()
                 );
             }
         }
@@ -476,7 +480,7 @@ public class NodeManager implements Closeable
         descriptor.setPlainText(YAML_MAPPER.writeValueAsString(descriptor));
         descriptor.setCreatedIn(System.currentTimeMillis());
         
-        this.jobService_.insertJob(descriptor);
+        jobService_.insertJob(descriptor);
         
         for (Application task: descriptor.getApplications())
         {
@@ -545,6 +549,9 @@ public class NodeManager implements Closeable
         
         request.setOwner(this.userService_.createIfDoesNotExist(request.getOwner(), request.getKeyPairs()));
         
+        final MemoryOutputStream outStreamHandler = new MemoryOutputStream();
+        final MemoryOutputStream errStreamHandler = new MemoryOutputStream();
+        
         new Worker().execute(request.getApplication(), new ExecuteResultHandler()
         {
             @Override
@@ -565,7 +572,7 @@ public class NodeManager implements Closeable
                 final long elapsedTimeM = currentTimeMillis() - timeS;
                 String failureReason = Strings.nullToEmpty(failure != null ? failure.getMessage() : null);
                 
-                LOG.info("Completed the execution of the task: [{}] in [{}/{} seconds] of job: [{}], manager: [{}], " +
+                LOG.info("Completed the execution of task: [{}] in [{}/{} seconds] of job: [{}], manager: [{}], " +
                          " with exitValue: [{}] from requestId: [{}], failure reason: [{}]", 
                          request.getApplication().getId(), 
                          MILLISECONDS.toSeconds(elapsedTimeM),
@@ -584,7 +591,7 @@ public class NodeManager implements Closeable
                 
                 if (request.getApplication().getOuputFile() != null)
                 {
-                	output = new String(Base64.encodeBase64(compress(readLinesQuietly(request.getApplication().getOuputFile()))));
+                	output = new String(encodeBase64(compress(readLinesQuietly(request.getApplication().getOuputFile()))));
                 }
                 
                 ApplicationExecutionResult result = new ApplicationExecutionResult();
@@ -598,11 +605,13 @@ public class NodeManager implements Closeable
                       .setReplyId(request.getId())
                       .setExitValue(exitValue)
                       .setWorker(request.getWorker())
-                      .setOutput(output);
+                      .setOutput(output)
+                      .setSyserr(outStreamHandler.getOutput())
+                      .setSysout(errStreamHandler.getOutput());
                 
                 target.path("reply").request(APPLICATION_XML_TYPE).post(Entity.entity(result, APPLICATION_XML_TYPE));
             }
-        });
+        },new PumpStreamHandler(outStreamHandler, errStreamHandler));
     }
 
     public VirtualMachine getThisNodeReference()
