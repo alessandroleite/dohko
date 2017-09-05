@@ -105,4 +105,9 @@ public class TestSupport
             ds.dispose();
         }
     }
+    
+    protected User getUser() 
+    {
+		return user;
+	}
 }

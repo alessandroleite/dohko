@@ -18,6 +18,7 @@ package org.excalibur.core.execution.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,7 +34,10 @@ import org.excalibur.core.domain.User;
 
 import com.google.common.base.Objects;
 
+import static java.util.Arrays.*;
 import static com.google.common.base.Objects.*;
+
+import static org.excalibur.core.util.CloneIterableFunction.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application-descriptor")
@@ -44,9 +48,9 @@ import static com.google.common.base.Objects.*;
 public class ApplicationDescriptor implements Serializable, Cloneable
 {
     /**
-     * Serial code version <code>serialVersionUID</code> for serialization.
-     */
-    private static final long serialVersionUID = 5301230728236638470L;
+	 * Serial code version <code>serialVersionUID</code> for serialization.
+	 */
+	private static final long serialVersionUID = -3633522812809081184L;
 
     @XmlTransient
     private Integer internalId;
@@ -223,12 +227,14 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     {
     	if (preconditions != null)
     	{
-    		for (Precondition precondition: preconditions)
-    		{
-    			preconditions_.add(precondition);
-    		}
+    		addPreconditions(asList(preconditions));
     	}
     	
+    	return this;
+    }
+    
+    public ApplicationDescriptor addPreconditions(Iterable<Precondition> preconditions)
+    {
     	return this;
     }
     
@@ -252,8 +258,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     }
 
     /**
-     * @param user
-     *            the user to set
+     * @param user the user to set
      */
     public ApplicationDescriptor setUser(User user)
     {
@@ -270,8 +275,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     }
 
     /**
-     * @param requirements
-     *            the requirements to set
+     * @param requirements the requirements to set
      */
     public ApplicationDescriptor setRequirements(Requirements requirements)
     {
@@ -356,7 +360,18 @@ public class ApplicationDescriptor implements Serializable, Cloneable
         return this;
     }
     
-    @Override
+    /**
+     * Returns an unmodifiable view of the preconditions. Any attempt to modify the returned list, 
+     * whether direct or via its iterator, result in an UnsupportedOperationException.
+     * 
+	 * @return the preconditions a read-only view of the preconditions.
+	 */
+	public List<Precondition> getPreconditions() 
+	{
+		return Collections.unmodifiableList(preconditions_);
+	}
+
+	@Override
     public int hashCode()
     {
        return Objects.hashCode(this.getId());
@@ -392,6 +407,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
                 .add("description", getDescription())
                 .add("clouds", getClouds())
                 .add("applications", getApplications())
+                .add("preconditions", getPreconditions())
                 .omitNullValues()
                 .toString();
     }
@@ -417,6 +433,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     				      .setName(getName())
     				      .setOnFinished(getOnFinished())
     				      .setPlainText(getPlainText())
+    				      .addPreconditions(cloneIterable(preconditions_))
     				      .setRequirements(getRequirements().clone())
     				      .setUser(getUser().clone());
 		}

@@ -41,13 +41,13 @@ import static com.google.common.base.Strings.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "precondition")
 @XmlType(name = "precondition")
-public class Precondition implements Serializable
+public class Precondition implements Serializable, Cloneable
 {
 	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-	private static final long serialVersionUID = -6767325418402381091L;
-	
+	private static final long serialVersionUID = 1876878688034296497L;
+
 	private final transient Lock LOCK_ = new ReentrantLock();
 
 	@XmlElement(name="packages")
@@ -230,5 +230,23 @@ public class Precondition implements Serializable
 				      .omitNullValues()
 				      .add("packages", on(",").join(packages_))
 				      .toString();
+	}
+	
+	@Override
+	public Precondition clone() 
+	{
+		Precondition clone;
+		
+		try 
+		{
+			clone = (Precondition) super.clone();
+			
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			clone = new Precondition(packages_.toArray(new String[packages_.size()]));
+		}
+		
+		return clone;
 	}
 }

@@ -95,8 +95,6 @@ public class SecurityUtils2
         String priv = getKeyMaterial(kp.getPrivate());
         
         byte[] encoded = encode((RSAPublicKey) kp.getPublic());
-        
-//        String pub = getKeyMaterial(kp.getPublic()).replaceAll(PUBLIC_KEY_START, "").replaceAll(PUBLIC_KEY_END, "").trim();
 
         return new UserKey().setPrivateKeyMaterial(priv)
                 .setPublicKeyMaterial(new String(Base64.encode(encoded)))

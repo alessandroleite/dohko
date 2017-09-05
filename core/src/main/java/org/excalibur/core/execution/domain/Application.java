@@ -16,51 +16,46 @@
  */
 package org.excalibur.core.execution.domain;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.common.base.Function;
-
-import static org.excalibur.core.util.Strings2.*;
 import static com.google.common.base.Objects.*;
-import static org.excalibur.core.util.YesNoEnum.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application")
-@XmlType(name = "application", propOrder = {"id_", "name_", "commandLine_", "preconditions_", "files_" })
+@XmlType(name = "application", propOrder = {"id_", "jobId_", "name_", "commandLine_", "preconditions_", "files_" })
 public class Application implements Serializable, Cloneable
 {
-    /**
+	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-    private static final long serialVersionUID = 6769888954321427115L;
-    
-    @XmlTransient
-    private Integer internalId_;
+	private static final long serialVersionUID = 125677774085729082L;
 
-    /**
-     * Opaque application's id.
+	/**
+     * Opaque application's id
      */
-    @XmlElement(name = "id", required = true, nillable = false)
+    @XmlAttribute(name = "id")
     private String id_;
+    
+    /**
+     * Job's id
+     */
+    @XmlAttribute(name="job-id", required= true)
+    private String jobId_;
 
     /**
-     * Application's name.
+     * Application's name
      */
     @XmlElement(name = "name", required = true, nillable = false)
     private String name_;
@@ -73,12 +68,6 @@ public class Application implements Serializable, Cloneable
     
     @XmlElement(name = "preconditions")
     private final List<Precondition> preconditions_ = new ArrayList<>();
-    
-    @XmlTransient
-    private ApplicationDescriptor job_;
-    
-    @XmlTransient
-    private TaskStatus status_ = TaskStatus.PENDING;
     
     @XmlTransient
     private String plainText_;
@@ -144,24 +133,6 @@ public class Application implements Serializable, Cloneable
         return this;
     }
     
-
-    /**
-     * @return the internalId
-     */
-    public Integer getInternalId()
-    {
-        return internalId_;
-    }
-
-    /**
-     * @param internalId the internalId to set
-     */
-    public Application setInternalId(Integer internalId)
-    {
-        this.internalId_ = internalId;
-        return this;
-    }
-
     /**
      * @return the id
      */
@@ -188,8 +159,7 @@ public class Application implements Serializable, Cloneable
     }
 
     /**
-     * @param name
-     *            the name to set
+     * @param name the name to set
      */
     public Application setName(String name)
     {
@@ -206,8 +176,7 @@ public class Application implements Serializable, Cloneable
     }
 
     /**
-     * @param commandLine
-     *            the commandLine to set
+     * @param commandLine the commandLine to set
      */
     public Application setCommandLine(String commandLine)
     {
@@ -226,36 +195,20 @@ public class Application implements Serializable, Cloneable
     /**
      * @return the job
      */
-    public ApplicationDescriptor getJob()
+    public String getJobId()
     {
-        return job_;
+        return jobId_;
     }
 
     /**
      * @param job the job to set
      */
-    public Application setJob(ApplicationDescriptor job)
+    public Application setJobId(String jobId)
     {
-        this.job_ = job;
+        this.jobId_ = jobId;
         return this;
     }
 
-    /**
-     * @return the status
-     */
-    public TaskStatus getStatus()
-    {
-        return status_;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public Application setStatus(TaskStatus status)
-    {
-        this.status_ = status;
-        return this;
-    }
 
     /**
      * @return the plainText
@@ -301,7 +254,7 @@ public class Application implements Serializable, Cloneable
                     .setCommandLine(commandLine_)
                     .setId(getId())
                     .setName(getName())
-                    .setJob(getJob());
+                    .setJobId(getJobId());
         }
 
         return (Application) cloned;
@@ -311,69 +264,11 @@ public class Application implements Serializable, Cloneable
     public String toString()
     {
         return toStringHelper(this)
-                .add("id", this.getId())
-                .add("name", this.getName())
-                .add("command-line", this.getCommandLine())
-                .add("files", this.files_)
+                .add("id", getId())
+                .add("name", getName())
+                .add("command-line", getCommandLine())
+                .add("files", files_)
                 .omitNullValues()
                 .toString();
-    }
-    
-    @XmlTransient
-    final static Function<List<AppData>, Map<String, AppData>> LIST_TO_MAP = new Function<List<AppData>, Map<String, AppData>>()
-    {
-        @Override
-        public Map<String, AppData> apply(List<AppData> input)
-        {
-            Map<String, AppData> result = new HashMap<String, AppData>();
-
-            for (AppData data : input)
-            {
-                result.put(data.getName(), data);
-            }
-
-            return result;
-        }
-    };
-    
-    
-    @XmlTransient
-    private File outputFile_;
-
-    public String getExecutableCommandLine()
-    {
-        final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{(.+?)\\}");
-        final String copy = commandLine_;
-        final Map<String, AppData> data = LIST_TO_MAP.apply(this.getFiles());
-        final String[] params = copy.split(SPACE);
-        
-        StringBuilder sb  = new StringBuilder();
-        
-        for (int i = 0; i < params.length; i++)
-        {
-            Matcher matcher = VARIABLE_PATTERN.matcher(params[i]);
-            String value = params[i];
-            
-            while (matcher.find())
-            {
-                String name = matcher.group(1);
-                AppData appData = data.get(name);
-                
-                if (YES.equals(appData.getGenerated()))
-                {
-                  outputFile_ = new File(data.get(name).getPath().replaceAll("~", System.getProperty("user.home")));  
-                }
-                
-                value = data.get(name).getPath();
-            }
-            sb.append(SPACE).append(value);
-        }
-        
-        return sb.toString().replaceAll("~", System.getProperty("user.home"));
-    }
-
-    public File getOuputFile()
-    {
-       return outputFile_;
     }
 }

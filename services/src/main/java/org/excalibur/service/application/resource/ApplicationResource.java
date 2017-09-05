@@ -47,8 +47,6 @@ import static javax.ws.rs.core.Response.Status.*;
 
 import java.util.List;
 
-
-
 @Path(ApplicationResource.APPLICATION_PATH)
 public class ApplicationResource
 {

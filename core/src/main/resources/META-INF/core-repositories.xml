@@ -157,6 +157,16 @@
 	   <constructor-arg ref="dbi" />
 	   <constructor-arg value="org.excalibur.core.execution.domain.repository.TaskRepository" />
     </bean>
+    
+    <bean id="taskStatusRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi" />
+	   <constructor-arg value="org.excalibur.core.execution.domain.repository.TaskStatusRepository" />
+    </bean>
+    
+    <bean id="taskOutputRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
+	   <constructor-arg ref="dbi" />
+	   <constructor-arg value="org.excalibur.core.execution.domain.repository.TaskOutputRepository" />
+    </bean>
 	
 	<bean id="userRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
 	   <constructor-arg ref="dbi"/>

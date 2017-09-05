@@ -114,6 +114,7 @@ import static org.excalibur.core.io.utils.ZipUtil.*;
 import static org.apache.commons.codec.binary.Base64.*;
 
 @SuppressWarnings("unused")
+@Deprecated
 public class NodeManager implements Closeable
 {
     private static final Logger LOG = LoggerFactory.getLogger(NodeManager.class.getName());
@@ -222,8 +223,8 @@ public class NodeManager implements Closeable
                                                   .setPublicKey(new KeyPair().setKeyName(key.getName()).setKeyMaterial(key.getPublicKeyMaterial())))
                                    .setOwner(owner)
                                    .setManager(thisNode_)
-                                   .setWorker(worker)
-                                   .setJobId(application.getJob().getId());
+                                   .setWorker(worker);
+//                                   .setJobId(application.getJob().getId());
                             
                             Response response = target.request(APPLICATION_XML_TYPE).post(Entity.entity(request, APPLICATION_XML_TYPE));
                             return response;
@@ -240,8 +241,8 @@ public class NodeManager implements Closeable
                                 LOG.info("Task [{}] sent to node: [{}], address:[{}:8080/application]. [{}]",
                                         application.getId(),
                                         worker.getName(),
-                                        worker.getConfiguration().getPublicIpAddress(),
-                                        application.getExecutableCommandLine());
+                                        worker.getConfiguration().getPublicIpAddress());//,
+                                        //application.getExecutableCommandLine());
                                 
                                 busyInstances_.putIfAbsent(worker.getName(), worker);
                                 submittedApplications_.putIfAbsent(application.getId(), application);
@@ -315,10 +316,10 @@ public class NodeManager implements Closeable
         {
             for (Application task : job.getApplications())
             {
-                if (TaskStatus.PENDING.equals(task.getStatus()))
-                {
-                    this.waitingApplications_.add(task);
-                }
+//                if (TaskStatus.PENDING.equals(task.getStatus()))
+//                {
+//                    this.waitingApplications_.add(task);
+//                }
             }
         }
     }
@@ -336,67 +337,67 @@ public class NodeManager implements Closeable
 
     public void finished(ApplicationExecutionResult result, VirtualMachine worker)
     {
-        LOG.info("Received the result of task: [{}] executed during [{} seconds] from request: [{}]", 
-                result.getApplication().getId(),
-                NANOSECONDS.toSeconds(result.getElapsedTime()), 
-                result.getId());
-
-        try
-        {
-            Application task = this.submittedApplications_.remove(result.getApplication().getId());
-            final TaskStatus status = result.getExitValue() == 0 ? FINISHED : FAILED;
-
-            if (task == null)
-            {
-                task = this.jobService_.findApplicationByUUID(result.getApplication().getId());
-
-                if (task != null && FINISHED.equals(task.getStatus()))
-                {
-                    task = null;
-                }
-            }
-
-            if (task != null)
-            {
-                this.jobService_.update
-                (
-                        task.setStatus(status), 
-                        worker, 
-                        result.getExitValue(), 
-                        task.getId(), 
-                        result.getElapsedTime(), 
-                        !Strings.isNullOrEmpty(result.getOutput()) ? new String(uncompress(decodeBase64(result.getOutput().getBytes()))) : "",
-                        result.getSysout(), 
-                        result.getSyserr()
-                );
-            }
-        }
-        finally
-        {
-            VirtualMachine idle = this.busyInstances_.remove(worker.getName());
-            this.addIdleInstance(idle);
-
-            if (submittedApplications_.isEmpty() && this.waitingApplications_.isEmpty())
-            {
-                ApplicationDescriptor finishedJob = this.jobService_.finishJob(result.getJobId(), System.currentTimeMillis());
-                long elapsedTime = finishedJob != null ? finishedJob.getFinishedIn() - finishedJob.getCreatedIn() : 0;
-                
-                LOG.info("Job [{}] finished in [{}] seconds", result.getJobId(), DateUtils2.seconds(elapsedTime));
-                
-                FinishedJobProcessing postJob = new FinishedJobProcessing
-                (
-                        this.jobService_.findJobByUUID(result.getJobId()), 
-                        this.instanceService_.getRunningInstancesWithTagFromUser
-                        (
-                                Tag.valueOf("app-deployment-id", result.getJobId()), configuration_.getUser()
-                        ),
-                        configuration_.getCredentials(),
-                        this.userService_
-                );
-                
-                this.dispatcher_.submit(postJob);
-            }
-        }
+//        LOG.info("Received the result of task: [{}] executed during [{} seconds] from request: [{}]", 
+//                result.getApplication().getId(),
+//                NANOSECONDS.toSeconds(result.getElapsedTime()), 
+//                result.getId());
+//
+//        try
+//        {
+//            Application task = this.submittedApplications_.remove(result.getApplication().getId());
+//            final TaskStatus status = result.getExitValue() == 0 ? FINISHED : FAILED;
+//
+//            if (task == null)
+//            {
+//                task = this.jobService_.findApplicationByUUID(result.getApplication().getId());
+//
+//                if (task != null && FINISHED.equals(task.getStatus()))
+//                {
+//                    task = null;
+//                }
+//            }
+//
+//            if (task != null)
+//            {
+//                this.jobService_.update
+//                (
+//                        task.setStatus(status), 
+//                        worker, 
+//                        result.getExitValue(), 
+//                        task.getId(), 
+//                        result.getElapsedTime(), 
+//                        !Strings.isNullOrEmpty(result.getOutput()) ? new String(uncompress(decodeBase64(result.getOutput().getBytes()))) : "",
+//                        result.getSysout(), 
+//                        result.getSyserr()
+//                );
+//            }
+//        }
+//        finally
+//        {
+//            VirtualMachine idle = this.busyInstances_.remove(worker.getName());
+//            this.addIdleInstance(idle);
+//
+//            if (submittedApplications_.isEmpty() && this.waitingApplications_.isEmpty())
+//            {
+//                ApplicationDescriptor finishedJob = this.jobService_.finishJob(result.getJobId(), System.currentTimeMillis());
+//                long elapsedTime = finishedJob != null ? finishedJob.getFinishedIn() - finishedJob.getCreatedIn() : 0;
+//                
+//                LOG.info("Job [{}] finished in [{}] seconds", result.getJobId(), DateUtils2.seconds(elapsedTime));
+//                
+//                FinishedJobProcessing postJob = new FinishedJobProcessing
+//                (
+//                        this.jobService_.findJobByUUID(result.getJobId()), 
+//                        this.instanceService_.getRunningInstancesWithTagFromUser
+//                        (
+//                                Tag.valueOf("app-deployment-id", result.getJobId()), configuration_.getUser()
+//                        ),
+//                        configuration_.getCredentials(),
+//                        this.userService_
+//                );
+//                
+//                this.dispatcher_.submit(postJob);
+//            }
+//        }
     }
 
     public void provision(ApplicationDescriptor descriptor) throws JsonProcessingException
@@ -589,10 +590,10 @@ public class NodeManager implements Closeable
                 
                 String output = "";
                 
-                if (request.getApplication().getOuputFile() != null)
-                {
-                	output = new String(encodeBase64(compress(readLinesQuietly(request.getApplication().getOuputFile()))));
-                }
+//                if (request.getApplication().getOuputFile() != null)
+//                {
+//                	output = new String(encodeBase64(compress(readLinesQuietly(request.getApplication().getOuputFile()))));
+//                }
                 
                 ApplicationExecutionResult result = new ApplicationExecutionResult();
                 result.setApplication(request.getApplication())

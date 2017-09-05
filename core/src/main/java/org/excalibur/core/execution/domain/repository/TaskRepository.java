@@ -16,15 +16,12 @@
  */
 package org.excalibur.core.execution.domain.repository;
 
+import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.excalibur.core.cloud.api.VirtualMachine;
 import org.excalibur.core.execution.domain.Application;
-import org.excalibur.core.execution.domain.ApplicationDescriptor;
-import org.excalibur.core.execution.job.ApplicationExecutionResult;
-import org.excalibur.core.execution.domain.TaskStatus;
 import org.excalibur.core.execution.domain.repository.TaskRepository.TaskRepositorySetMapper;
 import org.excalibur.core.repository.bind.BindBean;
 import org.skife.jdbi.v2.StatementContext;
@@ -33,87 +30,79 @@ import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
-import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 @RegisterMapper(TaskRepositorySetMapper.class)
-public interface TaskRepository
-{
-    
-    String SQL_SELECT_ALL = "SELECT t.job_id, t.uuid as task_uuid, t.status as task_status, t.description as task_description,\n" +
-            " t.syserr, t.sysout, t.elapsed_time_ns as task_elapsed_time_ns, t.worker_name as task_worker_name, t.exit_value, " + 
-    		" t.result as task_result, j.uuid as job_uuid, j.description as job_description \n" +
-            "FROM task t\n" +
-            " JOIN job j on j.id = t.job_id\n";
+public interface TaskRepository extends Closeable
+{   
+    String SQL_SELECT_ALL = "SELECT (SELECT j.uuid FROM job j WHERE j.id = t.job_id) as job_uuid, \n "
+    		+ " t.job_id, t.uuid as task_uuid, t.name as task_name, t.commandline as task_commandline \n"
+    		+ " FROM task t\n";
     
     @GetGeneratedKeys
-    @SqlUpdate("INSERT into task (job_id, uuid, status, description) VALUES(:job.internalId, :id, :status.name, :plainText)")
+    @SqlUpdate("INSERT into task (job_id, uuid, name, commandline) VALUES ((SELECT id FROM job WHERE lower(uuid) = lower(:jobId)), :id, :name, :commandLine)")
     Integer insert(@BindBean Application application);
     
-    @SqlBatch("INSERT into task (job_id, uuid, status, description) VALUES(:job.internalId, :id, :status.name, :plainText)")
-    @BatchChunkSize(30)
+    @SqlBatch("INSERT into task (job_id, uuid, commandline) VALUES ((SELECT id FROM job WHERE uuid = :jobId), :id, :name, :commandLine)")
     void insert(@BindBean Iterable<Application> applications);
     
-    @SqlUpdate(" UPDATE task set status = :newStatus, worker_name = :workerName, exit_value = :exitValue, elapsed_time_ns = :elapsedTime,\n" +
-               " result = :taskResult, last_state_time = current_timestamp, sysout = :sysout, syserr = :syserr \n" +
-               " WHERE uuid = :uuid")
-    void update(@BindBean(params = { "newStatus:status.name" }) Application task, @BindBean(params = { "workerName:name" }) VirtualMachine worker,
-            @Bind("exitValue") Integer exitValue, @Bind("uuid") String uuid, @Bind("elapsedTime") Long elapsedTime, @Bind("taskResult") String result,
-            @Bind("sysout") String sysout, @Bind("syserr") String syserr);
-    
+    @SqlUpdate("DELETE FROM task WHERE lower(uuid) = lower(:uuid)")
+    void delete(@Bind("uuid") String id);
+        
     @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid)")
     Application findByUUID(@Bind("uuid") String id);
     
-    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(j.uuid) = lower(:uuid)")
+    @SqlQuery(SQL_SELECT_ALL + " WHERE SELECT t.job_id = (SELECT id FROM job j WHERE lower(j.uuid) = lower(:uuid))")
     List<Application> findAllTasksOfJob(@Bind("uuid") String jobUUID);
     
-    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(j.uuid) = lower(:uuid) AND t.status = :status.name ")
-    List<Application> findTasksOfJobWithStatus(@Bind("uuid") String jobUUID, @Bind("status") TaskStatus status);
     
-    @RegisterMapper(ApplicationExecutionResultMapper.class)
-    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid) ")
-    ApplicationExecutionResult getTaskResult(@Bind("uuid") String uuid);
     
-    @RegisterMapper(ApplicationExecutionResultMapper.class)
-    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(j.uuid) = lower(:uuid) ")
-    List<ApplicationExecutionResult> getJobTasksResult(@Bind("uuid") String uuid);
+//    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid) AND t.status = :status.name ")
+//    List<Application> findTasksOfJobWithStatus(@Bind("uuid") String jobUUID, @Bind("status") TaskStatus status);
+    
+//    @RegisterMapper(ApplicationExecutionResultMapper.class)
+//    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid) ")
+//    ApplicationExecutionResult getTaskResult(@Bind("uuid") String uuid);
+    
+//    @RegisterMapper(ApplicationExecutionResultMapper.class)
+//    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(j.uuid) = lower(:uuid) ")
+//    List<ApplicationExecutionResult> getJobTasksResult(@Bind("uuid") String uuid);
     
     static class TaskRepositorySetMapper implements ResultSetMapper<Application>
     {
         @Override
         public Application map(int index, ResultSet r, StatementContext ctx) throws SQLException
         {
-        	ApplicationDescriptor job = new ApplicationDescriptor()
-        			.setId(r.getString("job_uuid"))
-        			.setPlainText(r.getString("job_description"))
-        			.setInternalId(r.getInt("job_id"));
-        	
             return new Application()
+            		.setCommandLine(r.getString("task_commandline"))
                     .setId(r.getString("task_uuid"))
-                    .setJob(job)
-                    .setStatus(TaskStatus.valueOf(r.getString("task_status")))
-                    .setPlainText(r.getString("task_description"));
+                    .setJobId(r.getString("job_uuid"))
+                    .setName(r.getString("task_name"));
         }
     }
+
+
+
+	
     
-    static class ApplicationExecutionResultMapper implements ResultSetMapper<ApplicationExecutionResult>
-    {
-		@Override
-		public ApplicationExecutionResult map(int index, ResultSet r, StatementContext ctx) throws SQLException 
-		{
-			Application app = new TaskRepositorySetMapper().map(index, r, ctx);
-			
-			return new ApplicationExecutionResult()
-					.setApplication(app)
-					.setElapsedTime(r.getLong("task_elapsed_time_ns"))
-					.setExitValue(r.getInt("exit_value"))
-					.setId(r.getString("task_uuid"))
-					.setJobId(app.getJob().getId())
-					.setOutput(r.getString("task_result"))
-					.setSyserr(r.getString("syserr"))
-					.setSysout(r.getString("sysout"))
-					.setWorker(new VirtualMachine().setName(r.getString("task_worker_name")));
-		}
-    }
+//    static class ApplicationExecutionResultMapper implements ResultSetMapper<ApplicationExecutionResult>
+//    {
+//		@Override
+//		public ApplicationExecutionResult map(int index, ResultSet r, StatementContext ctx) throws SQLException 
+//		{
+//			Application app = new TaskRepositorySetMapper().map(index, r, ctx);
+//			
+//			return new ApplicationExecutionResult()
+//					.setApplication(app)
+//					.setElapsedTime(r.getLong("task_elapsed_time_ns"))
+//					.setExitValue(r.getInt("exit_value"))
+//					.setId(r.getString("task_uuid"))
+//					.setJobId(app.getJob().getId())
+//					.setOutput(r.getString("task_result"))
+//					.setSyserr(r.getString("syserr"))
+//					.setSysout(r.getString("sysout"))
+//					.setWorker(new VirtualMachine().setName(r.getString("task_worker_name")));
+//		}
+//    }
 }

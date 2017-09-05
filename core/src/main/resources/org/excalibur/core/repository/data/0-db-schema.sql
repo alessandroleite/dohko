@@ -576,19 +576,52 @@ create table task
   id IDENTITY not null primary key,
   job_id integer not null references job(id),
   uuid varchar(100) not null,
-  status varchar(20) not null,
-  last_state_time timestamp not null default current_timestamp,
-  description text not null,
-  worker_name varchar(60),
-  exit_value integer,
-  elapsed_time_ns bigint,
-  result text,
-  sysout text, 
-  syserr text
+  name varchar(50) not null,
+  commandline text not null
 );
 
 create unique index idx_task_uuid on task(uuid);
 create index idx_task_job_id on task(job_id);
+
+create table task_status_type 
+(
+  id integer not null primary key,
+  name varchar(15) not null
+);
+
+create unique index idx_task_status_type_name on task_status_type (name);
+
+create table task_status
+(
+  id IDENTITY not null primary key,  
+  task_id integer not null references task(id),
+  task_status_type_id integer not null references task_status_type(id),
+  status_time timestamp not null default current_timestamp,
+  worker_id varchar(60),
+  pid integer
+);
+
+create index idx_task_status_type on task_status(task_status_type_id);
+create index idx_task_status_task on task_status(task_id);
+
+create table task_output_type 
+(
+  id integer not null primary key,
+  name varchar(6) not null
+);
+
+create index task_output_type_name on task_output_type(name);
+
+create table task_output
+(
+  id IDENTITY not null primary key,  
+  task_id integer not null references task(id),
+  uuid varchar(100) not null,
+  task_output_type_id integer not null references task_output_type(id),
+  value text
+);
+
+create unique index idx_task_output_uuid on task_output (uuid);
 
 create table metric_type 
 (
@@ -673,6 +706,22 @@ INSERT INTO unit_time (id, name) VALUES (4, 'Day');
 INSERT INTO unit_time (id, name) VALUES (5, 'Week');
 INSERT INTO unit_time (id, name) VALUES (6, 'Month');
 INSERT INTO unit_time (id, name) VALUES (7, 'Year');
+
+------------------------------------ 
+---       Task status type       ---
+------------------------------------
+INSERT INTO task_status_type(id, name) VALUES(1, 'PENDING');
+INSERT INTO task_status_type(id, name) VALUES(2, 'RUNNING');
+INSERT INTO task_status_type(id, name) VALUES(3, 'FAILED');
+INSERT INTO task_status_type(id, name) VALUES(4, 'FINISHED');
+
+------------------------------------ 
+---       Task output type       ---
+------------------------------------
+
+INSERT INTO task_output_type (id, name) VALUES(1, 'SYSOUT');
+INSERT INTO task_output_type (id, name) VALUES(2, 'SYSERR');
+INSERT INTO task_output_type (id, name) VALUES(3, 'FILE');
 
 ------------------------------------ 
 ---     Geographic regions       ---

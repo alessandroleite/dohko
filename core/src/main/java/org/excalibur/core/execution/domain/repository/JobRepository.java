@@ -31,7 +31,6 @@ import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
-import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -42,13 +41,15 @@ public interface JobRepository extends Closeable
              " FROM job j\n" +
              " JOIN user u on u.id = j.user_id\n";
 
-    @SqlUpdate("INSERT into job (user_id, uuid, description, created_in, finished_in) VALUES (:user.id, :id, :plainText, :createdIn, :finishedIn)")
     @GetGeneratedKeys
+    @SqlUpdate("INSERT into job (user_id, uuid, description, created_in, finished_in) VALUES (:user.id, :id, :plainText, :createdIn, :finishedIn)")
     Integer insert(@BindBean ApplicationDescriptor job);
     
     @SqlBatch("INSERT into job (user_id, uuid, description, created_in, finished_in) VALUES (:user.id, :id, :plainText, :createdIn, :finishedIn)")
-    @BatchChunkSize(30)
     void insert(@BindBean Iterable<ApplicationDescriptor> jobs);
+    
+    @SqlUpdate("DELETE FROM job WHERE lower(uuid) = lower(:id)")
+    void delete(@Bind("id") String id);
     
     @SqlUpdate("UPDATE job SET finished_in = :finishedIn WHERE uuid = :jobId AND finished_in IS NULL")
     void finished(@Bind("jobId")String jobId, @Bind("finishedIn") long finishedIn);
@@ -72,4 +73,6 @@ public interface JobRepository extends Closeable
                     .setUser(new User().setId(r.getInt("user_id")).setUsername(r.getString("username")));
         }
     }
+
+	
 }

@@ -17,53 +17,73 @@
 package org.excalibur.core.test.execution.domain.repository;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.util.Date;
+import java.util.List;
 
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
 import org.excalibur.core.execution.domain.Applications;
 import org.excalibur.core.execution.domain.TaskStatus;
+import org.excalibur.core.execution.domain.TaskStatusType;
 import org.excalibur.core.execution.domain.repository.JobRepository;
 import org.excalibur.core.execution.domain.repository.TaskRepository;
+import org.excalibur.core.execution.domain.repository.TaskStatusRepository;
 import org.excalibur.core.test.TestSupport;
 import org.junit.Test;
+
+import static java.util.UUID.*;
+import static java.lang.System.*;
+
+import static org.junit.Assert.*;
 
 public class JobRepositoryTest extends TestSupport
 {
     private JobRepository jobRepository_;
     private TaskRepository taskRepository_;
+    private TaskStatusRepository statusRepository_;
     
     @Override
     public void setup() throws IOException
     {
         super.setup();
-        this.jobRepository_ = openRepository(JobRepository.class);
-        this.taskRepository_ = openRepository(TaskRepository.class);
+        jobRepository_ = openRepository(JobRepository.class);
+        taskRepository_ = openRepository(TaskRepository.class);
+        statusRepository_ = openRepository(TaskStatusRepository.class);
     }
     
     @Test
     public void must_insert_on_job_with_one_task()
     {
-        ApplicationDescriptor job = new ApplicationDescriptor();
+        ApplicationDescriptor job = new ApplicationDescriptor()
+        		.setId(randomUUID().toString())
+        		.setCreatedIn(currentTimeMillis())
+        		.setDescription("test")
+        		.setPlainText("job-t")
+        		.setUser(getUser());
         
         Application who = new Application()
                 .setCommandLine("who")
-                .setId(UUID.randomUUID().toString())
-                .setJob(job).setPlainText("who")
-                .setStatus(TaskStatus.PENDING);
+                .setId(randomUUID().toString())
+                .setJobId(job.getId())
+                .setName("who")
+                .setPlainText("who");
         
-        job.setApplications(new Applications().add(who))
-                .setId(UUID.randomUUID().toString())
-                .setCreatedIn(System.currentTimeMillis())
-                .setPlainText("job-t")
-                .setUser(user);
+        job.setApplications(new Applications().add(who));
         
-        Integer jobId = this.jobRepository_.insert(job);
-        job.setInternalId(jobId);
+        jobRepository_.insert(job);
+        taskRepository_.insert(who);
+        statusRepository_.insert(new TaskStatus().setDate(new Date()).setTaskId(who.getId()).setPid(3200).setType(TaskStatusType.PENDING));
+        statusRepository_.insert(new TaskStatus().setDate(new Date()).setTaskId(who.getId()).setPid(6800).setType(TaskStatusType.RUNNING).setWorker("1"));
         
-        Integer taskId = taskRepository_.insert(who);
-        who.setInternalId(taskId);
+        List<Application> tasks = taskRepository_.findAllTasksOfJob(job.getId());
+        assertNotNull(tasks);
+        assertEquals(1, tasks.size());
         
-        this.taskRepository_.findAllTasksOfJob(job.getId());
+        List<TaskStatus> statuses = statusRepository_.getAllStatusesOfTask(who.getId());
+        assertNotNull(statuses);
+        assertEquals(2, statuses.size());
+        
+        assertEquals(statuses.get(statuses.size() - 1), statusRepository_.getLastStatusOfTask(who.getId()));
+        
     }
 }
