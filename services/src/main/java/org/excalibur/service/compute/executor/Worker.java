@@ -34,14 +34,12 @@ public class Worker
 {
     private static final Logger LOG = LoggerFactory.getLogger(Worker.class.getName());
     
-//    @Autowired
-//    private ApplicationExecutionService applicationExecutionService;
-    
     public void execute(final Application application, ExecuteResultHandler executeResultHandler, ExecuteStreamHandler streamHandler) throws ExecuteException, IOException
     {
-        final String commandLine = application.getExecutableCommandLine();
+        final String commandLine = application.getCommandLine();
         
         DefaultExecutor executor = new DefaultExecutor();
+        
         CommandLine command = new CommandLine("/bin/sh");
         command.addArgument("-c", false);
         command.addArgument(commandLine, false);
