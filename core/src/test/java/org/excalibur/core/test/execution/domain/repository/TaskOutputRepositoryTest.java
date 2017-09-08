@@ -38,6 +38,7 @@ public class TaskOutputRepositoryTest extends TestSupport
         		.setId(randomUUID().toString())
         		.setCreatedIn(currentTimeMillis())
         		.setDescription("test")
+        		.setName("j-test")
         		.setPlainText("job-t")
         		.setUser(getUser());
         
@@ -73,8 +74,8 @@ public class TaskOutputRepositoryTest extends TestSupport
     	assertNotNull(id);
     	assertTrue(id > 0);
     	
-    	
     	Iterable<TaskOutput> outputs = taskOutputRepository_.getAllOutputsOfTask(sysout.getTaskId());
+    	
     	assertNotNull(outputs);
     	assertFalse(Iterables.isEmpty(outputs));
     	assertEquals(1, Iterables.size(outputs));

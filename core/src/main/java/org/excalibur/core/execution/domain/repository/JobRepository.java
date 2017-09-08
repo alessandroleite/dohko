@@ -37,15 +37,15 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 @RegisterMapper(JobRowSetMapper.class)
 public interface JobRepository extends Closeable
 {
-    String SQL_SELECT_ALL = " SELECT u.username, user_id, uuid, description, created_in, finished_in\n" +
+    String SQL_SELECT_ALL = " SELECT u.username, j.user_id, j.uuid, j.description, j.name as job_name, j.created_in, j.finished_in\n" +
              " FROM job j\n" +
-             " JOIN user u on u.id = j.user_id\n";
+             " JOIN user u ON u.id = j.user_id\n";
 
     @GetGeneratedKeys
-    @SqlUpdate("INSERT into job (user_id, uuid, description, created_in, finished_in) VALUES (:user.id, :id, :plainText, :createdIn, :finishedIn)")
+    @SqlUpdate("INSERT into job (user_id, name, uuid, description, created_in, finished_in) VALUES (:user.id, :name, :id, :description, :createdIn, :finishedIn)")
     Integer insert(@BindBean ApplicationDescriptor job);
     
-    @SqlBatch("INSERT into job (user_id, uuid, description, created_in, finished_in) VALUES (:user.id, :id, :plainText, :createdIn, :finishedIn)")
+    @SqlBatch("INSERT into job (user_id, name, uuid, description, created_in, finished_in) VALUES (:user.id, :name, :id, :description, :createdIn, :finishedIn)")
     void insert(@BindBean Iterable<ApplicationDescriptor> jobs);
     
     @SqlUpdate("DELETE FROM job WHERE lower(uuid) = lower(:id)")
@@ -57,6 +57,9 @@ public interface JobRepository extends Closeable
     @SqlQuery(SQL_SELECT_ALL + " WHERE lower(uuid) = lower (:uuid)")
     ApplicationDescriptor findByUUID(@Bind("uuid") String id);
     
+    @SqlQuery(SQL_SELECT_ALL + " WHERE j.id in (SELECT t.job_id FROM task t WHERE lower(t.uuid) = lower(:taskId))")
+    ApplicationDescriptor findJobOfTaskId(@Bind("taskId") String taskId);
+    
     @SqlQuery(SQL_SELECT_ALL + " WHERE j.finished_in is null")
     List<ApplicationDescriptor> listAllPending();
     
@@ -65,14 +68,21 @@ public interface JobRepository extends Closeable
         @Override
         public ApplicationDescriptor map(int index, ResultSet r, StatementContext ctx) throws SQLException
         {
+        	Long finishedIn = r.getLong("finished_in");
+        	
+        	if (r.wasNull())
+        	{
+        		finishedIn = null;
+        	}
+        	
             return new ApplicationDescriptor()
                     .setCreatedIn(r.getLong("created_in"))
-                    .setFinishedIn(r.getLong("finished_in"))
+                    .setDescription(r.getString("description"))
+                    .setFinishedIn(finishedIn)
                     .setId(r.getString("uuid"))
+                    .setName(r.getString("job_name"))
                     .setPlainText(r.getString("description"))
                     .setUser(new User().setId(r.getInt("user_id")).setUsername(r.getString("username")));
         }
     }
-
-	
 }

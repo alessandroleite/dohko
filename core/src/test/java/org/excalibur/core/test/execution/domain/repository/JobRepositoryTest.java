@@ -58,6 +58,7 @@ public class JobRepositoryTest extends TestSupport
         		.setId(randomUUID().toString())
         		.setCreatedIn(currentTimeMillis())
         		.setDescription("test")
+        		.setName("j-test")
         		.setPlainText("job-t")
         		.setUser(getUser());
         

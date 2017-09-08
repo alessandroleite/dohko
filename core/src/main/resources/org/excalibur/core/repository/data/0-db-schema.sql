@@ -563,6 +563,7 @@ create table job
   id IDENTITY not null primary key,
   user_id integer not null references user (id),
   uuid varchar(100) not null,
+  name varchar(100) not null,
   description text not null,
   created_in bigint not null,
   finished_in bigint
@@ -574,7 +575,7 @@ create index idx_job_user_id on job(user_id);
 create table task
 (
   id IDENTITY not null primary key,
-  job_id integer not null references job(id),
+  job_id integer not null references job (id),
   uuid varchar(100) not null,
   name varchar(50) not null,
   commandline text not null
@@ -622,6 +623,28 @@ create table task_output
 );
 
 create unique index idx_task_output_uuid on task_output (uuid);
+
+create table resource_type 
+(
+  id integer not null primary key,
+  name varchar(6) not null
+);
+
+create unique index idx_resource_type_name on resource_type (name);
+
+create table task_resource_usage 
+(
+  id IDENTITY not null primary key,
+  task_id integer not null references task (id),
+  resource_type_id integer not null references resource_type (id),
+  pid integer not null,
+  datetime timestamp not null,
+  value numeric(8,6) not null
+);
+
+create index idx_tk_resource_usage_tk on task_resource_usage (task_id);
+create index idx_tk_resource_usage_rt on task_resource_usage (resource_type_id);
+create unique index idx_tk_resource_usage_uq on task_resource_usage (task_id, resource_type_id, pid, datetime);
 
 create table metric_type 
 (
@@ -718,10 +741,16 @@ INSERT INTO task_status_type(id, name) VALUES(4, 'FINISHED');
 ------------------------------------ 
 ---       Task output type       ---
 ------------------------------------
-
 INSERT INTO task_output_type (id, name) VALUES(1, 'SYSOUT');
 INSERT INTO task_output_type (id, name) VALUES(2, 'SYSERR');
 INSERT INTO task_output_type (id, name) VALUES(3, 'FILE');
+
+------------------------------------ 
+---       Resource Type          ---
+------------------------------------
+INSERT INTO resource_type (id, name) VALUES(1, 'CPU');
+INSERT INTO resource_type (id, name) VALUES(2, 'RAM');
+INSERT INTO resource_type (id, name) VALUES(3, 'IO');
 
 ------------------------------------ 
 ---     Geographic regions       ---

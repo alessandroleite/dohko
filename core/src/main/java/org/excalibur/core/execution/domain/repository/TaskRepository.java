@@ -47,8 +47,8 @@ public interface TaskRepository extends Closeable
     @SqlBatch("INSERT into task (job_id, uuid, commandline) VALUES ((SELECT id FROM job WHERE uuid = :jobId), :id, :name, :commandLine)")
     void insert(@BindBean Iterable<Application> applications);
     
-    @SqlUpdate("DELETE FROM task WHERE lower(uuid) = lower(:uuid)")
-    void delete(@Bind("uuid") String id);
+    @SqlUpdate("DELETE FROM task WHERE lower(uuid) = lower(:taskId)")
+    void delete(@Bind("taskId") String taskId);
         
     @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid)")
     Application findByUUID(@Bind("uuid") String id);
