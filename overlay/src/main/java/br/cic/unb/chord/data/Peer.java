@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -169,7 +170,12 @@ public class Peer implements Serializable, Cloneable, Comparable<Peer>
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("ID", this.getId()).add("host", getHost()).add("port", getPort()).toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("ID", this.getId())
+        		.add("host", getHost())
+        		.add("port", getPort())
+        		.omitNullValues()
+        		.toString();
     }
 
     @Override

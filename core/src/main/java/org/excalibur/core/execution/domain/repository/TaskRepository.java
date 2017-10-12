@@ -57,18 +57,6 @@ public interface TaskRepository extends Closeable
     List<Application> findAllTasksOfJob(@Bind("uuid") String jobUUID);
     
     
-    
-//    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid) AND t.status = :status.name ")
-//    List<Application> findTasksOfJobWithStatus(@Bind("uuid") String jobUUID, @Bind("status") TaskStatus status);
-    
-//    @RegisterMapper(ApplicationExecutionResultMapper.class)
-//    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid) ")
-//    ApplicationExecutionResult getTaskResult(@Bind("uuid") String uuid);
-    
-//    @RegisterMapper(ApplicationExecutionResultMapper.class)
-//    @SqlQuery(SQL_SELECT_ALL + " WHERE lower(j.uuid) = lower(:uuid) ")
-//    List<ApplicationExecutionResult> getJobTasksResult(@Bind("uuid") String uuid);
-    
     static class TaskRepositorySetMapper implements ResultSetMapper<Application>
     {
         @Override
@@ -81,28 +69,4 @@ public interface TaskRepository extends Closeable
                     .setName(r.getString("task_name"));
         }
     }
-
-
-
-	
-    
-//    static class ApplicationExecutionResultMapper implements ResultSetMapper<ApplicationExecutionResult>
-//    {
-//		@Override
-//		public ApplicationExecutionResult map(int index, ResultSet r, StatementContext ctx) throws SQLException 
-//		{
-//			Application app = new TaskRepositorySetMapper().map(index, r, ctx);
-//			
-//			return new ApplicationExecutionResult()
-//					.setApplication(app)
-//					.setElapsedTime(r.getLong("task_elapsed_time_ns"))
-//					.setExitValue(r.getInt("exit_value"))
-//					.setId(r.getString("task_uuid"))
-//					.setJobId(app.getJob().getId())
-//					.setOutput(r.getString("task_result"))
-//					.setSyserr(r.getString("syserr"))
-//					.setSysout(r.getString("sysout"))
-//					.setWorker(new VirtualMachine().setName(r.getString("task_worker_name")));
-//		}
-//    }
 }
