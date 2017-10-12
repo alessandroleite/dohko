@@ -106,7 +106,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>${source.version}</source>
@@ -168,6 +168,7 @@
 						<projectnature>org.eclipse.ajdt.ui.ajnature</projectnature>
 						<projectnature>org.eclipse.jdt.core.javanature</projectnature>
 						<projectnature>org.maven.ide.eclipse.maven2Nature</projectnature>
+						<projectnature>org.eclipse.m2e.core.maven2Nature</projectnature>
 						<!-- <projectnature>org.eclipse.jem.workbench.JavaEMFNature</projectnature> -->
 						<projectnature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</projectnature>
 					</additionalProjectnatures>

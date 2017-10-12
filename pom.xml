@@ -28,10 +28,10 @@
 		<checkstyle.file>${project.basedir}/checkstyle.xml</checkstyle.file>
 
 		<ajdt.version>1.7.2</ajdt.version>
-		<aspectjrt.version>1.8.0</aspectjrt.version>
-		<aspectjweaver.version>1.8.0</aspectjweaver.version>
-		<aspectjtools.version>1.8.0</aspectjtools.version>
-		<aspectj-maven-plugin.version>1.5</aspectj-maven-plugin.version>
+		<aspectjrt.version>1.8.9</aspectjrt.version>
+		<aspectjweaver.version>1.8.9</aspectjweaver.version>
+		<aspectjtools.version>1.8.9</aspectjtools.version>
+		<aspectj-maven-plugin.version>1.10</aspectj-maven-plugin.version>
 
 		<guava.version>23.1-jre</guava.version>
 		<jscience.version>4.3.1</jscience.version>
@@ -666,7 +666,7 @@
 				<inherited>true</inherited>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>${source.version}</source>
