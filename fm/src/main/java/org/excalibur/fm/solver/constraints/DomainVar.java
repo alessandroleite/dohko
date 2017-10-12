@@ -18,11 +18,12 @@ package org.excalibur.fm.solver.constraints;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.google.common.base.MoreObjects;
+
 import solver.Solver;
 import solver.variables.IntVar;
 import solver.variables.VF;
 
-import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Strings.*;
 
@@ -102,6 +103,10 @@ public class DomainVar
     @Override
     public String toString()
     {
-        return toStringHelper(this).add("name", this.getName()).add("domain", ArrayUtils.toString(domain_)).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("name", getName())
+        		.add("domain", ArrayUtils.toString(domain_))
+        		.omitNullValues()
+        		.toString();
     }
 }

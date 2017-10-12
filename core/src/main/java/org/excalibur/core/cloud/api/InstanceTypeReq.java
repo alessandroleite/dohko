@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -118,7 +119,7 @@ public class InstanceTypeReq implements Serializable, Cloneable
         }
         catch (CloneNotSupportedException e)
         {
-            clone = new InstanceTypeReq().setName(this.getName()).setNumberOfInstances(this.getNumberOfInstances());
+            clone = new InstanceTypeReq().setName(getName()).setNumberOfInstances(getNumberOfInstances());
         }
         return clone;
     }
@@ -126,7 +127,7 @@ public class InstanceTypeReq implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name", this.getName())
                 .add("number-of-instances", this.getNumberOfInstances())
                 .omitNullValues()

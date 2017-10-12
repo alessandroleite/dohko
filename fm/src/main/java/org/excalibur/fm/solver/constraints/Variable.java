@@ -16,12 +16,12 @@
  */
 package org.excalibur.fm.solver.constraints;
 
-import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Strings.*;
 
 import java.io.Serializable;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 public class Variable implements Serializable, Cloneable
@@ -121,7 +121,11 @@ public class Variable implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return toStringHelper(this).add("name", getName()).add("value", getValue()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("name", getName())
+        		.add("value", getValue())
+        		.omitNullValues()
+        		.toString();
     }
 
     @Override
@@ -134,7 +138,7 @@ public class Variable implements Serializable, Cloneable
              clone = super.clone();
         } catch (CloneNotSupportedException ex) 
         {
-            clone = new Variable(this.getName(), this.getValue());
+            clone = new Variable(getName(), getValue());
         }
         
         return (Variable) clone;

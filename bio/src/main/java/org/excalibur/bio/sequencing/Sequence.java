@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -139,9 +140,9 @@ public final class Sequence implements Serializable, Cloneable, Comparable<Seque
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
-                .add("name", this.getName())
-                .add("description", this.getDescription())
+        return MoreObjects.toStringHelper(this)
+                .add("name", getName())
+                .add("description", getDescription())
                 .add("content", getValue())
                 .omitNullValues()
                 .toString();

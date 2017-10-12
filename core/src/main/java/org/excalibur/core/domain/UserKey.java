@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.excalibur.core.cloud.api.KeyPair;
 import org.excalibur.core.cloud.api.KeyPairs;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static org.excalibur.core.util.SecurityUtils2.*;
@@ -220,7 +221,11 @@ public class UserKey implements Serializable, Comparable<UserKey>, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("id", this.getId()).add("name", this.getName()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("id", getId())
+        		.add("name", getName())
+        		.omitNullValues()
+        		.toString();
     }
 
     public static UserKey valueOf(KeyPair keyPair)

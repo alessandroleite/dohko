@@ -25,12 +25,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.cloud.api.domain.Region;
+import org.excalibur.core.util.CloneIterableFunction;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Objects.*;
@@ -41,10 +42,10 @@ import static com.google.common.base.Joiner.*;
 @XmlType(name = "cloud", propOrder = {"name_", "provider_", "accessKey_", "regions_", "instanceTypes_"})
 public class Cloud implements Serializable, Cloneable
 {
-    /**
+	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-    private static final long serialVersionUID = 838925016499533524L;
+	private static final long serialVersionUID = -9193201775910410860L;
 
     @XmlAttribute(name = "name", required = true)
     private String name_;
@@ -55,24 +56,34 @@ public class Cloud implements Serializable, Cloneable
     @XmlElement(name = "access-key", required = true, nillable = false)
     private AccessKey accessKey_;
 
-    @XmlElementWrapper(name = "regions")
-    @XmlElement(name = "region")
+    @XmlElement(name = "regions")
     private final List<Region> regions_ = new ArrayList<Region>();
 
     @XmlElement(name="instance-types")
-    private final InstanceTypeReqs instanceTypes_ = new InstanceTypeReqs();
+//    private final InstanceTypeReqs instanceTypes_ = new InstanceTypeReqs();
+    private final List<InstanceTypeReq> instanceTypes_ = new ArrayList<>();
 
     public Cloud addInstanceType(InstanceTypeReq instanceType)
     {
-        this.instanceTypes_.add(instanceType);
+        instanceTypes_.add(instanceType);
         return this;
     }
 
     public Cloud removeInstanceType(InstanceTypeReq instanceType)
     {
-        this.instanceTypes_.remove(instanceType);
+        instanceTypes_.remove(instanceType);
 
         return this;
+    }
+    
+    public Cloud addInstancesTypes(Iterable<InstanceTypeReq> instanceTypes)
+    {
+    	if (instanceTypes != null)
+    	{
+    		instanceTypes.forEach(this::addInstanceType);
+    	}
+    	
+    	return this;
     }
 
     public Cloud addAllInstanceTypes(InstanceTypeReq... instanceTypes)
@@ -149,8 +160,7 @@ public class Cloud implements Serializable, Cloneable
     }
 
     /**
-     * @param accessKey
-     *            the accessKey to set
+     * @param accessKey the accessKey to set
      */
     public Cloud setAccessKey(AccessKey accessKey)
     {
@@ -170,9 +180,9 @@ public class Cloud implements Serializable, Cloneable
     /**
      * @return the instanceTypes
      */
-    public InstanceTypeReqs getInstanceTypes()
+    public List<InstanceTypeReq> getInstanceTypes()
     {
-        return this.instanceTypes_;
+        return Collections.unmodifiableList(instanceTypes_);
     }
 
     @Override
@@ -189,7 +199,7 @@ public class Cloud implements Serializable, Cloneable
             return true;
         }
 
-        if (!(obj instanceof Cloud))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
@@ -202,7 +212,7 @@ public class Cloud implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name", getName())
                 .add("provider", getProvider())
                 .add("access-key", getAccessKey())
@@ -214,36 +224,29 @@ public class Cloud implements Serializable, Cloneable
     @Override
     public Cloud clone() 
     {
-        Cloud cloned;
+        Cloud clone;
         
         try
         {
-            cloned = (Cloud) super.clone();
+            clone = (Cloud) super.clone();
         }
         catch (CloneNotSupportedException e)
         {
-            cloned = new Cloud()
+            clone = new Cloud()
             		.setAccessKey(accessKey_.clone())
             		.setName(getName())
             		.setProvider(provider_.clone());
         }
         
-        cloned.setAccessKey(accessKey_.clone())
+        clone.setAccessKey(accessKey_.clone())
               .setProvider(provider_.clone());
         
-        cloned.regions_.clear();
-        cloned.instanceTypes_.clear();
+        clone.regions_.clear();
+        clone.instanceTypes_.clear();
         
-        for (Region region: this.regions_)
-        {
-            cloned.addRegion(region.clone());
-        }
+        new CloneIterableFunction<Region>().apply(regions_).forEach(clone::addRegion);
+        new CloneIterableFunction<InstanceTypeReq>().apply(instanceTypes_).forEach(clone::addInstanceType);
         
-        for (InstanceTypeReq req: instanceTypes_)
-        {
-            cloned.addInstanceType(req.clone());
-        }
-        
-        return cloned;
+        return clone;
     }
 }

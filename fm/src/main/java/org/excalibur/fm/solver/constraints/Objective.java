@@ -18,7 +18,7 @@ package org.excalibur.fm.solver.constraints;
 
 import java.io.Serializable;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import solver.ResolutionPolicy;
 import solver.variables.IntVar;
@@ -153,10 +153,10 @@ public class Objective implements Serializable
     @Override
     public String toString() 
     {
-    	return Objects.toStringHelper(this).add("objective", this.getObjective())
-    			      .add("objective-var", this.getObjectiveVar())
-    			      .add("operator", this.getOperator())
-    			      .add("policy", this.getResolutionPolicy())
+    	return MoreObjects.toStringHelper(this).add("objective", getObjective())
+    			      .add("objective-var", getObjectiveVar())
+    			      .add("operator", getOperator())
+    			      .add("policy", getResolutionPolicy())
     			      .omitNullValues()
     			      .toString();
     }

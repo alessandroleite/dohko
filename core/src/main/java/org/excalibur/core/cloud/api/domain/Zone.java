@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -185,7 +186,7 @@ public class Zone implements Serializable, Cloneable, Comparable<Zone>
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", this.getId())
                 .add("name", this.getName())
                 .add("status", this.getStatus())

@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
-import org.excalibur.core.execution.domain.Applications;
 import org.excalibur.core.execution.domain.TaskStatus;
 import org.excalibur.core.execution.domain.TaskStatusType;
 import org.excalibur.core.execution.domain.repository.JobRepository;
@@ -69,7 +68,8 @@ public class JobRepositoryTest extends TestSupport
                 .setName("who")
                 .setPlainText("who");
         
-        job.setApplications(new Applications().add(who));
+//        job.setApplications(new Applications().add(who));
+        job.addApplication(who);
         
         jobRepository_.insert(job);
         taskRepository_.insert(who);

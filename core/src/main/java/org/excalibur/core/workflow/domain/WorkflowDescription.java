@@ -36,10 +36,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.domain.User;
 
+import com.google.common.base.Objects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "workflow")
 @XmlType(name = "workflow")
-public class WorkflowDescription implements Serializable
+public class WorkflowDescription implements Serializable, Cloneable
 {
     /**
      * Serial code version <code>serialVersionUID</code> for serialization.
@@ -119,7 +121,7 @@ public class WorkflowDescription implements Serializable
             for (WorkflowActivityDescription activity : workflowActivities)
             {
                 activity.setWorkflow(this);
-                this.activities_.put(activity.getId(), activity);
+                activities_.put(activity.getId(), activity);
             }
 
             for (Integer workflowActivityId : this.activities_.keySet())
@@ -134,7 +136,7 @@ public class WorkflowDescription implements Serializable
                 }
             }
             
-            this.activitiesList.clear();
+            activitiesList.clear();
             activitiesList.addAll(this.activities_.values());
         }
 
@@ -145,7 +147,7 @@ public class WorkflowDescription implements Serializable
     {
         synchronized (lock_)
         {
-            this.activities_.remove(activity);
+            activities_.remove(activity);
         }
     }
 
@@ -242,7 +244,7 @@ public class WorkflowDescription implements Serializable
     {
         synchronized (lock_)
         {
-            return Collections.unmodifiableMap(this.activities_);
+            return Collections.unmodifiableMap(activities_);
         }
     }
 
@@ -291,10 +293,7 @@ public class WorkflowDescription implements Serializable
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id_ == null) ? 0 : id_.hashCode());
-        return result;
+        return Objects.hashCode(getId());
     }
 
     @Override
@@ -304,27 +303,35 @@ public class WorkflowDescription implements Serializable
         {
             return true;
         }
-        if (obj == null)
+        
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
+        
         WorkflowDescription other = (WorkflowDescription) obj;
-        if (id_ == null)
-        {
-            if (other.id_ != null)
-            {
-                return false;
-            }
-        }
-        else if (!id_.equals(other.id_))
-        {
-            return false;
-        }
-        return true;
+        return Objects.equal(getId(), other.getId());
     }
-
+    
+    @Override
+    public WorkflowDescription clone()
+    {
+    	WorkflowDescription clone;
+    	
+		try 
+		{
+			clone = (WorkflowDescription) super.clone();
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			clone = new WorkflowDescription(getId())
+					.setCreatedIn(getCreatedIn())
+					.setFinishedIn(getFinishedIn())
+					.setName(getName())
+					.setStartActivityId(getStartActivityId())
+					.setUser(getUser().clone());
+		}
+		
+    	return clone;
+    }
 }

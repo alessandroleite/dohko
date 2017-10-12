@@ -30,11 +30,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.common.base.Objects;
-
+import com.google.common.base.MoreObjects;
 
 import static java.util.Collections.*;
-
 import static com.google.common.base.Joiner.*;
 import static com.google.common.base.Strings.*;
 
@@ -145,8 +143,6 @@ public class Precondition implements Serializable, Cloneable
 			LOCK_.unlock();
 		}
 			
-			
-				
 		return this;
 	}
 	
@@ -226,7 +222,7 @@ public class Precondition implements Serializable, Cloneable
 	@Override
 	public String toString() 
 	{
-		return Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				      .omitNullValues()
 				      .add("packages", on(",").join(packages_))
 				      .toString();

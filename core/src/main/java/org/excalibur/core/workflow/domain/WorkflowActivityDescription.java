@@ -30,13 +30,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "activity")
 @XmlType(name = "activity")
-public class WorkflowActivityDescription implements Serializable
+public class WorkflowActivityDescription implements Serializable, Cloneable
 {
     /**
      * Serial code version <code>serialVersionUID</code> for serialization.
@@ -279,7 +280,7 @@ public class WorkflowActivityDescription implements Serializable
             return true;
         }
         
-        if (!(obj instanceof WorkflowActivityDescription))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
@@ -296,7 +297,7 @@ public class WorkflowActivityDescription implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this.getClass()).add("id", this.getId())
+        return MoreObjects.toStringHelper(this.getClass()).add("id", this.getId())
                 .add("label", this.getLabel())
                 .add("type", this.getType())
                 .omitNullValues()

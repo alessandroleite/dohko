@@ -28,10 +28,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.deployment.domain.Deployment;
 import org.excalibur.core.deployment.domain.DeploymentStatus;
+import org.excalibur.core.util.DateUtils2;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -113,8 +115,7 @@ public class DeploymentStatusDetails implements Serializable
     }
 
     /**
-     * @param user
-     *            the user to set
+     * @param user the user to set
      */
     public DeploymentStatusDetails setUser(String user)
     {
@@ -131,8 +132,7 @@ public class DeploymentStatusDetails implements Serializable
     }
 
     /**
-     * @param deploymentId
-     *            the deploymentId to set
+     * @param deploymentId the deploymentId to set
      */
     public DeploymentStatusDetails setDeploymentId(Integer deploymentId)
     {
@@ -149,8 +149,7 @@ public class DeploymentStatusDetails implements Serializable
     }
 
     /**
-     * @param status
-     *            the status to set
+     * @param status the status to set
      */
     public DeploymentStatusDetails setStatus(DeploymentStatus status)
     {
@@ -167,8 +166,7 @@ public class DeploymentStatusDetails implements Serializable
     }
 
     /**
-     * @param date
-     *            the date to set
+     * @param date the date to set
      */
     public DeploymentStatusDetails setDate(Date date)
     {
@@ -179,16 +177,18 @@ public class DeploymentStatusDetails implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this.getClass()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this.getClass())
+        		.add("id", getDeploymentId())
+        		.add("date", DateUtils2.toUTC(getDate()))
+        		.add("status", getStatus())
+        		.omitNullValues()
+        		.toString();
     }
 
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((deploymentId_ == null) ? 0 : deploymentId_.hashCode());
-        return result;
+        return Objects.hashCode(getDeploymentId());
     }
 
     @Override
@@ -199,24 +199,13 @@ public class DeploymentStatusDetails implements Serializable
             return true;
         }
 
-        if (!(obj instanceof DeploymentStatusDetails))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
 
         DeploymentStatusDetails other = (DeploymentStatusDetails) obj;
-        if (deploymentId_ == null)
-        {
-            if (other.deploymentId_ != null)
-            {
-                return false;
-            }
-        }
-        else if (!deploymentId_.equals(other.deploymentId_))
-        {
-            return false;
-        }
-        return true;
+       return Objects.equal(getDeploymentId(), other.getDeploymentId());
     }
 
 }

@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.excalibur.core.domain.User;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Objects.toStringHelper;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application-description")
@@ -258,7 +258,7 @@ public class ApplicationExecDescription implements Serializable
     @Override
     public String toString()
     {
-        return toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .omitNullValues()
                 .add("name", this.getName())
                 .add("on-failure", getFailureAction())

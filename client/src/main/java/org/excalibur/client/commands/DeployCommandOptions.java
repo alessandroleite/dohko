@@ -31,7 +31,7 @@ import org.springframework.beans.BeanUtils;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.BigDecimalConverter;
 import com.beust.jcommander.validators.PositiveInteger;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.net.HostAndPort;
 
 public class DeployCommandOptions
@@ -186,9 +186,15 @@ public class DeployCommandOptions
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("number-of-cpu-cores", this.getNumberOfCpuCores()).add("memory-size", this.getMemorySize())
-                .add("maximum-cost-per-hour", this.getMaximalCostPerHour()).add("number-of-instances-per-cloud", this.getNumberOfInstancesPerCloud())
-                .add("cloud-providers", this.getClouds()).add("application-descriptor", this.getApplicationDescriptor()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("number-of-cpu-cores", getNumberOfCpuCores())
+        		.add("memory-size", getMemorySize())
+                .add("maximum-cost-per-hour", getMaximalCostPerHour())
+                .add("number-of-instances-per-cloud", getNumberOfInstancesPerCloud())
+                .add("cloud-providers", getClouds())
+                .add("application-descriptor", getApplicationDescriptor())
+                .omitNullValues()
+                .toString();
     }
 
     public Requirements getRequirements()

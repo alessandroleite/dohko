@@ -19,7 +19,7 @@ package org.excalibur.core.test.deployment.validation;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.excalibur.core.cloud.api.domain.Tag;
 import org.excalibur.core.deployment.domain.Credential;

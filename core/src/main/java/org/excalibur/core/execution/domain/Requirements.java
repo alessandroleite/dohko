@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.cloud.api.Platform;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -174,7 +175,7 @@ public class Requirements implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("cpu", getNumberOfCpuCores())
                 .add("memory",  getMemorySize())
                 .add("platform",  getPlatform())

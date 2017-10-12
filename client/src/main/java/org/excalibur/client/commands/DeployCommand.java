@@ -115,7 +115,7 @@ public class DeployCommand implements Command
     protected WebTarget target()
     {
         Client client = ClientBuilder.newClient().register(YamlMapperProvider.class).register(JacksonFeature.class);
-        return client.target(String.format("http://%s:%s/application", options_.getHostAndPort().getHostText(), options_.getHostAndPort().getPort()));
+        return client.target(String.format("http://%s:%s/application", options_.getHostAndPort().getHost(), options_.getHostAndPort().getPort()));
     }
 
     @Override

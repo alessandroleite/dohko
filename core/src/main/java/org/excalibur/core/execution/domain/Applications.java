@@ -36,6 +36,7 @@ import com.google.common.base.Strings;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "applications")
 @XmlType(name="applications")
+@Deprecated
 public class Applications implements Iterable<Application>, Serializable, Cloneable
 {
     /**
@@ -114,30 +115,31 @@ public class Applications implements Iterable<Application>, Serializable, Clonea
     @Override
     public Applications clone() 
     {
-        Applications cloned;
+        Applications clone;
         
         try
         {
-            cloned = (Applications) super.clone();
+            clone = (Applications) super.clone();
         }
         catch (CloneNotSupportedException e)
         {
-            cloned = new Applications();
+            clone = new Applications();
         }
         
-        cloned.clear();
+        List<Application> applications = getApplications();
+        clone.clear();
         
-        for (Application application: this.applications_)
+        for (Application application: applications)
         {
-            cloned.add(application.clone());
+            clone.add(application.clone());
         }
         
-        return cloned;
+        return clone;
     }
     
     @Override
     public String toString()
     {
-        return this.applications_.toString();
+        return applications_.toString();
     }
 }

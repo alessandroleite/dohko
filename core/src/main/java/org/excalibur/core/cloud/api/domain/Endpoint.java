@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Strings.*;
@@ -160,6 +160,10 @@ public class Endpoint implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("uri", this.getUri()).add("port", this.getPort()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("uri", getUri())
+        		.add("port", getPort())
+        		.omitNullValues()
+        		.toString();
     }
 }

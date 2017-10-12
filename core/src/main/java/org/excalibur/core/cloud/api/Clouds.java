@@ -33,6 +33,7 @@ import static com.google.common.base.Joiner.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "clouds")
+@Deprecated
 public class Clouds implements Iterable<Cloud>, Serializable, Cloneable
 {
 	/**

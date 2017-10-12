@@ -20,7 +20,6 @@ import java.util.List;
 
 public final class Lists2
 {
-
     private Lists2()
     {
         throw new UnsupportedOperationException();
@@ -34,5 +33,10 @@ public final class Lists2
             first = list.get(0);
         }
         return first;
+    }
+    
+    public static boolean isInRage(int index, int size)
+    {
+    	return index >= 0 && index < size;
     }
 }

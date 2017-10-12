@@ -17,7 +17,6 @@
 package org.excalibur.discovery.ws.ext;
 
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
 
 import org.excalibur.jackson.databind.JsonYamlObjectMapper;
 

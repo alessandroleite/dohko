@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import static com.google.common.base.Objects.*;
+import com.google.common.base.MoreObjects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application")
@@ -263,7 +263,7 @@ public class Application implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", getId())
                 .add("name", getName())
                 .add("command-line", getCommandLine())

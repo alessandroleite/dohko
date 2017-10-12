@@ -33,6 +33,7 @@ import br.cic.unb.chord.data.Peer;
 import br.cic.unb.chord.data.URL;
 import br.cic.unb.overlay.chord.HashFunction;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import static com.google.common.collect.Lists.*;
 
@@ -147,7 +148,11 @@ public class NodeDetails implements Comparable<NodeDetails>, Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).omitNullValues().add("host", this.getAddresses()).add("uptime", getUptime()).toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("host", getAddresses())
+        		.add("uptime", getUptime())
+        		.omitNullValues()
+        		.toString();
     }
 
     public String getId()

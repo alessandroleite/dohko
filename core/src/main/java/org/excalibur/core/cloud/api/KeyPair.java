@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -171,7 +172,7 @@ public class KeyPair implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this.getClass())
+        return MoreObjects.toStringHelper(this.getClass())
                 .add("name", this.getKeyName())
                 .add("fingerprint", this.getKeyFingerprint())
                 .add("material", this.getKeyMaterial())
@@ -189,7 +190,10 @@ public class KeyPair implements Serializable, Cloneable
         }
         catch (CloneNotSupportedException e)
         {
-            clone = new KeyPair().setKeyFingerprint(this.getKeyFingerprint()).setKeyMaterial(this.getKeyMaterial()).setKeyName(this.getKeyName());
+            clone = new KeyPair()
+            		.setKeyFingerprint(getKeyFingerprint())
+            		.setKeyMaterial(getKeyMaterial())
+            		.setKeyName(getKeyName());
         }
         
         return clone;

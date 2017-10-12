@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Objects.*;
@@ -141,20 +142,25 @@ public class HostAndPort implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return toStringHelper(this).add("host", this.getHost()).add("port", this.getPort()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("host", getHost())
+        		.add("port", getPort())
+        		.omitNullValues()
+        		.toString();
     }
     
     @Override
     public HostAndPort clone()
     {
         Object clone;
+        
         try
         {
             clone = super.clone();
         }
         catch (CloneNotSupportedException e)
         {
-            clone = new HostAndPort(this.host_, this.port_, this.provider_);
+            clone = new HostAndPort(host_, port_, provider_);
         }
         
         return (HostAndPort) clone;

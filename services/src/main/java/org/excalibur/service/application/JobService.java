@@ -17,12 +17,14 @@
 package org.excalibur.service.application;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.excalibur.core.cloud.api.VirtualMachine;
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
 import org.excalibur.core.execution.domain.repository.JobRepository;
+import org.excalibur.core.execution.domain.repository.TaskOutputRepository;
 import org.excalibur.core.execution.domain.repository.TaskRepository;
 import org.excalibur.core.execution.job.ApplicationExecutionResult;
 import org.excalibur.core.services.UserService;
@@ -49,6 +51,9 @@ public class JobService
     private TaskRepository taskRepository_;
     
     @Autowired
+    private TaskOutputRepository taskOutputRepository_;
+    
+    @Autowired
     private UserService userService_;
     
     public ApplicationDescriptor findJobByUUID(String id)
@@ -70,7 +75,9 @@ public class JobService
     
     public List<ApplicationExecutionResult> getJobTasksResult(String jobId)
     {
-    	return taskRepository_.getJobTasksResult(jobId);
+    	taskOutputRepository_.getAllOutputsOfTask(jobId);
+    	
+    	return Collections.emptyList();
     }
     
     protected ApplicationDescriptor completJobState(final ApplicationDescriptor job)
@@ -94,7 +101,7 @@ public class JobService
             
             for (Application task : this.taskRepository_.findAllTasksOfJob(job.getId()))
             {
-                completeTaskState(task).setJob(jb);
+//                completeTaskState(task).setJob(jb);
                 jb.getApplications().add(task);
             }
             
@@ -129,7 +136,7 @@ public class JobService
 
     public void update(Application task, VirtualMachine worker, int exitValue, String uuid, long elapsedTime, String result, String sysout, String syserr)
     {
-        this.taskRepository_.update(task, worker, exitValue, uuid, elapsedTime, result, sysout, syserr);
+//        this.taskRepository_.update(task, worker, exitValue, uuid, elapsedTime, result, sysout, syserr);
     }
 
     public ApplicationDescriptor finishJob(String jobId, long timeInMillis)
@@ -146,7 +153,7 @@ public class JobService
             try
             {
                 application.setPlainText(YAML_MAPPER.writeValueAsString(application));
-                application.setJob(job);
+//                application.setJob(job);
             }
             catch (JsonProcessingException e)
             { 
@@ -159,12 +166,12 @@ public class JobService
         
         for (Application task: job.getApplications())
         {
-            task.setInternalId(this.taskRepository_.findByUUID(task.getId()).getInternalId());
+//            task.setInternalId(this.taskRepository_.findByUUID(task.getId()).getInternalId());
         }
     }
 
     protected void insertTask(Application task)
     {
-        task.setInternalId(this.taskRepository_.insert(task));
+//        task.setInternalId(this.taskRepository_.insert(task));
     }
 }

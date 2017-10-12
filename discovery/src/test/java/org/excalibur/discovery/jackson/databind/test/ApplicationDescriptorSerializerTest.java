@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.excalibur.core.domain.User;
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
-import org.excalibur.core.execution.domain.Applications;
+import org.excalibur.core.execution.domain.Block;
 import org.excalibur.core.execution.domain.Precondition;
 import org.excalibur.jackson.databind.JsonYamlObjectMapper;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class ApplicationDescriptorSerializerTest
 		ApplicationDescriptor toSerialize = new ApplicationDescriptor()
 				.setName("test")
 				.setUser(new User().setUsername("Alice"))
-				.setApplications(new Applications().add(new Application().setName("echo").setCommandLine("echo 'hello world'")));
+				.addApplication(new Application().setName("echo").setCommandLine("echo 'hello world'"));
 		
 		String json = mapper.writeValueAsString(toSerialize);
 		assertNotNull(json);
@@ -46,9 +46,9 @@ public class ApplicationDescriptorSerializerTest
 		ApplicationDescriptor toSerialize = new ApplicationDescriptor()
 				.setName("test")
 				.setUser(new User().setUsername("Alice"))
-				.setApplications(new Applications().add(new Application().setName("echo").setCommandLine("echo 'hello world'")));
+				.addApplication(new Application().setName("echo").setCommandLine("echo 'hello world'"));
 		
-		toSerialize.getApplications().add(new Application().setName("echo2").setCommandLine("echo Hello World"));
+		toSerialize.addApplication(new Application().setName("echo2").setCommandLine("echo Hello World"));
 		
 		String json = mapper.writeValueAsString(toSerialize);
 		assertNotNull(json);
@@ -74,8 +74,7 @@ public class ApplicationDescriptorSerializerTest
 				.setCommandLine("echo Hello World")
 				.addPrecondition(precondition);
 		
-		
-		toSerialize.getApplications().add(echo);
+		toSerialize.addApplication(echo);
 		
 		String json = mapper.writeValueAsString(toSerialize);
 		assertFalse(Strings.isNullOrEmpty(json));
@@ -83,7 +82,39 @@ public class ApplicationDescriptorSerializerTest
 		ApplicationDescriptor deserialized = mapper.readValue(json, ApplicationDescriptor.class);
 		assertNotNull(deserialized);
 		assertEquals(1, deserialized.getApplications().size());
-		assertEquals(1, deserialized.getApplications().first().orNull().getPreconditions().size());
-		assertEquals(echo.getPreconditions().get(0), deserialized.getApplications().first().orNull().getPreconditions().get(0));
+		assertEquals(1, deserialized.getApplication(0).orNull().getPreconditions().size());
+		assertEquals(echo.getPreconditions().get(0), deserialized.getApplication(0).orNull().getPreconditions().get(0));
+	}
+	
+	@Test
+	public void must_serialize_an_application_descriptor_with_two_blocks() throws IOException
+	{
+		ApplicationDescriptor toSerialize = new ApplicationDescriptor()
+				.setName("test")
+				.setUser(new User().setUsername("Alice"))
+				.addPrecondition(newPrecondition("a"));
+		
+		Block b1 = new Block()
+				.setId("1")
+				.addApplication(new Application().setName("echo1").setCommandLine("echo 'Hello World 1'").addPrecondition(newPrecondition("b")));
+		
+		Block b2 = new Block()
+				.setId("2")
+				.addApplications(
+						new Application().setName("echo2").setCommandLine("echo 'Hello World 2'").addPrecondition(newPrecondition("c", "b", "d")),
+						new Application().setName("echo3").setCommandLine("echo '3'"))
+				.setParents("1")
+				.setRepeat(2);
+		
+		toSerialize.addBlocks(b1, b2);
+		toSerialize.addApplications(new Application().setName("echo4").setCommandLine("echo '4'"));
+		
+		String json = mapper.writeValueAsString(toSerialize);
+		assertFalse(Strings.isNullOrEmpty(json));
+		
+		ApplicationDescriptor deserialized = mapper.readValue(json, ApplicationDescriptor.class);
+		assertNotNull(deserialized);
+		assertEquals(1, deserialized.getApplications().size());
+		assertEquals(2, deserialized.getBlocks().size());
 	}
 }

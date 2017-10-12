@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.excalibur.core.cloud.api.domain.Zone;
 import org.excalibur.core.domain.User;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -264,14 +265,14 @@ public class Volume implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
-                .omitNullValues()
-                .add("id", this.getId())
-                .add("iops", this.getIops())
+        return MoreObjects.toStringHelper(this)
+                .add("id",  getId())
+                .add("iops", getIops())
                 .add("name", getName())
                 .add("size(GiB)", getSizeGb())
                 .add("type", getType())
                 .add("zone", getZone())
+                .omitNullValues()
                 .toString();
     }
 

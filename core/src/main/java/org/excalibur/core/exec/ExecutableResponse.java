@@ -18,6 +18,7 @@ package org.excalibur.core.exec;
 
 import java.io.Serializable;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 public class ExecutableResponse implements Serializable
@@ -87,7 +88,7 @@ public class ExecutableResponse implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("output", output)
                 .add("error", error)
                 .add("exitStatus", exitStatus)

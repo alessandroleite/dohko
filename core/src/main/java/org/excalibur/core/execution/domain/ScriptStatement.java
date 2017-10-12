@@ -32,6 +32,7 @@ import org.excalibur.core.cloud.api.Platform;
 import org.excalibur.core.util.Strings2;
 import org.excalibur.core.util.YesNoEnum;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -295,7 +296,7 @@ public class ScriptStatement implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name", this.getName())
                 .add("platform", this.getPlatform())
                 .add("is-active", this.getActive())

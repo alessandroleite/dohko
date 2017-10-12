@@ -29,28 +29,28 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.cloud.api.Cloud;
-import org.excalibur.core.cloud.api.Clouds;
 import org.excalibur.core.domain.User;
+import org.excalibur.core.util.Lists2;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 import static java.util.Arrays.*;
-import static com.google.common.base.Objects.*;
 
 import static org.excalibur.core.util.CloneIterableFunction.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application-descriptor")
 @XmlType(name = "application-descriptor", propOrder = { 
-		"id_", "name_", "description_", "user_", "requirements_", 
-		"preconditions_", "clouds_", "applications_",
+		"id_", "name_", "description_", "user_", "requirements_", "preconditions_", "clouds_", "applications_", "blocks_",
         "createdIn_", "finishedIn_", "onFinished_" })
 public class ApplicationDescriptor implements Serializable, Cloneable
 {
-    /**
+	/**
 	 * Serial code version <code>serialVersionUID</code> for serialization.
 	 */
-	private static final long serialVersionUID = -3633522812809081184L;
+	private static final long serialVersionUID = 1759115607404731621L;
 
     @XmlTransient
     private Integer internalId;
@@ -73,11 +73,16 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     @XmlElement(name = "preconditions")
     private final List<Precondition> preconditions_ = new ArrayList<>();
 
-    @XmlElement(name = "clouds")
-    private final Clouds clouds_ = new Clouds();
+    @XmlElement(name="clouds")
+//    private final Clouds clouds_ = new Clouds();
+    private final List<Cloud> clouds_ = new ArrayList<>();
 
     @XmlElement(name = "applications")
-    private Applications applications_ = new Applications();
+//    private Applications applications_ = new Applications();
+    private List<Application> applications_ = new ArrayList<>();
+    
+    @XmlElement(name = "blocks")
+    private List<Block> blocks_ = new ArrayList<>();
     
     @XmlElement(name = "description")
     private String description_;
@@ -105,11 +110,112 @@ public class ApplicationDescriptor implements Serializable, Cloneable
         this.id_ = id;
     }
     
+    public ApplicationDescriptor addApplication(Application app)
+    {
+    	if (app != null && !applications_.contains(app))
+    	{
+    		applications_.add(app);
+    	}
+    	
+    	return this;
+    }
+    
+    public ApplicationDescriptor addApplications(Iterable<Application> apps)
+    {
+    	apps.forEach(this::addApplication);
+    	return this;
+    }
+    
+    public ApplicationDescriptor addApplications (Application ... apps)
+    {
+    	if (apps != null)
+    	{
+    		for (int i = 0; i < apps.length; i++) 
+    		{
+    			addApplication(apps[i]);
+			}
+    	}
+    	
+    	return this;
+    }
+    
+    public Optional<Application> getApplication(int index)
+    {
+    	return Lists2.isInRage(index, applications_.size()) ? Optional.of(applications_.get(index)) : Optional.<Application>absent();
+    }
+    
+    /**
+     * @return the applications
+     */
+    public List<Application> getApplications()
+    {
+//        return applications_ == null ? new Applications(): applications_;
+    	return Collections.unmodifiableList(applications_);
+    }
+    
+    public ApplicationDescriptor addBlock(Block block)
+    {
+    	if (block != null && !blocks_.contains(block))
+    	{
+    		blocks_.add(block);
+    	}
+    	
+    	return this;
+    }
+    
+    public ApplicationDescriptor addBlocks(Iterable<Block> blocks)
+    {
+    	blocks.forEach(this::addBlock);
+    	return this;
+    }
+    
+    public ApplicationDescriptor addBlocks(Block ...blocks)
+    {
+    	if (blocks != null)
+    	{
+    		for (Block block : blocks) 
+    		{
+    			addBlock(block);
+			}
+    	}
+    	
+    	return this;
+    }
+    
+    public ApplicationDescriptor removeBlock(int index)
+    {
+    	if (Lists2.isInRage(index, blocks_.size()))
+    	{
+    		blocks_.remove(index);
+    	}
+    	
+    	return this;
+    }
+    
+    public ApplicationDescriptor removeBlock(Block block)
+    {
+    	blocks_.remove(block);
+    	return this;
+    }
+    
+    public Optional<Block> getBlock(int index)
+    {
+    	return Lists2.isInRage(index, blocks_.size()) ? Optional.of(blocks_.get(index)) : Optional.<Block>absent();
+    }
+    
+    /**
+	 * @return the blocks
+	 */
+	public List<Block> getBlocks() 
+	{
+		return Collections.unmodifiableList(blocks_);
+	}
+    
     public ApplicationDescriptor addCloud(Cloud cloud)
     {
         if (cloud != null)
         {
-            this.clouds_.add(cloud);
+            clouds_.add(cloud);
         }
         
         return this;
@@ -117,9 +223,21 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     
     public ApplicationDescriptor removeCloud(Cloud cloud)
     {
-        this.clouds_.remove(cloud);
-        
+        clouds_.remove(cloud);
         return this;
+    }
+    
+    public Optional<Cloud> getCloud(int index)
+    {
+    	return Lists2.isInRage(index, clouds_.size()) ? Optional.of(clouds_.get(index)) : Optional.<Cloud>absent();
+    }
+    
+    /**
+     * @return the clouds
+     */
+    public List<Cloud> getClouds()
+    {
+        return Collections.unmodifiableList(clouds_);
     }
     
     /**
@@ -193,8 +311,6 @@ public class ApplicationDescriptor implements Serializable, Cloneable
         this.name_ = name;
         return this;
     }
-    
-    
 
     /**
      * @return the onFinished
@@ -283,33 +399,18 @@ public class ApplicationDescriptor implements Serializable, Cloneable
         return this;
     }
 
-    /**
-     * @return the applications
-     */
-    public Applications getApplications()
-    {
-        return applications_ == null ? new Applications(): applications_;
-    }
-
-    /**
-     * @param applications the application to set
-     * @return this instance
-     */
-    public ApplicationDescriptor setApplications(Applications applications)
-    {
-        applications_ = applications;
-        return this;
-    }
-
-    /**
-     * @return the clouds
-     */
-    public Clouds getClouds()
-    {
-        return this.clouds_;
-    }
+//    /**
+//     * @param applications the application to set
+//     * @return this instance
+//     */
+//    public ApplicationDescriptor setApplications(Applications applications)
+//    {
+//        applications_ = applications;
+//        return this;
+//    }
     
-    /**
+
+	/**
      * @return the plainText
      */
     public String getPlainText()
@@ -397,7 +498,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", getId())
                 .add("name", getName())
                 .add("created-in", getCreatedIn())
@@ -407,6 +508,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
                 .add("description", getDescription())
                 .add("clouds", getClouds())
                 .add("applications", getApplications())
+                .add("blocks", getBlocks())
                 .add("preconditions", getPreconditions())
                 .omitNullValues()
                 .toString();
@@ -424,7 +526,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     	catch (CloneNotSupportedException e) 
     	{
     		clone = new ApplicationDescriptor()
-    				      .setApplications(getApplications().clone())
+//    				      .setApplications(getApplications().clone())
     				      .setCreatedIn(getCreatedIn())
     				      .setDescription(getDescription())
     				      .setFinishedIn(getFinishedIn())

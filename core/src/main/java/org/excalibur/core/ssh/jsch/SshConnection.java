@@ -157,7 +157,7 @@ public final class SshConnection implements Connection<Session>
         if (connected_.compareAndSet(false, true))
         {
             JSch jsch = new JSch();
-            session_ = jsch.getSession(loginCredentials_.getUser(), hostAndPort_.getHostText(), hostAndPort_.getPortOrDefault(22));
+            session_ = jsch.getSession(loginCredentials_.getUser(), hostAndPort_.getHost(), hostAndPort_.getPortOrDefault(22));
 
             if (sessionTimeout_ != 0)
             {

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import br.cic.unb.chord.data.Peer;
@@ -101,7 +102,11 @@ public class Addresses implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("internal", this.getInternal()).add("external", this.getExternal()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("internal", getInternal())
+        		.add("external", getExternal())
+        		.omitNullValues()
+        		.toString();
     }
 
     

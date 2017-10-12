@@ -4,6 +4,7 @@ ApplicationDescriptor
 ApplicationExecDescription
 ApplicationExecutionResult
 Applications
+Block
 FailureAction
 Requirements
 ScriptStatement

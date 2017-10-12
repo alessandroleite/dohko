@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -137,6 +138,10 @@ public class Attribute implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).omitNullValues().add("name", this.getName()).add("value", this.getValue()).toString();
+        return MoreObjects.toStringHelper(this)
+        		          .add("name", this.getName())
+        		          .add("value", this.getValue())
+        		          .omitNullValues()
+        		          .toString();
     }
 }

@@ -391,7 +391,7 @@ public class JschSshClient implements SshClient
     public JschSshClient(HostAndPort socket, LoginCredentials loginCredentials, int timeout, Optional<Connector> agentConnector,
             BackoffLimitedRetryHandler backoffLimitedRetryHandler)
     {
-        this.host = checkNotNull(socket, "host").getHostText();
+        this.host = checkNotNull(socket, "host").getHost();
         this.user = checkNotNull(loginCredentials, "credentials for %s", host).getUser();
         checkArgument(socket.getPort() > 0, "ssh port must be greater than zero" + socket.getPort());
         checkArgument(socket.getPort() < 65535, "ssh port must be less than 65535" + socket.getPort());

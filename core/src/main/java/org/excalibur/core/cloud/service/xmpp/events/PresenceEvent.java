@@ -25,6 +25,8 @@ import org.excalibur.core.cloud.service.xmpp.XMPPEvent;
 import org.excalibur.core.cloud.service.xmpp.listeners.PresenceListener;
 import org.excalibur.core.util.EventListener;
 
+import com.google.common.base.MoreObjects;
+
 public class PresenceEvent extends XMPPEvent<Presence, PresenceType>
 {
     /**
@@ -58,6 +60,10 @@ public class PresenceEvent extends XMPPEvent<Presence, PresenceType>
     @Override
     public String toString()
     {
-        return toStringHelper(this).add("type", this.getType()).add("presence", this.getValue()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("type", getType())
+        		.add("presence", getValue())
+        		.omitNullValues()
+        		.toString();
     }
 }

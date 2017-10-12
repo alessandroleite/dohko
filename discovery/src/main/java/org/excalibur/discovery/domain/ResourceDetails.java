@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @JsonRootName("resource-info")
@@ -135,6 +136,10 @@ public class ResourceDetails implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("name", getName()).add("type", getType()).add("payload", getPayload()).toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("name", getName())
+        		.add("type", getType())
+        		.add("payload", getPayload())
+        		.toString();
     }
 }

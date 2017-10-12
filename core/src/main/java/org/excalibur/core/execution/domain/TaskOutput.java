@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import net.vidageek.mirror.dsl.Mirror;
@@ -170,7 +171,7 @@ public class TaskOutput implements Serializable, Cloneable
 	@Override
 	public String toString() 
 	{
-		return Objects.toStringHelper(this)
+		return MoreObjects.toStringHelper(this)
 				.add("id", getId())
 				.add("task-id", getTaskId())
 				.add("type", getType())

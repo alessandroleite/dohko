@@ -26,6 +26,7 @@ import org.excalibur.core.task.TaskResult;
 import org.excalibur.core.task.TaskState;
 import org.excalibur.core.task.TaskType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -116,7 +117,7 @@ class TaskResultImpl<T extends Serializable> implements TaskResult<T>
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("started in", getStartTime())
                 .add("status", getTaskState())
                 .add("finished in", getFinishTime())

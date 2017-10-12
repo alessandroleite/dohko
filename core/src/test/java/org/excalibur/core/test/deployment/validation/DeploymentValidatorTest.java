@@ -16,10 +16,6 @@
  */
 package org.excalibur.core.test.deployment.validation;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-
 import org.excalibur.core.deployment.domain.Credential;
 import org.excalibur.core.deployment.domain.Dependency;
 import org.excalibur.core.deployment.domain.Deployment;
@@ -32,6 +28,10 @@ import org.excalibur.core.deployment.validation.DeploymentValidator;
 import org.excalibur.core.deployment.validation.ValidationContext;
 import org.excalibur.core.validator.ValidationResult;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DeploymentValidatorTest
 {

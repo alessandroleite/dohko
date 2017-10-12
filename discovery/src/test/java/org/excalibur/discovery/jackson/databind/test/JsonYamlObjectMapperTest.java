@@ -84,7 +84,7 @@ public class JsonYamlObjectMapperTest
             JsonMappingException, JAXBException
     {
         Applications applications = createApplications();
-        description.setApplications(applications);
+        description.addApplications(applications);
         String yaml = mapper_.writeValueAsString(description);
         assertNotNull(yaml);
         

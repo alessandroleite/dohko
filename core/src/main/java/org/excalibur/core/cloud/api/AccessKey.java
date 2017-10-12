@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -114,7 +115,11 @@ public class AccessKey implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("accessKey", this.getAccessKey()).add("secretKey", getSecretKey()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("accessKey", this.getAccessKey())
+        		.add("secretKey", getSecretKey())
+        		.omitNullValues()
+        		.toString();
     }
     
     @Override

@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
-import org.excalibur.core.execution.domain.Applications;
 import org.excalibur.core.execution.domain.TaskResourceUsage;
 import org.excalibur.core.execution.domain.TaskStatus;
 import org.excalibur.core.execution.domain.repository.JobRepository;
@@ -52,7 +51,7 @@ public class TaskResourceUsageRepositoryTest extends TestSupport
                 .setName("who")
                 .setPlainText("who");
         
-        job.setApplications(new Applications().add(task));
+        job.addApplication(task);
         
         job.setInternalId(openRepository(JobRepository.class).insert(job));
         openRepository(TaskRepository.class).insert(task);

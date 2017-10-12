@@ -18,7 +18,7 @@ package org.excalibur.core.cloud.service.xmpp;
 
 import java.io.Serializable;
 
-import static com.google.common.base.Objects.*;
+import com.google.common.base.MoreObjects;
 
 /**
  * Represents presence information returned by the server.
@@ -116,12 +116,12 @@ public final class Presence implements Serializable
     @Override
     public String toString()
     {
-        return toStringHelper(this)
-                .add("from", this.getFromJid())
-                .add("to", this.getToJid())
-                .add("presenceType", this.getPresenceType())
-                .add("presenceShow", this.getPresenceShow())
-                .add("stanza", this.getStanza())
+        return MoreObjects.toStringHelper(this)
+                .add("from", getFromJid())
+                .add("to", getToJid())
+                .add("presenceType", getPresenceType())
+                .add("presenceShow", getPresenceShow())
+                .add("stanza", getStanza())
                 .omitNullValues()
                 .toString();
     }

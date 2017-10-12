@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -114,11 +115,11 @@ public class NetworkRule
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
-                .add("name", this.getName())
-                .add("from-port", this.getFromPort())
-                .add("to-port", this.getToPort())
-                .add("protocol", this.getProtocol())
+        return MoreObjects.toStringHelper(this)
+                .add("name", getName())
+                .add("from-port", getFromPort())
+                .add("to-port", getToPort())
+                .add("protocol", getProtocol())
                 .omitNullValues()
                 .toString();
     }

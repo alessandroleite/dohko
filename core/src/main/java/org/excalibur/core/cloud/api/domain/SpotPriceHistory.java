@@ -21,8 +21,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.excalibur.core.cloud.api.InstanceType;
+import org.excalibur.core.util.DateUtils2;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 public class SpotPriceHistory implements Serializable
 {
@@ -32,10 +33,10 @@ public class SpotPriceHistory implements Serializable
     private static final long serialVersionUID = -6761701279784226016L;
     
     private InstanceType     instanceType_;
-    private Date       time_;
-    private Region     region_;
-    private BigDecimal price_;
-    private String     imageTypeDescription_;
+    private Date             time_;
+    private Region           region_;
+    private BigDecimal       price_;
+    private String           imageTypeDescription_;
     
     public SpotPriceHistory withInstanceType(InstanceType type)
     {
@@ -155,6 +156,12 @@ public class SpotPriceHistory implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("instance-type", getInstanceType())
+        		.add("region", getRegion())
+        		.add("price", getPrice())
+        		.add("time", DateUtils2.toUTC(getTime()))
+        		.omitNullValues()
+        		.toString();
     }
 }

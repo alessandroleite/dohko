@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Objects.*;
@@ -181,13 +182,17 @@ public class GeographicRegion implements Serializable, Cloneable
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.getId(), this.getName());
+        return Objects.hashCode(getId(), getName());
     }
 
     @Override
     public String toString()
     {
-        return toStringHelper(this).add("id", this.getId()).add("name", this.getName()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("id", getId())
+        		.add("name", getName())
+        		.omitNullValues()
+        		.toString();
     }
 
     @Override

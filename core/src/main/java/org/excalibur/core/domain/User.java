@@ -17,6 +17,9 @@
 package org.excalibur.core.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.cloud.api.KeyPair;
 import org.excalibur.core.cloud.api.KeyPairs;
+import org.excalibur.core.util.CloneIterableFunction;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -52,7 +57,8 @@ public class User implements Serializable, Comparable<User>, Cloneable
     private String password_;
 
     @XmlElement(name = "keys")
-    private final UserKeys keys_ = new UserKeys();
+//    private final UserKeys keys_ = new UserKeys();
+    private final List<UserKey> keys_ = new ArrayList<>();
 
     public User()
     {
@@ -66,24 +72,15 @@ public class User implements Serializable, Comparable<User>, Cloneable
 
     public User addKeys(Iterable<UserKey> keys)
     {
-        synchronized (this.keys_)
-        {
-            for (UserKey key : keys)
-            {
-                this.addKey(key);
-            }
-        }
+        keys.forEach(this::addKey);
         return this;
     }
 
     public User addKey(UserKey key)
     {
-        synchronized (this.keys_)
+    	if (key != null && !keys_.contains(key))
         {
-            if (key != null && !keys_.contains(key))
-            {
-                keys_.add(key.setUser(this));
-            }
+            keys_.add(key.setUser(this));
         }
 
         return this;
@@ -125,8 +122,7 @@ public class User implements Serializable, Comparable<User>, Cloneable
     }
 
     /**
-     * @param id
-     *            the id to set
+     * @param id the id to set
      */
     public User setId(Integer id)
     {
@@ -173,9 +169,9 @@ public class User implements Serializable, Comparable<User>, Cloneable
     /**
      * @return the keys
      */
-    public UserKeys getKeys()
+    public List<UserKey> getKeys()
     {
-        return keys_;
+        return Collections.unmodifiableList(keys_);
     }
 
     @Override
@@ -186,14 +182,14 @@ public class User implements Serializable, Comparable<User>, Cloneable
             return true;
         }
 
-        if (!(obj instanceof User))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
 
         User other = (User) obj;
-
-        return Objects.equal(this.getId(), other.getId()) || Objects.equal(this.getUsername(), other.getUsername());
+        return Objects.equal(this.getId(), other.getId()) || 
+        	   Objects.equal(this.getUsername(), other.getUsername());
     }
 
     @Override
@@ -205,7 +201,11 @@ public class User implements Serializable, Comparable<User>, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("id", this.getId()).add("username", this.getUsername()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("id", getId())
+        		.add("username", getUsername())
+        		.omitNullValues()
+        		.toString();
     }
 
     @Override
@@ -225,13 +225,13 @@ public class User implements Serializable, Comparable<User>, Cloneable
         }
         catch (CloneNotSupportedException e)
         {
-            clone = new User().setPassword(this.getPassword()).setUsername(this.getUsername());
+            clone = new User()
+            		.setPassword(this.getPassword())
+            		.setUsername(this.getUsername());
         }
-
-        for (UserKey userKey : this.keys_)
-        {
-            clone.addKey(userKey.clone());
-        }
+        
+        clone.keys_.clear();
+        new CloneIterableFunction<UserKey>().apply(keys_).forEach(clone::addKey);
 
         return clone;
     }

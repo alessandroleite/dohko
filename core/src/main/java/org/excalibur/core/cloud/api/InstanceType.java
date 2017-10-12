@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.excalibur.core.cloud.api.domain.Region;
 import org.excalibur.core.util.YesNoEnum;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static org.excalibur.core.cloud.api.VirtualizationType.*;
@@ -317,13 +318,13 @@ public class InstanceType implements Serializable, Comparable<InstanceType>, Clo
         catch (CloneNotSupportedException e)
         {
             type = new InstanceType()
-                    .setConfiguration(this.configuration_)
-                    .setCost(this.getCost())
-                    .setFamilyType(this.getFamilyType())
-                    .setName(this.getName())
-                    .setProvider(this.getProvider())
-                    .setRegion(this.getRegion())
-                    .setRequiredVirtualizationType(this.getRequiredVirtualizationType())
+                    .setConfiguration(configuration_)
+                    .setCost(getCost())
+                    .setFamilyType(getFamilyType())
+                    .setName(getName())
+                    .setProvider(getProvider())
+                    .setRegion(getRegion())
+                    .setRequiredVirtualizationType(getRequiredVirtualizationType())
                     .setSupportPlacementGroup(this.getSupportPlacementGroup());
         }
         
@@ -333,14 +334,14 @@ public class InstanceType implements Serializable, Comparable<InstanceType>, Clo
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
-                .add("name", this.getName())
-                .add("family", this.getFamilyType())
-                .add("region", this.getRegion())
-                .add("cost", this.getCost())
-                .add("hardware", this.getConfiguration())
-                .add("support-placement-grouping", this.getSupportPlacementGroup())
-                .add("required-virtualization-type", this.getRequiredVirtualizationType())
+        return MoreObjects.toStringHelper(this)
+                .add("name", getName())
+                .add("family", getFamilyType())
+                .add("region", getRegion())
+                .add("cost", getCost())
+                .add("hardware", getConfiguration())
+                .add("support-placement-grouping", getSupportPlacementGroup())
+                .add("required-virtualization-type", getRequiredVirtualizationType())
                 .omitNullValues()
                 .toString();
     }

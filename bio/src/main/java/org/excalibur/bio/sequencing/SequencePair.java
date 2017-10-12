@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -104,7 +105,11 @@ public class SequencePair implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("query", this.getQuery()).add("target", this.getTarget()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("query", getQuery())
+        		.add("target", getTarget())
+        		.omitNullValues()
+        		.toString();
     }
     
     @Override

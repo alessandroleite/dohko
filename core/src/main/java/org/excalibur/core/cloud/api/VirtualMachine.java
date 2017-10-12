@@ -30,6 +30,7 @@ import org.excalibur.core.cloud.api.domain.Tags;
 import org.excalibur.core.cloud.api.domain.Zone;
 import org.excalibur.core.domain.User;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import static com.google.common.base.Objects.*;
@@ -82,7 +83,7 @@ public class VirtualMachine implements Serializable, Cloneable
     private Date launchTime_;
 
     /**
-     * Logical grouping for your cluster instances. For instance, on EC2, placement group have low latency, full bisection 10 Gbps bandwidth between
+     * Logical grouping for your cluster instances. For instance, in EC2, placement group have low latency, full bisection 10 Gbps bandwidth between
      * instances.
      */
     @XmlElement(name = "instance-group")
@@ -341,8 +342,6 @@ public class VirtualMachine implements Serializable, Cloneable
         this.location_ = location;
         return this;
     }
-    
-    
 
     /**
      * @return the cost
@@ -353,15 +352,13 @@ public class VirtualMachine implements Serializable, Cloneable
     }
 
     /**
-     * @param cost
-     *            the cost to set
+     * @param cost the cost to set
      */
     public VirtualMachine setCost(BigDecimal cost)
     {
         this.cost_ = cost;
         return this;
     }
-    
     
 
     /**
@@ -400,7 +397,7 @@ public class VirtualMachine implements Serializable, Cloneable
             return true;
         }
         
-        if (!(obj instanceof VirtualMachine))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
@@ -413,10 +410,12 @@ public class VirtualMachine implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
-                .add("id", this.getId())
-                .add("image", this.getImageId())
-                .add("name", this.getName())
+        return MoreObjects.toStringHelper(this)
+                .add("id", getId())
+                .add("image", getImageId())
+                .add("name", getName())
+                .add("type", getType())
+                .add("location", getLocation())
                 .omitNullValues()
                 .toString();
     }

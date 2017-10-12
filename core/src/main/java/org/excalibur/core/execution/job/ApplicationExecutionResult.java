@@ -27,7 +27,7 @@ import org.excalibur.core.cloud.api.VirtualMachine;
 import org.excalibur.core.domain.User;
 import org.excalibur.core.execution.domain.Application;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application-exec-result")
@@ -295,7 +295,7 @@ public class ApplicationExecutionResult implements Serializable, Cloneable
 	@Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", getId())
                 .add("job id", getJobId())
                 .add("owner", getUser())

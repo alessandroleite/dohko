@@ -30,7 +30,7 @@ import org.excalibur.core.cloud.api.domain.Endpoint;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 @JsonRootName("provider-info")
 @JsonPropertyOrder(value = { "name", "endpoint" })
@@ -97,6 +97,10 @@ public class ProviderDetails implements Serializable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("name", getName()).add("endpoint", getEndpoint()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("name", getName())
+        		.add("endpoint", getEndpoint())
+        		.omitNullValues()
+        		.toString();
     }
 }

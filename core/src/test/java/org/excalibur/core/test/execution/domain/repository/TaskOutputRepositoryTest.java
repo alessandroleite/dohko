@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
-import org.excalibur.core.execution.domain.Applications;
 import org.excalibur.core.execution.domain.TaskOutput;
 import org.excalibur.core.execution.domain.repository.JobRepository;
 import org.excalibur.core.execution.domain.repository.TaskOutputRepository;
@@ -49,8 +48,7 @@ public class TaskOutputRepositoryTest extends TestSupport
                 .setName("who")
                 .setPlainText("who");
         
-        job.setApplications(new Applications().add(task));
-        
+        job.addApplication(task);
         
         job.setInternalId(openRepository(JobRepository.class).insert(job));
         openRepository(TaskRepository.class).insert(task);

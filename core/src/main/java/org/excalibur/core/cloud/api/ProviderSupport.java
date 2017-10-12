@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.excalibur.core.cloud.api.domain.Services;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -178,7 +179,7 @@ public class ProviderSupport implements Provider, Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name", this.getName())
                 .add("description", this.getDescription())
                 .add("max-instances", this.getLimitOfResourcesPerType())

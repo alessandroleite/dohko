@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.excalibur.core.util.DateUtils2;
 
+import com.google.common.base.MoreObjects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="instance-state")
 public class InstanceStateDetails implements Serializable, Cloneable
@@ -178,7 +180,7 @@ public class InstanceStateDetails implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                   .add("instance", getInstance())
                   .add("state", getState())
                   .add("time", DateUtils2.toUTC(getTime()))

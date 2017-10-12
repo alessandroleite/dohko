@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.excalibur.core.domain.UserKey;
+import org.excalibur.core.util.CloneIterableFunction;
 
 import static com.google.common.collect.Lists.*;
 import static com.google.common.base.Preconditions.*;
@@ -114,7 +115,7 @@ public class UserKeys implements Iterable<UserKey>, Cloneable, Serializable
         synchronized (keys_)
         {
             checkPositionIndex(index, this.keys_.size());
-            return this.keys_.get(index);
+            return keys_.get(index);
         }
     }
     
@@ -132,11 +133,8 @@ public class UserKeys implements Iterable<UserKey>, Cloneable, Serializable
             clone = new UserKeys();
         }
         
-        for (UserKey key: this.keys_)
-        {
-            clone.add(key.clone());
-        }
-        
+        clone.keys_.clear();
+        new CloneIterableFunction<UserKey>().apply(keys_).forEach(clone::add);
         return clone;
     }
 }

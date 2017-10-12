@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.domain.UserProviderCredentials;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlRootElement(name = "instance-configuration")
@@ -241,12 +242,12 @@ public class VmConfiguration implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
-                .add("ip", this.getPublicIpAddress())
-                .add("dns", this.getPublicDnsName())
-                .add("platform", this.getPlatform())
-                .add("username", this.getPlatformUserName())
-                .add("keyname", this.getKeyName())
+        return MoreObjects.toStringHelper(this)
+                .add("ip", getPublicIpAddress())
+                .add("dns", getPublicDnsName())
+                .add("platform", getPlatform())
+                .add("username", getPlatformUserName())
+                .add("keyname", getKeyName())
                 .omitNullValues()
                 .toString();
     }

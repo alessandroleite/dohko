@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -110,7 +111,11 @@ public class Placement implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("group", this.getGroupName()).add("zone", this.getZone()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		.add("group", getGroupName())
+        		.add("zone", getZone())
+        		.omitNullValues()
+        		.toString();
     }
 
     @Override
@@ -123,7 +128,7 @@ public class Placement implements Serializable, Cloneable
         }
         catch (CloneNotSupportedException e)
         {
-            clone = new Placement().setGroupName(this.groupName_).setZone(this.zone_);
+            clone = new Placement().setGroupName(groupName_).setZone(zone_);
         }
 
         return (Placement) clone;

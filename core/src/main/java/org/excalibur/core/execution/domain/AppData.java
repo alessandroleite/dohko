@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.util.YesNoEnum;
 
+import com.google.common.base.MoreObjects;
+
 import static com.google.common.base.Objects.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -154,7 +156,7 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
     @Override
     public String toString()
     {
-        return toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name", this.getName())
                 .add("path", this.getPath())
                 .add("isGenerated", this.getGenerated())

@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -284,7 +285,12 @@ public class Region implements Serializable, Comparable<Region>, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("endpoint", this.getEndpoint()).omitNullValues().toString();
+        return MoreObjects.toStringHelper(this)
+        		          .add("id", getId())
+        		          .add("name", getName())
+        		          .add("endpoint", getEndpoint())
+        		          .omitNullValues()
+        		          .toString();
     }
 
     @Override
@@ -296,21 +302,22 @@ public class Region implements Serializable, Comparable<Region>, Cloneable
     @Override
     public Region clone() 
     {
-        Region cloned;
+        Region clone;
         
         try
         {
-            cloned = (Region) super.clone();
+            clone = (Region) super.clone();
         }
         catch (CloneNotSupportedException e)
         {
-            cloned = new Region()
-                    .setCity(this.getCity())
-                    .setEndpoint(this.getEndpoint())
-                    .setGeographicRegion(this.getGeographicRegion().clone())
-                    .setName(this.getName()).setStatus(this.getStatus());
+            clone = new Region()
+                    .setCity(getCity())
+                    .setEndpoint(getEndpoint())
+                    .setGeographicRegion(getGeographicRegion().clone())
+                    .setName(getName())
+                    .setStatus(getStatus());
         }
         
-        return cloned;
+        return clone;
     }
 }

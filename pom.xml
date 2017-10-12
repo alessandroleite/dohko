@@ -20,7 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<source.version>1.7</source.version>
+		<source.version>1.8</source.version>
 
 		<internal.snapshots.repo.path>file://${project.basedir}/maven-repo/snapshots</internal.snapshots.repo.path>
 		<internal.release.repo.path>file://${project.basedir}/maven-repo/releases</internal.release.repo.path>
@@ -33,7 +33,7 @@
 		<aspectjtools.version>1.8.0</aspectjtools.version>
 		<aspectj-maven-plugin.version>1.5</aspectj-maven-plugin.version>
 
-		<guava.version>16.0</guava.version>
+		<guava.version>23.1-jre</guava.version>
 		<jscience.version>4.3.1</jscience.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-io.version>2.4</commons-io.version>

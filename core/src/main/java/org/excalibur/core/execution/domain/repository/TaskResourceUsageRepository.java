@@ -60,6 +60,4 @@ public interface TaskResourceUsageRepository extends Closeable
 					.setValue(r.getBigDecimal("value"));
 		}
 	}
-
-	
 }

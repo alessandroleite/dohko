@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -77,9 +77,9 @@ public class KeyPairs implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
-                .add("public-key", this.getPublicKey())
-                .add("private-key", this.getPrivateKey())
+        return MoreObjects.toStringHelper(this)
+                .add("public-key", getPublicKey())
+                .add("private-key", getPrivateKey())
                 .omitNullValues()
                 .toString();
     }
@@ -100,7 +100,7 @@ public class KeyPairs implements Serializable, Cloneable
         
         for (int i = 0; i < keys_.length; i++)
         {
-            clone.keys_[i] = this.keys_[i].clone();
+            clone.keys_[i] = keys_[i].clone();
         }
 
         return clone;

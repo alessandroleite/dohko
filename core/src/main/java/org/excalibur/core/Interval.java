@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "interval")
@@ -107,7 +107,11 @@ public class Interval implements Serializable, Cloneable
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).omitNullValues().add("min", this.getMin()).add("max", getMax()).toString();
+        return MoreObjects.toStringHelper(this)
+        		          .omitNullValues()
+        		          .add("min", this.getMin())
+        		          .add("max", getMax())
+        		          .toString();
     }
 
 }
