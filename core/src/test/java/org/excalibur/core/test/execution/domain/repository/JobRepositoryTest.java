@@ -30,6 +30,8 @@ import org.excalibur.core.execution.domain.repository.TaskStatusRepository;
 import org.excalibur.core.test.TestSupport;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static java.util.UUID.*;
 import static java.lang.System.*;
 
@@ -42,7 +44,7 @@ public class JobRepositoryTest extends TestSupport
     private TaskStatusRepository statusRepository_;
     
     @Override
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         jobRepository_ = openRepository(JobRepository.class);
@@ -73,8 +75,11 @@ public class JobRepositoryTest extends TestSupport
         
         jobRepository_.insert(job);
         taskRepository_.insert(who);
-        statusRepository_.insert(new TaskStatus().setDate(new Date()).setTaskId(who.getId()).setPid(3200).setType(TaskStatusType.PENDING));
-        statusRepository_.insert(new TaskStatus().setDate(new Date()).setTaskId(who.getId()).setPid(6800).setType(TaskStatusType.RUNNING).setWorker("1"));
+        
+        long statusTime = System.currentTimeMillis();
+        
+        statusRepository_.insert(new TaskStatus().setDate(new Date(statusTime)).setTaskId(who.getId()).setPid(3200).setType(TaskStatusType.PENDING));
+        statusRepository_.insert(new TaskStatus().setDate(new Date(statusTime + 2000)).setTaskId(who.getId()).setPid(6800).setType(TaskStatusType.RUNNING).setWorker("1"));
         
         List<Application> tasks = taskRepository_.findAllTasksOfJob(job.getId());
         assertNotNull(tasks);
@@ -84,7 +89,7 @@ public class JobRepositoryTest extends TestSupport
         assertNotNull(statuses);
         assertEquals(2, statuses.size());
         
-        assertEquals(statuses.get(statuses.size() - 1), statusRepository_.getLastStatusOfTask(who.getId()));
+        assertEquals(statuses.get(statuses.size() - 1),  statusRepository_.getLastStatusOfTask(who.getId()).orNull());
         
     }
 }

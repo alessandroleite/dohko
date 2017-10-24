@@ -33,6 +33,8 @@ import static java.util.UUID.*;
 
 import com.google.common.collect.Iterables;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.excalibur.core.execution.domain.TaskOutputType.*;
 
 import static org.junit.Assert.*;
@@ -43,7 +45,7 @@ public class TaskOutputRepositoryTest extends TestSupport
     private Application task;
     
     @Override
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         taskOutputRepository_ = openRepository(TaskOutputRepository.class);

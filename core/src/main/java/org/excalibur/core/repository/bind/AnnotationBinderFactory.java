@@ -32,6 +32,10 @@ import org.skife.jdbi.v2.sqlobject.BinderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @see io.dohko.jdbi.binders.AnnotationBinderFactory
+ */
+@Deprecated
 public class AnnotationBinderFactory implements BinderFactory
 {
     @SuppressWarnings("rawtypes")
@@ -98,15 +102,7 @@ public class AnnotationBinderFactory implements BinderFactory
                     
                     q.bind(paramParts[0], propertyValue);
                 }
-                catch (IllegalAccessException e)
-                {
-                    LOG.error(e.getMessage(), e);
-                }
-                catch (InvocationTargetException e)
-                {
-                    LOG.error(e.getMessage(), e);
-                }
-                catch (NoSuchMethodException e)
+                catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
                 {
                     LOG.error(e.getMessage(), e);
                 }

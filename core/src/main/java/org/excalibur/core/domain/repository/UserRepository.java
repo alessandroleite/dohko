@@ -41,8 +41,11 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import com.google.common.base.Strings;
 
+import io.dohko.jdbi.stereotype.Repository;
+
 //import static org.excalibur.core.cipher.TripleDESUtils.*;
 
+@Repository
 @RegisterMapper(UserResultSetRowMapper.class)
 public interface UserRepository extends Closeable
 {

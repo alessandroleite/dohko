@@ -30,6 +30,8 @@ import org.excalibur.core.test.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,7 +44,7 @@ public class DeploymentRepositoryTest extends TestSupport
 
     @Override
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         deploymentRepository = openRepository(DeploymentRepository.class);

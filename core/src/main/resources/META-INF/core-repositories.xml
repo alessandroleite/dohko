@@ -95,8 +95,15 @@
     </bean> -->
 
 	<bean id="dbi" class="org.skife.jdbi.v2.spring.DBIFactoryBean" autowire="byName" depends-on="dataSource"/>
+	
+	<bean id="repositoryFactoryBeanProcessor"  class="io.dohko.jdbi.spring.beans.factory.DBIRepositoryDefinitionBeanFactoryProcessor"
+	      depends-on="dataSource">
+	      <constructor-arg value="org.excalibur"/>
+	</bean>
 
 	<!-- <bean class="org.excalibur.service.spring.config.AutowireCandidateResolverConfigurer"/> -->
+	
+	<!-- 
 	
 	<bean id="deploymentRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
 	   <constructor-arg ref="dbi"/>
@@ -186,6 +193,7 @@
 	<bean id="workflowRepository" class="org.excalibur.core.beans.JdbiRepositoryFactoryBean" depends-on="dbi">
 	   <constructor-arg ref="dbi"/>
 	   <constructor-arg value="org.excalibur.core.workflow.repository.WorkflowRepository"/>
-	</bean>
-	
+	</bean>	
+  -->
+
 </beans>

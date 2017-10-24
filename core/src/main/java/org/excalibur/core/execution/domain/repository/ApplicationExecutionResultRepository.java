@@ -34,6 +34,9 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import io.dohko.jdbi.stereotype.Repository;
+
+@Repository
 @RegisterMapper(InstanceStatementResultSetMapper.class)
 public interface ApplicationExecutionResultRepository extends Closeable
 {

@@ -252,7 +252,7 @@ public class Volume implements Serializable
             return true;
         }
 
-        if (!(obj instanceof Volume))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }

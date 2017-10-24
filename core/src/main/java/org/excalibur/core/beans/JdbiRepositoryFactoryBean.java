@@ -22,6 +22,11 @@ import org.springframework.beans.factory.FactoryBean;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * @deprecated
+ * @see io.dohko.jdbi.spring.beans.factory.JdbiRepositoryFactoryBean
+ */
+@Deprecated
 public class JdbiRepositoryFactoryBean<T> implements FactoryBean<T>
 {
     private final Class<T> repositoryClass_;

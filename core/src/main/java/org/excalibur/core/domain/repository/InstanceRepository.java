@@ -44,6 +44,9 @@ import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import io.dohko.jdbi.stereotype.Repository;
+
+@Repository
 @RegisterMapper(InstanceMapper.class)
 public interface InstanceRepository extends Closeable
 {

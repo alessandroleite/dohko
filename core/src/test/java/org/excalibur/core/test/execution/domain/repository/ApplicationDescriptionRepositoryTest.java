@@ -28,11 +28,17 @@ import org.excalibur.core.test.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.excalibur.core.execution.domain.FailureAction.*;
 import static org.excalibur.core.util.YesNoEnum.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+
+import static java.util.Calendar.SECOND;
+import static org.apache.commons.lang3.time.DateUtils.*;
+import static org.excalibur.core.util.DateUtils2.*;
 
 public class ApplicationDescriptionRepositoryTest extends TestSupport
 {
@@ -42,7 +48,7 @@ public class ApplicationDescriptionRepositoryTest extends TestSupport
 
     @Override
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         
@@ -77,6 +83,6 @@ public class ApplicationDescriptionRepositoryTest extends TestSupport
         assertThat(expected.getResource(), equalTo(newState.getResource()));
         assertThat(expected.getUser().getId(), equalTo(newState.getUser().getId()));
         assertThat(expected.getId(), equalTo(newState.getId()));
-        assertThat(expected.getCreatedIn().getTime(), equalTo(newState.getCreatedIn().getTime()));
+        assertThat(truncate(toUTC(expected.getCreatedIn()), SECOND).getTime(), equalTo(truncate(toUTC(newState.getCreatedIn()), SECOND).getTime()));
     }
 }

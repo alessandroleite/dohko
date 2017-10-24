@@ -16,7 +16,7 @@
  */
 package org.excalibur.core.test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,11 +44,11 @@ public class GenerateProvidersInstanceTypesTable extends TestSupport
     private InstanceTypeRepository instanceTypeRepository_;
     
     @Override
-    @Before
+//    @Before
     public void setup() throws IOException
     {
 //        super.setup();
-        ds = JdbcConnectionPool.create("jdbc:h2:tcp://localhost:6083/~/.excalibur/database/database", "", "");
+//        ds = JdbcConnectionPool.create("jdbc:h2:tcp://localhost:6083/~/.excalibur/database/database", "", "");
         dbi = new DBI(ds);
         
         this.instanceTypeRepository_ = this.openRepository(InstanceTypeRepository.class);
@@ -69,7 +69,7 @@ public class GenerateProvidersInstanceTypesTable extends TestSupport
         
     }
     
-    @Test
+//    @Test
     public void must_generate_one_table()
     {
         printProviderInstanceTypesTable(1, "us-east-1", 37);

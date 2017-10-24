@@ -36,11 +36,17 @@ import org.excalibur.core.test.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.excalibur.core.util.YesNoEnum.*;
 import static org.excalibur.core.execution.domain.FailureAction.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+
+import static org.apache.commons.lang3.time.DateUtils.truncate;
+import static java.util.Calendar.SECOND;
+import static org.excalibur.core.util.DateUtils2.toUTC;
 
 public class ApplicationExecutionResultRepositoryTest extends TestSupport
 {
@@ -51,7 +57,7 @@ public class ApplicationExecutionResultRepositoryTest extends TestSupport
 
     @Override
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         this.instanceStatementRepository_ = openRepository(ApplicationExecutionResultRepository.class);
@@ -119,10 +125,10 @@ public class ApplicationExecutionResultRepositoryTest extends TestSupport
         assertThat(is1, equalTo(is2));
         assertThat(is1.getError(), equalTo(is2.getError()));
         assertThat(is1.getExitCode(), equalTo(is2.getExitCode()));
-        assertThat(new Date(is1.getFinishedIn().getTime()), equalTo(new Date(is2.getFinishedIn().getTime())));
+        assertThat(truncate(toUTC(is1.getFinishedIn()), SECOND).getTime(), equalTo(truncate(toUTC(is2.getFinishedIn()), SECOND).getTime()));
         assertThat(is1.getInstance(), equalTo(is2.getInstance()));
         assertThat(is1.getOutput(), equalTo(is2.getOutput()));
-        assertThat(new Date(is1.getStartedIn().getTime()), equalTo(new Date(is2.getStartedIn().getTime())));
+        assertThat(truncate(toUTC(is1.getStartedIn()), SECOND).getTime(), equalTo(truncate(toUTC(is2.getStartedIn()), SECOND).getTime()));
         assertThat(is1.getApplication(), equalTo(is2.getApplication()));
     }
 }

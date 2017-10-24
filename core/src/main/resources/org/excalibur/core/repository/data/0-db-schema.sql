@@ -15,73 +15,78 @@
 --     along with this program.  If not, see <http://www.gnu.org/licenses/>
 --
 
-create table unit_time
+CREATE DATABASE IF NOT EXISTS dohko;
+USE dohko;
+
+-- by default MariaDB uses current_time for date and timestamp types. Thus, declare date type as x timestamp null
+
+create table if not exists unit_time
 (
   id integer not null primary key, 
   name varchar(10) not null
 );
 
-create unique index idx_unit_time_name on unit_time (name);
+create unique index if not exists idx_unit_time_name on unit_time (name);
 
-create table geographic_region
+create table if not exists geographic_region
 (
   id integer not null primary key,
   name varchar(20) not null
 );
 
-create unique index idx_geographic_region_name on geographic_region (name);
+create unique index if not exists  idx_geographic_region_name on geographic_region (name);
 
-create table provider
+create table if not exists provider
 (
-  id IDENTITY  not null primary key,
+  id integer not null auto_increment primary key,
   name varchar(45) not null,
   class_name varchar(200) not null,
   ub_instances_per_type int not null   
 );
 
-create table region
+create table if not exists region
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   geographic_region_id integer not null references geographic_region(id),
   name varchar(120) not null,
   endpoint varchar(255) not null,
   city_name varchar(60)
 );
 
-create unique index idx_region_name on region(name);
-create index idx_region_greographic_id on region(geographic_region_id);
+create unique index if not exists  idx_region_name on region(name);
+create index if not exists  idx_region_greographic_id on region(geographic_region_id);
 
-create table zone
+create table if not exists zone
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   region_id integer not null references region (id),
   name varchar(30) not null  
 );
 
-create index idx_zone_region on zone (region_id);
-create unique index idx_zone_name on zone (name);
+create index if not exists  idx_zone_region on zone (region_id);
+create unique index if not exists  idx_zone_name on zone (name);
 
-create table region_provider 
+create table if not exists region_provider 
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   region_id integer not null references region (id),
   provider_id integer not null references provider (id)  
 );
 
-create unique index idx_region_provider_k on region_provider (region_id, provider_id);
+create unique index if not exists  idx_region_provider_k on region_provider (region_id, provider_id);
 
-create table instance_family_type
+create table if not exists instance_family_type
 (
   id integer not null primary key,
   name varchar(100) not null
 );
 
-create unique index idx_ift_name on instance_family_type (name);
+create unique index if not exists  idx_ift_name on instance_family_type (name);
 
 
-create table virtual_instance_image
+create table if not exists virtual_instance_image
 ( 
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   region_id integer not null references region(id),
   hypervisor_id integer not null,
   virtualization_type_id integer not null,
@@ -94,12 +99,12 @@ create table virtual_instance_image
   check (os_architecture_id in (1,2)) 
 );
 
-create unique index idx_vmi_name on virtual_instance_image (name, region_id);
-create index idx_vmi_region_id on virtual_instance_image (region_id);
+create unique index if not exists  idx_vmi_name on virtual_instance_image (name, region_id);
+create index if not exists  idx_vmi_region_id on virtual_instance_image (region_id);
 
-create table instance_type
+create table if not exists instance_type
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   provider_id integer not null references provider(id),
   family_type_id integer not null references instance_family_type (id),
   name varchar(60) not null,
@@ -130,9 +135,9 @@ create table instance_type
   check (support_placement_group in ('Y', 'N'))
 );
 
-create unique index idx_instance_type_name on instance_type(provider_id, name);
-create index idx_instance_type_provider    on instance_type(provider_id);
-create index idx_instance_type_family      on instance_type(family_type_id);
+create unique index if not exists  idx_instance_type_name on instance_type(provider_id, name);
+create index if not exists  idx_instance_type_provider    on instance_type(provider_id);
+create index if not exists  idx_instance_type_family      on instance_type(family_type_id);
 
 --create index idx_instance_type_family on instance_type(family_type_id);
 
@@ -144,52 +149,52 @@ create index idx_instance_type_family      on instance_type(family_type_id);
 --  primary key(provider_id, instance_type_id, family_type_id)
 --);
 
-create table instance_type_cost
+create table if not exists instance_type_cost
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   instance_type_id integer not null references instance_type (id),
   region_provider_id integer not null references region_provider (id),
   unit_time_id integer not null references unit_time (id),
   minimal_time integer not null,  
   cost_per_unit_time DECIMAL(10,6) not null,   
   start_in timestamp not null,
-  finish_in timestamp
+  finish_in timestamp null
 );
 
-create unique index idx_itc_k on instance_type_cost(instance_type_id, region_provider_id);
+create unique index if not exists  idx_itc_k on instance_type_cost(instance_type_id, region_provider_id);
 
-create table instance_state_type 
+create table if not exists instance_state_type 
 (
   id integer  not null primary key,
   name varchar(30) not null
 );
 
-create unique index idx_instance_state_type_name on instance_state_type (name);
+create unique index if not exists  idx_instance_state_type_name on instance_state_type (name);
 
-create table user
+create table if not exists user
 (
-  id IDENTITY  not null primary key,
+  id integer not null auto_increment primary key,
   username varchar(40) not null,
   passwd varchar(32) not null
 );
 
-create unique index idx_user_username on user (username);
+create unique index if not exists  idx_user_username on user (username);
 
-create table user_key
+create table if not exists user_key
 (
-  id IDENTITY  not null  primary key,
+  id integer not null auto_increment primary key,
   user_id integer  not null references user(id),
   name varchar(100) not null,
   public_key_material text,
-  private_key_material text,  
+  private_key_material text  
 );
 
-create unique index idx_user_key_name on user_key (user_id,name);
-create index idx_user_key_user on user_key (user_id);
+create unique index if not exists  idx_user_key_name on user_key (user_id,name);
+create index if not exists  idx_user_key_user on user_key (user_id);
 
-create table user_provider_credential
+create table if not exists user_provider_credential
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   user_id integer not null references user(id),
   provider_id integer not null references provider(id),
   access_identity text not null,
@@ -197,13 +202,13 @@ create table user_provider_credential
   project_name text
 );
 
-create index idx_user_provider_credential_u on user_provider_credential (user_id);
-create index idx_user_provider_credential_p on user_provider_credential (provider_id);
+create index if not exists  idx_user_provider_credential_u on user_provider_credential (user_id);
+create index if not exists  idx_user_provider_credential_p on user_provider_credential (provider_id);
 
 
-create table disk_type
+create table if not exists disk_type
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   provider_id integer not null references provider (id),
   name varchar(40) not null,
   min_size_gb integer not null,
@@ -214,31 +219,30 @@ create table disk_type
   check(max_size_gb > 0 and max_size_gb >= min_size_gb)
 );
 
-create index idx_disk_type on disk_type (provider_id);
+create index if not exists  idx_disk_type on disk_type (provider_id);
 
-
-create table disk
+create table if not exists disk
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   type_id integer not null references disk_type (id),
   zone_id integer not null references zone (id),  
   owner_id integer not null references user (id),
   name varchar(40) not null,
   size_gb integer not null,
   iops integer not null,
-  created_in timestamp not null,
-  deleted_in timestamp,
+  created_in timestamp not null null,
+  deleted_in timestamp null,
   check (size_gb > 0)   
 );
 
-create index idx_disk_type_id on disk (type_id);
-create index idx_disk_zone on disk (zone_id);
-create index idx_disk_owner on disk (owner_id);
-create unique index idx_disk_name on disk (name);
+create index if not exists  idx_disk_type_id on disk (type_id);
+create index if not exists  idx_disk_zone on disk (zone_id);
+create index if not exists  idx_disk_owner on disk (owner_id);
+create unique index if not exists  idx_disk_name on disk (name);
 
-create table disk_type_cost
+create table if not exists disk_type_cost
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   region_provider_id integer not null references region_provider (id),
   unit_time_id integer not null references unit_time (id),
   disk_type_id integer not null references disk_type (id),
@@ -246,21 +250,21 @@ create table disk_type_cost
   cost_iops decimal (10,6) not null default 0,
   cost_million_request decimal(10,6) not null default 0,
   start_in timestamp not null,
-  finish_in timestamp,
+  finish_in timestamp null,
   check (cost_storage_gb >= 0),
   check (cost_iops >= 0),
   check (cost_million_request >= 0)
 );
 
-create index idx_disk_cost_region_provider on disk_type_cost (region_provider_id);
-create index idx_disk_cost_unit_time on disk_type_cost (unit_time_id);
-create index idx_disk_type_disk on disk_type_cost (disk_type_id);
-create unique index uk_disk_type on disk_type_cost (region_provider_id, disk_type_id, start_in);
+create index if not exists  idx_disk_cost_region_provider on disk_type_cost (region_provider_id);
+create index if not exists  idx_disk_cost_unit_time on disk_type_cost (unit_time_id);
+create index if not exists  idx_disk_type_disk on disk_type_cost (disk_type_id);
+create unique index if not exists  uk_disk_type on disk_type_cost (region_provider_id, disk_type_id, start_in);
 
 
-create table instance
+create table if not exists instance
 (
-  id IDENTITY  not null primary key,
+  id integer not null auto_increment primary key,
   instance_type_id integer  not null references instance_type (id),
   zone_id integer not null references zone (id),
   owner_id integer  not null references user (id),
@@ -270,35 +274,35 @@ create table instance
   public_ip varchar(15),
   private_ip varchar(15),
   public_dns varchar(200),
-  launch_time timestamp,
+  launch_time timestamp null,
   platform varchar(7) not null,
   platform_username varchar(30) not null,
   keyname varchar(100) not null,
   user_data text
 );
 
-create index idx_instance_instance_type_id on instance (instance_type_id);
-create unique index idx_instance_owner on instance (owner_id, name);
-create unique index idx_instance_name on instance (name);
-create index idx_instance_owner_id on instance (owner_id);
-create index idx_instance_zone on instance (zone_id);
+create index if not exists  idx_instance_instance_type_id on instance (instance_type_id);
+create unique index if not exists  idx_instance_owner on instance (owner_id, name);
+create unique index if not exists  idx_instance_name on instance (name);
+create index if not exists  idx_instance_owner_id on instance (owner_id);
+create index if not exists  idx_instance_zone on instance (zone_id);
 
-create table instance_state_history
+create table if not exists instance_state_history
 (
-  id IDENTITY  not null  primary key,
+  id integer not null auto_increment primary key,
   instance_id integer  not null references instance (id),
   instance_state_type_id integer  not null references instance_state_type (id),
   state_time timestamp not null,
   description text
 );
 
-create index idx_inst_hist_state_instance_id on instance_state_history (instance_id);
-create index idx_inst_hist_state_type_id on instance_state_history (instance_state_type_id);
-create unique index idx_inst_hist_u on instance_state_history (instance_id, instance_state_type_id, state_time);
+create index if not exists  idx_inst_hist_state_instance_id on instance_state_history (instance_id);
+create index if not exists  idx_inst_hist_state_type_id on instance_state_history (instance_state_type_id);
+create unique index if not exists  idx_inst_hist_u on instance_state_history (instance_id, instance_state_type_id, state_time);
 
-create table instance_disk
+create table if not exists instance_disk
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   instance_id integer not null references instance (id),
   disk_id integer not null references disk (id),
   device_name varchar(30) not null,
@@ -306,11 +310,11 @@ create table instance_disk
   check (is_boot in ('Y', 'N'))
 );
 
-create unique index idx_instance_disk_uk on instance_disk(instance_id, disk_id);
+create unique index if not exists  idx_instance_disk_uk on instance_disk(instance_id, disk_id);
 
-create table instance_tag
+create table if not exists instance_tag
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   instance_id integer not null references instance (id),
   tag_name varchar(63) not null,
   tag_value varchar(255) not null
@@ -319,9 +323,9 @@ create table instance_tag
 create index idx_instance_tag_inst_id on instance_tag (instance_id);
 create index idx_instance_tag_name on instance_tag (tag_name);
 
-create table script_statement
+create table if not exists script_statement
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   name varchar(60) not null,
   platform varchar(7) not null,
   statement text not null, 
@@ -331,44 +335,44 @@ create table script_statement
   check (active in ('Y', 'N'))
 );
 
-create unique index idx_script_statement_name on script_statement (name, platform);
+create unique index if not exists  idx_script_statement_name on script_statement (name, platform);
 
 -- INSERT INTO instance_configuration_script (statement, parents, state) values ()  
 
 --instance_executed_statement
 
 
-create table application_execution_description 
+create table if not exists application_execution_description 
 (
-   id IDENTITY not null primary key,
+   id integer not null auto_increment primary key,
    user_id integer not null references user (id),
    application_id integer not null references script_statement (id),
    failure_action_id integer not null,
    name varchar(60) not null, 
    resource_name varchar(30) not null, 
    number_of_execution integer not null,
-   created_in timestamp not null,
+   created_in timestamp not null null,
    check (number_of_execution > 0)
 );
 
-create index idx_app_exec_desc_user_id on application_execution_description (user_id);
-create index idx_app_exec_desc_app_id on application_execution_description (application_id);
+create index if not exists  idx_app_exec_desc_user_id on application_execution_description (user_id);
+create index if not exists  idx_app_exec_desc_app_id on application_execution_description (application_id);
 
-create table application_execution_result
+create table if not exists application_execution_result
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   instance_id integer not null references instance(id),
   app_description_id integer not null references application_execution_description (id),
   started_in  timestamp not null,
-  finished_in timestamp,
+  finished_in timestamp null,
   exit_code integer,
   statement_output text,
   statement_error text  
 );
 
 --create unique index idx_uk_appl_exec_state_inst on application_execution_history (instance_id, statement_id);
-create index        idx_appl_exec_state_inst    on application_execution_result (instance_id);
-create index        idx_appl_exec_state_app     on application_execution_result (app_description_id);
+create index if not exists        idx_appl_exec_state_inst    on application_execution_result (instance_id);
+create index if not exists        idx_appl_exec_state_app     on application_execution_result (app_description_id);
 
 -- INSERT INTO instance_executed_statement (id_instance, id_statement, started_in, finished_in, exit_code) VALUES ()
 
@@ -390,9 +394,9 @@ create index        idx_appl_exec_state_app     on application_execution_result 
 ---------------------------------------------------------------------
 ---                     Spot instance offer                       ---
 ---------------------------------------------------------------------
-create table spot_instance_offer
+create table if not exists spot_instance_offer
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   instance_type_id integer not null references instance_type (id),  
   provider_id integer not null references provider (id),
   region_id integer not null references region (id),
@@ -400,8 +404,8 @@ create table spot_instance_offer
   instance_image_id varchar(50) not null, 
   user_keyname varchar(40) not null,
   offer_price decimal(10,6) not null,  
-  offer_from timestamp,
-  offer_until timestamp,
+  offer_from timestamp null,
+  offer_until timestamp null,
   offer_type_id integer not null,
   number_instances integer not null,  
   create_time timestamp not null,  
@@ -410,13 +414,13 @@ create table spot_instance_offer
   check (offer_price >= 0)
 );
 
-create index idx_spot_req_own on spot_instance_offer (owner_id);
-create index idx_spot_req_region on spot_instance_offer (region_id);
-create index idx_spot_req_provider on spot_instance_offer (provider_id);
+create index if not exists  idx_spot_req_own on spot_instance_offer (owner_id);
+create index if not exists  idx_spot_req_region on spot_instance_offer (region_id);
+create index if not exists  idx_spot_req_provider on spot_instance_offer (provider_id);
 
 create table spot_instance_offer_status
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   spot_instance_offer_id integer not null references spot_instance_offer (id),
   instance_id integer references instance (id),
   spot_offer_state_id integer not null, 
@@ -426,24 +430,24 @@ create table spot_instance_offer_status
   status_message text
 );
 
-create index idx_spot_req_st_s on spot_instance_offer_status (spot_instance_offer_id);
-create index idx_spot_req_st_i on spot_instance_offer_status (instance_id);
+create index if not exists  idx_spot_req_st_s on spot_instance_offer_status (spot_instance_offer_id);
+create index if not exists  idx_spot_req_st_i on spot_instance_offer_status (instance_id);
 
-create table workflow
+create table if not exists workflow
 (
-  id IDENTITY  not null  primary key,
+  id integer not null auto_increment primary key,
   user_id integer  not null references user(id),
   start_activity_id integer,   
   created_in datetime not null, 
-  finished_in datetime,
+  finished_in datetime null,
   name varchar(150) not null
 );
 
-create index idx_workflow_user_id on workflow(user_id);
+create index if not exists  idx_workflow_user_id on workflow(user_id);
 
 create table workflow_activity
 (
-  id IDENTITY  not null primary key,
+  id integer not null auto_increment primary key,
   activity_id integer not null,  
   workflow_id integer  not null references workflow(id),
   label varchar(150) not null,  
@@ -451,15 +455,15 @@ create table workflow_activity
   parents varchar(60)
 );
 
-create index idx_workflow_activity_workflow_id on workflow_activity (workflow_id);
-create unique index idx_workflow_activity_act_id on workflow_activity(workflow_id, activity_id);
+create index if not exists  idx_workflow_activity_workflow_id on workflow_activity (workflow_id);
+create unique index if not exists  idx_workflow_activity_act_id on workflow_activity(workflow_id, activity_id);
 
-create table workflow_activity_state_history
+create table if not exists workflow_activity_state_history
 (
-  id IDENTITY  not null primary key,
+  id integer not null auto_increment primary key,
   workflow_activity_id integer not null references workflow_activity(id),
   state varchar(150) not null,
-  state_time timestamp not null,
+  state_time timestamp not null null,
   message text
 );
 
@@ -467,19 +471,19 @@ create index idx_workflow_activity_state on workflow_activity_state_history (wor
 
 create table workflow_activity_task
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   workflow_activity_id integer not null references workflow_activity(id),  
   executable text,
   type text  
 );
 
-create index idx_workflow_activity_task_act on workflow_activity_task (workflow_activity_id);
+create index if not exists  idx_workflow_activity_task_act on workflow_activity_task (workflow_activity_id);
 
 -- INSERT INTO workflow_activity_task (workflow_activity_id, command, type) VALUES ()
 
-create table workflow_activity_task_data
+create table if not exists workflow_activity_task_data
 (
-   id IDENTITY not null primary key,
+   id integer not null auto_increment primary key,
    activity_task_id integer not null references workflow_activity_task(id),     
    type char(1) not null,
    is_dynamic char(1) not null default 'N',
@@ -494,37 +498,36 @@ create table workflow_activity_task_data
    check (is_splittable in ('Y', 'N'))   
 );
 
-create index idx_workflow_data_task_id on workflow_activity_task_data (activity_task_id);
-create unique index idx_u_workflow_data_name on workflow_activity_task_data (activity_task_id, name);
+create index if not exists idx_workflow_data_task_id on workflow_activity_task_data (activity_task_id);
+create unique index if not exists idx_u_workflow_data_name on workflow_activity_task_data (activity_task_id, name);
 
-
-create table workflow_activity_task_state
+create table if not exists workflow_activity_task_state
 (
-   id IDENTITY not null primary key,
+   id integer not null auto_increment primary key,
    activity_task_id integer not null references workflow_activity_task(id),
    node_id integer not null references instance (id),
    state integer not null,
-   state_time timestamp not null,
+   state_time timestamp not null null,
    state_message text
 );
 
-create index idx_task_state_activity on workflow_activity_task_state (activity_task_id);
-create index idx_task_state_node on workflow_activity_task_state (node_id);
+create index if not exists  idx_task_state_activity on workflow_activity_task_state (activity_task_id);
+create index if not exists  idx_task_state_node on workflow_activity_task_state (node_id);
 
-create table service
+create table if not exists service
 (
-  id IDENTITY  not null  primary key,
+  id integer not null auto_increment primary key,
   name varchar(100) not null,
   uri varchar(200) not null,
   protocol varchar(10) not null,
   media_type varchar(120) not null
 );
 
-create index idx_service_name on service (name);
+create index if not exists  idx_service_name on service (name);
 
-create table deployment 
+create table if not exists deployment 
 (
-  id IDENTITY  not null  primary key,
+  id integer not null auto_increment primary key,
   user_id integer not null references user (id),
   username varchar(40) not null,
   workflow_id integer references workflow (id), 
@@ -534,14 +537,14 @@ create table deployment
   data text
 );
 
-create index idx_deployment_user_id on deployment (user_id);
-create index idx_deployment_workflow_id on deployment (workflow_id);
-create index idx_deployment_username on deployment (username);
+create index if not exists idx_deployment_user_id on deployment (user_id);
+create index if not exists idx_deployment_workflow_id on deployment (workflow_id);
+create index if not exists idx_deployment_username on deployment (username);
 
 
-create table jid_account 
+create table if not exists jid_account 
 (
- id IDENTITY not null primary key, 
+ id integer not null auto_increment primary key, 
  owner_id integer not null references user (id), 
  jid varchar(200) not null, 
  domain varchar(180) not null, 
@@ -549,18 +552,18 @@ create table jid_account
  name varchar(160),
  status char(1) not null default 'A',
  created_in timestamp default current_timestamp,
- date_status timestamp not null,
+ date_status timestamp not null null,
  resource text,
  attributes text,
  check (status in ('A', 'I'))
 );
 
-create index idx_jid_account_user_id on jid_account (owner_id);
-create unique index idx_jid_account_jid on jid_account (jid);
+create index if not exists idx_jid_account_user_id on jid_account (owner_id);
+create unique index if not exists idx_jid_account_jid on jid_account (jid);
 
-create table job
+create table if not exists job
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   user_id integer not null references user (id),
   uuid varchar(100) not null,
   name varchar(100) not null,
@@ -569,32 +572,32 @@ create table job
   finished_in bigint
 );
 
-create unique index idx_job_uuid on job(uuid);
-create index idx_job_user_id on job(user_id);
+create unique index if not exists idx_job_uuid on job(uuid);
+create index if not exists idx_job_user_id on job(user_id);
 
-create table task
+create table if not exists task
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   job_id integer not null references job (id),
   uuid varchar(100) not null,
   name varchar(50) not null,
   commandline text not null
 );
 
-create unique index idx_task_uuid on task(uuid);
-create index idx_task_job_id on task(job_id);
+create unique index if not exists idx_task_uuid on task(uuid);
+create index if not exists idx_task_job_id on task(job_id);
 
-create table task_status_type 
+create table if not exists task_status_type 
 (
   id integer not null primary key,
   name varchar(15) not null
 );
 
-create unique index idx_task_status_type_name on task_status_type (name);
+create unique index if not exists idx_task_status_type_name on task_status_type (name);
 
-create table task_status
+create table if not exists task_status
 (
-  id IDENTITY not null primary key,  
+  id integer not null auto_increment primary key,  
   task_id integer not null references task(id),
   task_status_type_id integer not null references task_status_type(id),
   status_time timestamp not null default current_timestamp,
@@ -602,39 +605,39 @@ create table task_status
   pid integer
 );
 
-create index idx_task_status_type on task_status(task_status_type_id);
-create index idx_task_status_task on task_status(task_id);
+create index if not exists idx_task_status_type on task_status(task_status_type_id);
+create index if not exists idx_task_status_task on task_status(task_id);
 
-create table task_output_type 
+create table if not exists task_output_type 
 (
   id integer not null primary key,
   name varchar(6) not null
 );
 
-create index task_output_type_name on task_output_type(name);
+create index if not exists task_output_type_name on task_output_type(name);
 
-create table task_output
+create table if not exists task_output
 (
-  id IDENTITY not null primary key,  
+  id integer not null auto_increment primary key,  
   task_id integer not null references task(id),
   uuid varchar(100) not null,
   task_output_type_id integer not null references task_output_type(id),
   value text
 );
 
-create unique index idx_task_output_uuid on task_output (uuid);
+create unique index if not exists idx_task_output_uuid on task_output (uuid);
 
-create table resource_type 
+create table if not exists resource_type 
 (
   id integer not null primary key,
   name varchar(6) not null
 );
 
-create unique index idx_resource_type_name on resource_type (name);
+create unique index if not exists idx_resource_type_name on resource_type (name);
 
-create table task_resource_usage 
+create table if not exists task_resource_usage 
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   task_id integer not null references task (id),
   resource_type_id integer not null references resource_type (id),
   pid integer not null,
@@ -642,34 +645,34 @@ create table task_resource_usage
   value numeric(8,6) not null
 );
 
-create index idx_tk_resource_usage_tk on task_resource_usage (task_id);
-create index idx_tk_resource_usage_rt on task_resource_usage (resource_type_id);
-create unique index idx_tk_resource_usage_uq on task_resource_usage (task_id, resource_type_id, pid, datetime);
+create index if not exists idx_tk_resource_usage_tk on task_resource_usage (task_id);
+create index if not exists idx_tk_resource_usage_rt on task_resource_usage (resource_type_id);
+create unique index if not exists idx_tk_resource_usage_uq on task_resource_usage (task_id, resource_type_id, pid, datetime);
 
-create table metric_type 
+create table if not exists metric_type 
 (
   id integer not null primary key,
   name varchar(30) not null
 );
 
-create table metric 
+create table if not exists metric 
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   type_id integer not null references metric_type (id),
   name varchar(60) not null
 );
 
-create unique index idx_metric_name on metric(name);
-create index idx_metric_type on metric (type_id);
+create unique index if not exists idx_metric_name on metric(name);
+create index if not exists idx_metric_type on metric (type_id);
 
-create table metric_unit
+create table if not exists metric_unit
 (
-  id IDENTITY not null primary key,
+  id integer not null auto_increment primary key,
   name varchar(30) not null,
   symbol varchar(6) not null
 );
 
-create unique index idx_metric_unit_name on metric_unit (name);
+create unique index if not exists idx_metric_unit_name on metric_unit (name);
 
 --create view vw_instance as
 --select 

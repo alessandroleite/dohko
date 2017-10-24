@@ -50,7 +50,9 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import static junit.framework.Assert.*;
+import ch.vorburger.exec.ManagedProcessException;
+
+import static org.junit.Assert.*;
 
 public class WorkflowExecutionTest extends TestSupport
 {
@@ -62,7 +64,7 @@ public class WorkflowExecutionTest extends TestSupport
     private VirtualMachine localNode;
 
     @Override
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         workflowRepository_ = openRepository(WorkflowRepository.class);

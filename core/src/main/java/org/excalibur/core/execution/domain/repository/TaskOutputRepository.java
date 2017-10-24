@@ -35,6 +35,9 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import io.dohko.jdbi.stereotype.Repository;
+
+@Repository
 @RegisterMapper(TaskOutputRowMapper.class)
 public interface TaskOutputRepository extends Closeable 
 {
@@ -54,15 +57,17 @@ public interface TaskOutputRepository extends Closeable
 	@SqlUpdate("DELETE FROM task_output WHERE id = :id")
 	void delete(@Bind("id") Integer id);
 	
-	@SqlQuery(" SELECT out.uuid, (SELECT t.uuid FROM task t WHERE lower(t.id) = lower(out.task_id)) as task_id,\n" + 
+	@SqlQuery(" SELECT ot.uuid, (SELECT t.uuid FROM task t WHERE lower(t.id) = lower(ot.task_id)) as task_id,\n" + 
 	          " task_output_type_id as type_id, value \n" +
-	          " FROM task_output out WHERE lower(out.uuid) = lower(:uuid)\n")
+	          " FROM task_output ot \n" + 
+	          " WHERE lower(ot.uuid) = lower(:uuid) \n")
 	TaskOutput getById(@Bind("uuid")String id);
 	
-	@SqlQuery(" SELECT out.uuid, (SELECT t.uuid FROM task t WHERE lower(t.uuid) = lower(:taskId)) as task_id,\n" + 
-	          " task_output_type_id as type_id, value \n" +
-	          " FROM task_output out ORDER BY out.id\n")
 	@Nonnull
+	@SqlQuery(" SELECT ot.uuid, (SELECT t.uuid FROM task t WHERE lower(t.uuid) = lower(:taskId)) as task_id,\n" + 
+	          " task_output_type_id as type_id, value \n" +
+	          " FROM task_output ot \n" + 
+	          " ORDER BY ot.id \n")
 	Iterable<TaskOutput> getAllOutputsOfTask(@Nonnull @Bind("taskId") String taskId);
 		
 	class TaskOutputRowMapper implements ResultSetMapper<TaskOutput> 

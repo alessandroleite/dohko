@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -213,13 +214,26 @@ public class VolumeType implements Serializable
             return true;
         }
         
-        if (!(obj instanceof VolumeType))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
         
         VolumeType other = (VolumeType) obj;
-        
         return Objects.equal(this.getId(), other.getId());
+    }
+    
+    @Override
+    public String toString() 
+    {
+    	return MoreObjects.toStringHelper(this)
+    			          .add("name", getName())
+    			          .add("min-size-gb", getMinSizeGb())
+    			          .add("max-size-gb", getMaxSizeGb())
+    			          .add("min-iops", getMinIops())
+    			          .add("max-iops", getMaxIops())
+    			          .add("provider", getProvider() != null ? getProvider().getName() : null)
+    			          .omitNullValues()
+    			          .toString();
     }
 }

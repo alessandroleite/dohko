@@ -16,9 +16,6 @@
  */
 package org.excalibur.core.test.execution.domain.repository;
 
-import static java.lang.System.currentTimeMillis;
-import static java.util.UUID.randomUUID;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +31,11 @@ import org.excalibur.core.execution.domain.repository.TaskStatusRepository;
 import org.excalibur.core.test.TestSupport;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
+import static java.lang.System.currentTimeMillis;
+import static java.util.UUID.randomUUID;
+
 import static java.math.BigDecimal.TEN;
 import static org.excalibur.core.execution.domain.ResourceType.CPU;
 import static org.excalibur.core.execution.domain.TaskStatusType.RUNNING;
@@ -46,11 +48,10 @@ public class TaskResourceUsageRepositoryTest extends TestSupport
 	private TaskStatus taskStatus_;
 	
 	@Override
-	public void setup() throws IOException 
+	public void setup() throws IOException, ManagedProcessException 
 	{
 		super.setup();
 		repository_ = openRepository(TaskResourceUsageRepository.class);
-		
 		
 		ApplicationDescriptor job = new ApplicationDescriptor()
         		.setId(randomUUID().toString())
@@ -109,7 +110,7 @@ public class TaskResourceUsageRepositoryTest extends TestSupport
     {
 		JobRepository jobRepository = openRepository(JobRepository.class);
 		String jobId = jobRepository.findJobOfTaskId(taskStatus_.getTaskId()).getId();
-		
+//		
 		repository_.deleteAllOfTask(taskStatus_.getTaskId());
 		openRepository(TaskStatusRepository.class).deleteAllStatusesOfTask(taskStatus_.getTaskId());
     	openRepository(TaskRepository.class).delete(taskStatus_.getTaskId());

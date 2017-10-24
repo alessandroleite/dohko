@@ -19,6 +19,7 @@ package org.excalibur.core.domain.repository;
 import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.excalibur.core.cloud.api.Volume;
@@ -67,14 +68,21 @@ public interface VolumeRepository extends Closeable
         @Override
         public Volume map(int index, ResultSet r, StatementContext ctx) throws SQLException
         {
+        	Date deletedIn = r.getTimestamp("disk_deleted_in");
+        	
+        	if (r.wasNull())
+        	{
+        		deletedIn = null;
+        	}
+        		
             return new Volume()
                     .setCreatedIn(r.getTimestamp("disk_created_in"))
-                    .setDeletedIn(r.getTimestamp("disk_deleted_in"))
+                    .setDeletedIn(deletedIn)
                     .setId(r.getInt("disk_id"))
                     .setIops(r.getInt("disk_iops"))
                     .setOwner(new User().setId(r.getInt("disk_owner_id")))
                     .setName(r.getString("disk_name"))
-                    .setSizeGb(r.getInt("size_gb"))
+                    .setSizeGb(r.getInt("disk_size"))
                     .setType(new VolumeTypeMapper().map(index, r, ctx))
                     .setZone(new Zone().setId(r.getInt("zone_id")).setName(r.getString("zone_name")));
         }

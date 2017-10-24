@@ -17,6 +17,8 @@
 
 -- Oregon -- current generations
 
+USE dohko;
+
 INSERT INTO instance_type_cost (region_provider_id, unit_time_id, instance_type_id, minimal_time, cost_per_unit_time, start_in)
 VALUES
 (

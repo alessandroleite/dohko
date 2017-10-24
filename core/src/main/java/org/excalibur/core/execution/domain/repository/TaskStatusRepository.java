@@ -35,8 +35,14 @@ import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import com.google.common.base.Optional;
+
+import io.dohko.jdbi.stereotype.Repository;
+
+@Repository
 @RegisterMapper(TaskStatusRepositorySetMapper.class)
 public interface TaskStatusRepository extends Closeable 
 {
@@ -72,12 +78,15 @@ public interface TaskStatusRepository extends Closeable
 	 * @param taskId id of the task to return its last status
 	 * @return the last status of the given task. It may be <code>null</code>
 	 */
+	@Nullable
+	@SingleValueResult
 	@SqlQuery("SELECT (SELECT t.uuid FROM task t WHERE t.id = ts.task_id and lower(t.uuid) = lower(:taskId)) as task_uuid, \n" + 
 	          " task_id, task_status_type_id, status_time, worker_id, pid \n" + 
 			  " FROM task_status ts\n" + 
-	          "WHERE ts.status_time = (SELECT MAX(status_time) FROM task_status tsm WHERE tsm.task_id = ts.task_id)")
-	@Nullable
-	TaskStatus getLastStatusOfTask(@Bind("taskId") String taskId);
+	          "WHERE \n" +
+			  " ts.task_id = (SELECT t.id FROM task t WHERE lower(t.uuid) = lower(:taskId)) AND \n" + 
+	          " ts.status_time = (SELECT MAX(status_time) FROM task_status tsm WHERE tsm.task_id = ts.task_id)")
+	Optional<TaskStatus> getLastStatusOfTask(@Bind("taskId") String taskId);
 	
 	class TaskStatusRepositorySetMapper implements ResultSetMapper<TaskStatus> 
 	{

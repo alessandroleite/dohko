@@ -27,7 +27,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+
+import static org.apache.commons.lang3.time.DateUtils.truncate;
+import static java.util.Calendar.SECOND;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="task-resource-usage")
@@ -177,13 +181,13 @@ public class TaskResourceUsage implements Serializable, Cloneable
 		return Objects.equal(getTaskId(), other.getTaskId()) &&
 			   Objects.equal(getResourceType(), other.getResourceType()) &&
 			   Objects.equal(getPid(), other.getPid()) &&
-			   Objects.equal(getDatetime(), other.getDatetime());
+			   Objects.equal(truncate(getDatetime(), SECOND), truncate(other.getDatetime(), SECOND));
 	}
 	
 	@Override
 	public int hashCode() 
 	{
-		return Objects.hashCode(getTaskId(), getResourceType(), getPid(), getDatetime());
+		return Objects.hashCode(getTaskId(), getResourceType(), getPid(), truncate(getDatetime(), SECOND));
 	}
 	
 	@Override
@@ -198,7 +202,7 @@ public class TaskResourceUsage implements Serializable, Cloneable
 		catch (CloneNotSupportedException e) 
 		{
 			clone = new TaskResourceUsage()
-					.setDatetime(getDatetime())
+					.setDatetime(truncate(getDatetime(), SECOND))
 					.setId(getId()).setPid(getPid())
 					.setResourceType(getResourceType())
 					.setTaskId(getTaskId())
@@ -206,5 +210,18 @@ public class TaskResourceUsage implements Serializable, Cloneable
 		}
 		
 		return clone;
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return MoreObjects.toStringHelper(this)
+				          .add("task-id", getId())
+				          .add("resource-type", getResourceType())
+				          .add("pid", getPid())
+				          .add("datetime", truncate(getDatetime(), SECOND))
+				          .add("value", getValue())
+				          .omitNullValues()
+				          .toString();
 	}
 }

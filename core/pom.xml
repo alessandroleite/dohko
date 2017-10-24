@@ -43,6 +43,36 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- <dependency>
+		    <groupId>com.wix</groupId>
+		    <artifactId>wix-embedded-mysql</artifactId>
+		    <scope>test</scope>
+		</dependency> -->
+
+		<!-- <dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <scope>test</scope>
+		</dependency> -->
+
+		<dependency>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    <artifactId>mariadb-java-client</artifactId>
+		    <scope>test</scope>
+		</dependency>
+
+		<dependency>
+		    <groupId>ch.vorburger.mariaDB4j</groupId>
+		    <artifactId>mariaDB4j</artifactId>
+		    <scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.yammer.dropwizard</groupId>
 			<artifactId>dropwizard-core</artifactId>
@@ -219,6 +249,11 @@
 			<groupId>org.jdbi</groupId>
 			<artifactId>jdbi</artifactId>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.dohko</groupId>
+			<artifactId>jdbi-ext</artifactId>
 		</dependency>
 
 		<dependency>

@@ -27,12 +27,14 @@ import org.excalibur.core.workflow.repository.WorkflowRepository;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 public class WorkflowTaskTest extends TestSupport
 {
     private WorkflowRepository workflowRepository;
     
     @Before
-    public void setUp() throws ClassNotFoundException, IOException
+    public void setUp() throws ClassNotFoundException, IOException, ManagedProcessException
     {
         super.setup();
         this.workflowRepository = openRepository(WorkflowRepository.class);

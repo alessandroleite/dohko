@@ -30,6 +30,8 @@ import org.excalibur.core.test.TestSupport;
 import org.excalibur.core.util.Strings2;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.excalibur.core.cloud.api.domain.Tags.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -41,7 +43,7 @@ public class InstanceTagRepositoryTest extends TestSupport
     private VirtualMachine instance_;
     
     @Override
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         this.instanceTagRepository_ = this.openRepository(InstanceTagRepository.class);

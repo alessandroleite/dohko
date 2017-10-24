@@ -32,6 +32,8 @@ import org.excalibur.core.workflow.repository.WorkflowRepository;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -43,7 +45,7 @@ public class TaskRepositoryTest extends TestSupport
 
     @Override
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         

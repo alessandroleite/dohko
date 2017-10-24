@@ -45,11 +45,15 @@ public final class DateUtils2
     
     public static Date toUTC(Date date)
     {
-        checkNotNull(date);
-        Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-        c.setTime(date);
-        
-        return c.getTime();
+        checkNotNull(date, "Date to convert to UTC might not be null");
+        return toUTC(date.getTime());
+    }
+    
+    public static Date toUTC(long millis)
+    {
+    	Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+    	c.setTimeInMillis(millis);
+    	return c.getTime();
     }
 
     public static long seconds(long timeInMillis)

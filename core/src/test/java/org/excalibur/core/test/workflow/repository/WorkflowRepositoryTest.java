@@ -28,6 +28,8 @@ import org.excalibur.core.workflow.repository.WorkflowRepository;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -39,7 +41,7 @@ public class WorkflowRepositoryTest extends TestSupport
     
     
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         workflowRepository = openRepository(WorkflowRepository.class);

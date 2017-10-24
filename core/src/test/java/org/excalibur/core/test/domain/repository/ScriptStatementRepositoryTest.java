@@ -27,6 +27,8 @@ import org.excalibur.core.util.YesNoEnum;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -38,7 +40,7 @@ public class ScriptStatementRepositoryTest extends TestSupport
     
     @Override
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         scriptStatementRepository = openRepository(ScriptStatementRepository.class);

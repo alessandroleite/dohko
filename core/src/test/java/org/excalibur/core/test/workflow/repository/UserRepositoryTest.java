@@ -25,6 +25,8 @@ import org.excalibur.core.test.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -35,7 +37,7 @@ public class UserRepositoryTest extends TestSupport
     private UserRepository userRepository;
     
     @Before
-    public void setup() throws IOException 
+    public void setup() throws IOException, ManagedProcessException 
     {
         super.setup();
         userRepository = openRepository(UserRepository.class);

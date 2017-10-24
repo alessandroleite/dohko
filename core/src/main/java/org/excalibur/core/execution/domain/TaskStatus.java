@@ -28,6 +28,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
+import static org.apache.commons.lang3.time.DateUtils.truncate;
+import static java.util.Calendar.SECOND;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "task-status")
 public class TaskStatus implements Serializable, Cloneable
@@ -145,7 +148,7 @@ public class TaskStatus implements Serializable, Cloneable
 			return true;
 		}
 		
-		if (obj == null || !getClass().equals(obj.getClass()))
+		if (obj == null || getClass() != obj.getClass())
 		{
 			return false;
 		}
@@ -153,14 +156,14 @@ public class TaskStatus implements Serializable, Cloneable
 		TaskStatus other = (TaskStatus) obj;
 		
 		return Objects.equal(getTaskId(), other.getTaskId()) && 
-			   Objects.equal(getDate(), other.getDate()) && 
+			   Objects.equal(truncate(getDate(), SECOND), truncate(other.getDate(), SECOND)) && 
 			   Objects.equal(getType(), other.getType());
 	}
 	
 	@Override
 	public int hashCode() 
 	{
-		return Objects.hashCode(getTaskId(), getDate(), getType());
+		return Objects.hashCode(getTaskId(), truncate(getDate(), SECOND), getType());
 	}
 	
 	@Override

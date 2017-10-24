@@ -33,6 +33,9 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import io.dohko.jdbi.stereotype.Repository;
+
+@Repository
 @RegisterMapper(TaskRepositorySetMapper.class)
 public interface TaskRepository extends Closeable
 {   
@@ -53,7 +56,7 @@ public interface TaskRepository extends Closeable
     @SqlQuery(SQL_SELECT_ALL + " WHERE lower(t.uuid) = lower(:uuid)")
     Application findByUUID(@Bind("uuid") String id);
     
-    @SqlQuery(SQL_SELECT_ALL + " WHERE SELECT t.job_id = (SELECT id FROM job j WHERE lower(j.uuid) = lower(:uuid))")
+    @SqlQuery(SQL_SELECT_ALL + " WHERE t.job_id = (SELECT id FROM job j WHERE lower(j.uuid) = lower(:uuid))")
     List<Application> findAllTasksOfJob(@Bind("uuid") String jobUUID);
     
     

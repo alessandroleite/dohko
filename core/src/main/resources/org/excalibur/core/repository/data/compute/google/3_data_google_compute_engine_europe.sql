@@ -15,6 +15,7 @@
 --     along with this program.  If not, see <http://www.gnu.org/licenses/>
 --
 
+USE dohko;
 ------------
 -- Europe -- 202, 203
 ------------

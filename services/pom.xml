@@ -20,7 +20,7 @@
 		<internal.release.repo.path>file://${basedir}/../maven-repo/releases</internal.release.repo.path>
 		<license-header-file>${basedir}/../HEADER</license-header-file>
 		<checkstyle.file>${basedir}/../checkstyle.xml</checkstyle.file>
-		<commons.dbcp.version>1.4</commons.dbcp.version>
+		<!-- <commons.dbcp.version>1.4</commons.dbcp.version> -->
 		<quartz.version>2.2.0</quartz.version>
 		<spring.rabbit.version>1.3.2.RELEASE</spring.rabbit.version>
 		<!-- <org.excalibur.logs.dir>${basedir}/logs</org.excalibur.logs.dir> -->

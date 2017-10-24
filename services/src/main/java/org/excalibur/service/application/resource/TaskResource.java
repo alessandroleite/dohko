@@ -30,6 +30,8 @@ import org.excalibur.core.execution.domain.repository.TaskRepository;
 import org.excalibur.core.execution.domain.repository.TaskStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Optional;
+
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.*;
 import static javax.ws.rs.core.Response.Status.*;
@@ -71,8 +73,8 @@ public class TaskResource
     @Produces({APPLICATION_XML, APPLICATION_JSON, TEXT_XML })
     public Response lastStatus(@PathParam("taskId") String taskId)
     {
-    	TaskStatus status = taskStatusRepository_.getLastStatusOfTask(taskId);
-    	return buildResponse(status);
+    	Optional<TaskStatus> status = taskStatusRepository_.getLastStatusOfTask(taskId);
+    	return buildResponse(status.orNull());
     }
     
     @GET

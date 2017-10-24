@@ -19,17 +19,18 @@ package org.excalibur.core.test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.excalibur.core.cloud.api.domain.Zone;
 import org.excalibur.core.domain.User;
 import org.excalibur.core.domain.repository.RegionRepository;
 import org.excalibur.core.domain.repository.UserRepository;
-import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -42,20 +43,62 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.DB;
+import io.dohko.jdbi.BigIntegerArgumentFactory;
+import io.dohko.jdbi.JodaTimeArgumentFactory;
+import io.dohko.jdbi.OptionalArgumentFactory;
+import io.dohko.jdbi.OptionalContainerFactory;
+import io.dohko.jdbi.args.JodaDateTimeMapper;
+import io.dohko.jdbi.util.BigIntegerMapper;
+
+import static java.lang.System.getProperty;
+import static java.lang.String.format;
+
 public class TestSupport
 {
-    protected JdbcConnectionPool ds;
+	protected static DB db;
+	private static int dbport;
+	private static String dbname;
+	protected BasicDataSource ds;
     protected DBI dbi;
     protected User user;     
     protected Zone zone;
     
+    private static final java.util.Random random = new java.util.Random();
+    
     protected final Logger LOG = LoggerFactory.getLogger(this.getClass().getName());
+    
+    @BeforeClass
+    public static void newEmbeddedDB() throws ManagedProcessException
+    {
+    	dbport = random.nextInt(4100) + 3306;
+    	dbname = getProperty("org.excalibur.database.name", "dohko");
+    	
+    	db = DB.newEmbeddedDB(dbport);
+    	db.start();
+    	db.createDB(dbname);
+    	addVMShutdownHook();
+    }
 
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
-        ds = JdbcConnectionPool.create("jdbc:h2:mem:" + UUID.randomUUID(), "sa", "sa");
+//    	final int dbport = random.nextInt(4100) + 3306;
+//    	final String dbname = getProperty("org.excalibur.database.name", "dohko");
+    	
+//    	startEmbeddedDB(dbport, dbname);
+    	createAndConfigureDatasource(dbport, dbname);
+//    	addVMShutdownHook();
+        
         dbi = new DBI(ds);
+        dbi.registerArgumentFactory(new JodaTimeArgumentFactory());
+        dbi.registerArgumentFactory(new OptionalArgumentFactory());
+        dbi.registerArgumentFactory(new BigIntegerArgumentFactory());
+        dbi.registerContainerFactory(new OptionalContainerFactory());
+
+        dbi.registerMapper(new BigIntegerMapper());
+        dbi.registerMapper(new JodaDateTimeMapper());
 
         // see https://code.google.com/p/reflections/wiki/UseCases
         Reflections reflections = new Reflections(new ConfigurationBuilder()
@@ -78,15 +121,62 @@ public class TestSupport
         for (String script : databaseScripts)
         {
             LOG.debug("Executing the database script {}", script);
-            h.execute(script);            
+            db.source(script);
         }
 
         h.close();
 
         user = new User().setPassword("passwd").setUsername("username");
         user.setId(openRepository(UserRepository.class).insert(user));
-        this.zone = openRepository(RegionRepository.class).findZoneByName("us-east-1a");
+        zone = openRepository(RegionRepository.class).findZoneByName("us-east-1a");
+        
     }
+
+	private static void addVMShutdownHook() 
+	{
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> 
+        {
+        	try 
+        	{
+				db.stop();
+//				if (ds != null)
+//				{
+//					ds.close();
+//				}
+			} 
+        	catch (ManagedProcessException e) 
+        	{
+//        		LOG.error(e.getMessage(), e);
+			}
+        	
+        }));
+	}
+
+//	private void startEmbeddedDB(final int dbport, final String dbname) throws ManagedProcessException 
+//	{
+//		db = DB.newEmbeddedDB(dbport);
+//		
+//		LOG.info("Starting database server on port [{}]", dbport);
+//    	db.start();
+//
+//    	LOG.info("Creating database [{}]", dbname);
+//    	db.createDB(dbname);
+//	}
+
+	private void createAndConfigureDatasource(final int dbport, final String dbname) 
+	{
+		ds = new BasicDataSource();
+    	ds.setUrl(getProperty("org.excalibur.database.jdbc.test.url", format("jdbc:mysql://localhost:%s/%s", dbport, dbname)));
+    	ds.setUsername(getProperty("org.excalibur.database.jdbc.test.username", "root"));
+    	ds.setPassword(getProperty("org.excalibur.database.jdbc.test.password", ""));
+    	
+    	ds.setInitialSize(2);
+    	ds.setMinIdle(2);
+    	ds.setMaxActive(10);
+    	ds.setTestOnBorrow(true);
+    	ds.setTestOnReturn(true);
+    	ds.setValidationQuery("SELECT 1 + 1");
+	}
 
     public <T> T openRepository(Class<T> klass)
     {
@@ -100,10 +190,25 @@ public class TestSupport
     @After
     public void tearDown() throws Exception
     {
+//    	if (db != null)
+//    	{
+//    		db.stop();
+//    	}
+    	
         if (dbi != null)
         {
-            ds.dispose();
+        	ds.close();
         }
+    }
+    
+    @AfterClass
+    public static void stopdb() throws ManagedProcessException
+    {
+    	if (db != null)
+    	{
+    		db.stop();
+    	}
+
     }
     
     protected User getUser() 

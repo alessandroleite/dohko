@@ -69,6 +69,9 @@ public class Application implements Serializable, Cloneable
     @XmlElement(name = "preconditions")
     private final List<Precondition> preconditions_ = new ArrayList<>();
     
+    @XmlElement(name = "timeout")
+    private long timeout_;
+    
     @XmlTransient
     private String plainText_;
     
@@ -227,6 +230,7 @@ public class Application implements Serializable, Cloneable
         return this;
     }
     
+    
     /**
      * Returns a read-only view of the preconditions of this application
      * 
@@ -236,6 +240,22 @@ public class Application implements Serializable, Cloneable
 	public List<Precondition> getPreconditions() 
 	{
 		return Collections.unmodifiableList(preconditions_);
+	}
+
+	/**
+	 * @return the timeout
+	 */
+	public long getTimeout() 
+	{
+		return timeout_;
+	}
+
+	/**
+	 * @param timeout the timeout to set
+	 */
+	public void setTimeout(long timeout) 
+	{
+		this.timeout_ = timeout;
 	}
 
 	@Override

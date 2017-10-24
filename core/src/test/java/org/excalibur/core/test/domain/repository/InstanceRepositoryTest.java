@@ -27,6 +27,8 @@ import org.excalibur.core.domain.repository.InstanceRepository;
 import org.excalibur.core.test.TestSupport;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
@@ -35,7 +37,7 @@ public class InstanceRepositoryTest extends TestSupport
     private InstanceRepository instanceRepository_;
 
     @Override
-    public void setup() throws java.io.IOException
+    public void setup() throws java.io.IOException, ManagedProcessException
     {
         super.setup();
         this.instanceRepository_ = openRepository(InstanceRepository.class);

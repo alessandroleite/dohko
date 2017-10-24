@@ -29,8 +29,16 @@ import org.excalibur.core.test.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.vorburger.exec.ManagedProcessException;
+
+import static java.util.Calendar.SECOND;
+
+import static org.apache.commons.lang3.time.DateUtils.truncate;
+import static org.excalibur.core.util.DateUtils2.toUTC;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+
 
 public class VolumeRepositoryTest extends TestSupport
 {
@@ -39,7 +47,7 @@ public class VolumeRepositoryTest extends TestSupport
 
     @Override
     @Before
-    public void setup() throws IOException
+    public void setup() throws IOException, ManagedProcessException
     {
         super.setup();
         this.volumeRepository_ = openRepository(VolumeRepository.class);
@@ -75,8 +83,16 @@ public class VolumeRepositoryTest extends TestSupport
     private void equals(Volume disk, Volume disk2)
     {
         assertThat(disk.getId(), equalTo(disk2.getId()));
-        assertThat(disk.getCreatedIn().getTime(), equalTo(disk2.getCreatedIn().getTime()));
-        assertThat(disk.getDeletedIn(), equalTo(disk2.getDeletedIn()));
+        assertThat(truncate(toUTC(disk.getCreatedIn()), SECOND).getTime(), equalTo(truncate(toUTC(disk2.getCreatedIn()), SECOND).getTime()));
+        if (disk.getDeletedIn() != null && disk2.getDeletedIn() != null)
+        {
+        	assertThat(truncate(toUTC(disk.getDeletedIn()), SECOND), equalTo(truncate(toUTC(disk2.getDeletedIn()), SECOND)));
+        }
+        else 
+        {
+        	assertThat(disk.getDeletedIn(), equalTo(disk2.getDeletedIn()));
+        }
+        
         assertThat(disk.getIops(), equalTo(disk2.getIops()));
         assertThat(disk.getName(), equalTo(disk2.getName()));
         assertThat(disk.getOwner(), equalTo(disk2.getOwner()));

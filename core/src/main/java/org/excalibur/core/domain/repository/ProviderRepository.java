@@ -32,6 +32,9 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import io.dohko.jdbi.stereotype.Repository;
+
+@Repository
 @RegisterMapper(ProviderRowMapper.class)
 public interface ProviderRepository extends Closeable
 {
