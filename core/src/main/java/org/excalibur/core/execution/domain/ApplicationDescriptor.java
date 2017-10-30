@@ -35,6 +35,7 @@ import org.excalibur.core.util.Lists2;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import static java.util.Arrays.*;
 
@@ -147,10 +148,10 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     /**
      * @return the applications
      */
-    public List<Application> getApplications()
+    public ImmutableList<Application> getApplications()
     {
 //        return applications_ == null ? new Applications(): applications_;
-    	return Collections.unmodifiableList(applications_);
+    	return ImmutableList.copyOf(applications_);
     }
     
     public ApplicationDescriptor addBlock(Block block)

@@ -41,15 +41,11 @@ public class DynamicExecutors
      * Creates a thread pool using the provided {@link ThreadFactory} to create new threads when needed, and re-scheduling the execution of the tasks
      * when rejected.
      * 
-     * @param min
-     *            the number of threads to keep in the pool, even if they are idle.
-     * @param max
-     *            the maximum number of threads to allow in the pool.
-     * @param keepAliveTime
-     *            when the number of threads is greater than {@code min}, this is the maximum time that excess idle threads will wait for new tasks
+     * @param min the number of threads to keep in the pool, even if they are idle.
+     * @param max the maximum number of threads to allow in the pool.
+     * @param keepAliveTime when the number of threads is greater than {@code min}, this is the maximum time that excess idle threads will wait for new tasks
      *            before terminating (in milliseconds).
-     * @param threadFactory
-     *            the factory to use when creating new threads.
+     * @param threadFactory the factory to use when creating new threads.
      * @return the newly created thread pool.
      */
     public static ExecutorService newScalingThreadPool(int min, int max, long keepAliveTime, ThreadFactory threadFactory)
@@ -80,7 +76,7 @@ public class DynamicExecutors
     public static ListeningExecutorService newListeningDynamicScalingThreadPool(String threadNamesFormat, int max)
     {
         ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(threadNamesFormat).build();
-        int max_ = max > getRuntime().availableProcessors() ? max : getRuntime().availableProcessors();
+        int max_ = max < 1 || max > getRuntime().availableProcessors() ? getRuntime().availableProcessors() : max;
         return newListeningDynamicScalingThreadPool(getRuntime().availableProcessors(), max_, 1, TimeUnit.MINUTES, threadFactory);
     }
 }

@@ -20,7 +20,7 @@
 		<checkstyle.file>${basedir}/../checkstyle.xml</checkstyle.file>
 
 		<smack.version>3.4.1-SNAPSHOT</smack.version>
-		<reflections.version>0.9.9-RC1</reflections.version>
+
 		<dropwizard.version>0.6.2</dropwizard.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-beanutils.version>1.9.1</commons-beanutils.version>
@@ -164,9 +164,20 @@
 
 		<!-- compile -->
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>computer-objects</groupId>
 			<artifactId>computer-objects</artifactId>
+		</dependency> -->
+		
+		<dependency>
+		   <groupId>io.airlift</groupId>
+		   <artifactId>command</artifactId>
+		   <exclusions>
+		   	  <exclusion>
+					<groupId>org.apache.bval</groupId>
+					<artifactId>bval-jsr303</artifactId>
+				</exclusion>
+		   </exclusions>
 		</dependency>
 
 		<dependency>
@@ -182,6 +193,11 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
 		<dependency>
@@ -229,18 +245,19 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
-			<version>${reflections.version}</version>
-			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -254,6 +271,32 @@
 		<dependency>
 			<groupId>io.dohko</groupId>
 			<artifactId>jdbi-ext</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jdbi</groupId>
+					<artifactId>jdbi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jdbc</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aspects</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

@@ -14,26 +14,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package org.excalibur.core.compute.monitoring.domain.repository;
+package org.excalibur.core.util;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import net.vidageek.mirror.dsl.Mirror;
 
-import org.excalibur.core.compute.monitoring.domain.CpuStatePerc;
-import org.excalibur.core.compute.monitoring.domain.repository.CpuMonitoringRepository.CpuStateResultMapper;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
-
-@RegisterMapper(CpuStateResultMapper.class)
-public interface CpuMonitoringRepository
+public final class Objects2
 {
-    public static class CpuStateResultMapper implements ResultSetMapper<CpuStatePerc>
+    /**
+     * Private default constructor that it's never called.
+     */
+    private Objects2()
     {
-        @Override
-        public CpuStatePerc map(int index, ResultSet r, StatementContext ctx) throws SQLException
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Invoke the clone method of a {@link Cloneable} type
+     * 
+     * @param object {@link Cloneable} instance to execute the method clone
+     * @param <T> {@link Cloneable} type
+     * @return The return of the clone method
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Cloneable> T clone(final T object)
+    {
+        if (object != null)
         {
-            return null;
+            return (T) new Mirror().on(object).invoke().method("clone").withoutArgs();
         }
+        
+        return object;
     }
 }

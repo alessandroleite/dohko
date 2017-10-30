@@ -649,6 +649,37 @@ create index if not exists idx_tk_resource_usage_tk on task_resource_usage (task
 create index if not exists idx_tk_resource_usage_rt on task_resource_usage (resource_type_id);
 create unique index if not exists idx_tk_resource_usage_uq on task_resource_usage (task_id, resource_type_id, pid, datetime);
 
+
+create table if not exists task_cpu_stats
+(
+  id integer not null auto_increment primary key,
+--  task_id integer not null references task (id),
+  datetime timestamp not null,
+  pid long not null,
+  percent long not null,
+  sys long not null, 
+  user long not null,
+  total long not null
+);
+
+--create index  idx_task_cpu_stats_task on task_cpu_stats(task_id);
+--create unique index idx_task_cpu_stats_pid on task_cpu_stats(task_id, pid, datetime);
+--create unique index if not exists idx_task_cpu_stats_pid on task_cpu_stats(pid, datetime);
+
+create table if not exists task_mem_stats 
+(
+  id integer not null auto_increment primary key,
+--  task_id integer not null references task(id),
+  datetime timestamp not null,
+  pid long not null,
+  resident long not null,
+  share long not null,
+  size long not null
+);
+
+--create index if not exists idx_task_mem_stats_task on task_mem_stats(task_id);
+--create unique if not exists index idx_task_mem_stats_pid on task_mem_stats(pid, datetime);
+
 create table if not exists metric_type 
 (
   id integer not null primary key,

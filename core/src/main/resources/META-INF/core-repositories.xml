@@ -63,21 +63,21 @@
     
     <!-- dataSourceTarget -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
-        <property name="maxActive" value="${jdbc.maxActive}"/>
-        <property name="initialSize" value="${jdbc.initialSize}"/>
-        <property name="maxIdle" value="${jdbc.idle}"/>
-        <property name="maxWait" value="${jdbc.maxWaitMillis}"/>
-        <property name="removeAbandoned" value="${jdbc.removeAbandoned}"/>
+        <property name="driverClassName" 		value="${jdbc.driverClassName}"/>
+        <property name="url" 					value="${jdbc.url}"/>
+        <property name="username" 				value="${jdbc.username}"/>
+        <property name="password" 				value="${jdbc.password}"/>
+        <property name="maxActive" 				value="${jdbc.maxActive}"/>
+        <property name="initialSize" 			value="${jdbc.initialSize}"/>
+        <property name="maxIdle" 				value="${jdbc.idle}"/>
+        <property name="maxWait" 				value="${jdbc.maxWaitMillis}"/>
+        <property name="removeAbandoned" 		value="${jdbc.removeAbandoned}"/>
         <property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeoutInSeconds}"/>
-        <property name="logAbandoned" value="${jdbc.logAbandoned}"/>
-        <property name="testOnReturn" value="${jdbc.testOnReturn}"/>
-        <property name="testOnBorrow" value="${jdbc.testOnBorrow}"/>
-        <property name="testWhileIdle" value="${jdbc.testWhileIdle}"/>
-        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+        <property name="logAbandoned" 			value="${jdbc.logAbandoned}"/>
+        <property name="testOnReturn" 			value="${jdbc.testOnReturn}"/>
+        <property name="testOnBorrow" 			value="${jdbc.testOnBorrow}"/>
+        <property name="testWhileIdle" 			value="${jdbc.testWhileIdle}"/>
+        <property name="validationQuery" 		value="${jdbc.validationQuery}"/>
     </bean>
     
 	<jdbc:initialize-database data-source="dataSource" enabled="#{systemProperties.getProperty('org.excalibur.database.initialize', 'false')}" 
@@ -94,7 +94,7 @@
 	    <property name="dataSource" ref="dataSourceTarget" />
     </bean> -->
 
-	<bean id="dbi" class="org.skife.jdbi.v2.spring.DBIFactoryBean" autowire="byName" depends-on="dataSource"/>
+	<bean id="dbi" class="io.dohko.jdbi.spring.beans.factory.DBIFactoryBean2" autowire="byName" depends-on="dataSource"/>
 	
 	<bean id="repositoryFactoryBeanProcessor"  class="io.dohko.jdbi.spring.beans.factory.DBIRepositoryDefinitionBeanFactoryProcessor"
 	      depends-on="dataSource">

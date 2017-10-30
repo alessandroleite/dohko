@@ -16,8 +16,6 @@
  */
 package org.excalibur.core.util;
 
-import org.excalibur.core.compute.monitoring.utils.Objects2;
-
 import com.google.common.base.Function;
 
 import net.vidageek.mirror.dsl.Mirror;
