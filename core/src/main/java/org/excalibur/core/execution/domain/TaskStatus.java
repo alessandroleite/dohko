@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -52,7 +53,8 @@ public class TaskStatus implements Serializable, Cloneable
 	@XmlElement(name="worker")
 	private String worker_;
 	
-	@XmlElement(name="pid")
+	@XmlTransient
+//	@XmlElement(name="pid")
 	private Integer pid_;
 	
 	

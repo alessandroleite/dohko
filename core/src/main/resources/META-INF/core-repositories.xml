@@ -97,7 +97,7 @@
 	<bean id="dbi" class="io.dohko.jdbi.spring.beans.factory.DBIFactoryBean2" autowire="byName" depends-on="dataSource"/>
 	
 	<bean id="repositoryFactoryBeanProcessor"  class="io.dohko.jdbi.spring.beans.factory.DBIRepositoryDefinitionBeanFactoryProcessor"
-	      depends-on="dataSource">
+	      depends-on="dbi">
 	      <constructor-arg value="org.excalibur"/>
 	</bean>
 

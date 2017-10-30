@@ -40,15 +40,15 @@ import io.dohko.jdbi.stereotype.Repository;
 @RegisterMapper(JobRowSetMapper.class)
 public interface JobRepository extends Closeable
 {
-    String SQL_SELECT_ALL = " SELECT u.username, j.user_id, j.uuid, j.description, j.name as job_name, j.created_in, j.finished_in\n" +
+    String SQL_SELECT_ALL = " SELECT j.user_id, u.username, j.uuid, j.description, j.name as job_name, j.created_in, j.finished_in\n" +
              " FROM job j\n" +
              " JOIN user u ON u.id = j.user_id\n";
 
     @GetGeneratedKeys
-    @SqlUpdate("INSERT into job (user_id, name, uuid, description, created_in, finished_in) VALUES (:user.id, :name, :id, :description, :createdIn, :finishedIn)")
+    @SqlUpdate("INSERT into job (user_id, name, uuid, description, created_in, finished_in) VALUES ((SELECT u.id FROM user u WHERE lower(username) = lower(:user.username)), :name, :id, :description, :createdIn, :finishedIn)")
     Integer insert(@BindBean ApplicationDescriptor job);
     
-    @SqlBatch("INSERT into job (user_id, name, uuid, description, created_in, finished_in) VALUES (:user.id, :name, :id, :description, :createdIn, :finishedIn)")
+    @SqlBatch("INSERT into job (user_id, name, uuid, description, created_in, finished_in) VALUES ((SELECT u.id FROM user u WHERE lower(username) = lower(:user.username)), :name, :id, :description, :createdIn, :finishedIn)")
     void insert(@BindBean Iterable<ApplicationDescriptor> jobs);
     
     @SqlUpdate("DELETE FROM job WHERE lower(uuid) = lower(:id)")

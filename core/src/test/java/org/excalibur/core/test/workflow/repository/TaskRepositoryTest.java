@@ -27,7 +27,7 @@ import org.excalibur.core.workflow.domain.TaskDataDescription;
 import org.excalibur.core.workflow.domain.TaskDescription;
 import org.excalibur.core.workflow.domain.WorkflowActivityDescription;
 import org.excalibur.core.workflow.domain.WorkflowDescription;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 import org.excalibur.core.workflow.repository.WorkflowRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 
 public class TaskRepositoryTest extends TestSupport
 {
-    private TaskRepository taskRepository;
+    private WorkflowTaskRepository taskRepository;
     private WorkflowActivityDescription activity;
 
     @Override
@@ -50,7 +50,7 @@ public class TaskRepositoryTest extends TestSupport
         super.setup();
         
         WorkflowRepository workflowRepository = openRepository(WorkflowRepository.class);
-        taskRepository = openRepository(TaskRepository.class);
+        taskRepository = openRepository(WorkflowTaskRepository.class);
 
         WorkflowDescription workflow = new WorkflowDescription()
                 .setCreatedIn(new Date())

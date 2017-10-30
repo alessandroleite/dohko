@@ -30,7 +30,7 @@ import org.excalibur.core.executor.task.TaskExecutionService;
 import org.excalibur.core.task.TaskType;
 import org.excalibur.core.workflow.definition.Activity;
 import org.excalibur.core.workflow.domain.TaskDescription;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 
 import com.google.common.collect.Lists;
 
@@ -41,13 +41,13 @@ public class DefaultActivityExecutionContext implements ActivityExecutionContext
     private final Context           parentContext_;
     private final Activity          activity_;
     private final List<TaskType<?>> tasks_ = Lists.newArrayList();
-    private final TaskRepository    taskRepository_;
+    private final WorkflowTaskRepository    taskRepository_;
     private final UserRepository    userRepository_;
     private final RegionRepository  regionRepository_;
     private final VirtualMachine    node_;
 
     public DefaultActivityExecutionContext(Context parentContext, Activity activity, 
-            TaskRepository taskRepository, UserRepository userRepository, RegionRepository regionRepository,
+            WorkflowTaskRepository taskRepository, UserRepository userRepository, RegionRepository regionRepository,
             VirtualMachine machine)
     {
         this.parentContext_ = parentContext;
@@ -100,7 +100,7 @@ public class DefaultActivityExecutionContext implements ActivityExecutionContext
     }
 
     @Override
-    public TaskRepository getTaskRepository()
+    public WorkflowTaskRepository getTaskRepository()
     {
         return taskRepository_;
     }

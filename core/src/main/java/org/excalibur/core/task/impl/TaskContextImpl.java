@@ -26,7 +26,7 @@ import org.excalibur.core.executor.task.ExecutionContext;
 import org.excalibur.core.io.handlers.IOHandler;
 import org.excalibur.core.task.TaskContext;
 import org.excalibur.core.task.TaskType;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 
 import com.google.common.base.Preconditions;
 
@@ -36,12 +36,12 @@ public final class TaskContextImpl extends AbstractContextBase implements TaskCo
     private final ExecutionContext                 executionContext_;
     private final IOHandler                        ioHandler;
     private final ExecutionLogger                  logger_;
-    private final TaskRepository                   taskRepository_;
+    private final WorkflowTaskRepository                   taskRepository_;
     private final UserRepository                   userRepository_;
     private final RegionRepository                 regionRepository_;
     
     public TaskContextImpl(TaskType<? extends Serializable> task, Context parent, ExecutionContext executionContext, IOHandler ioHandler,
-            ExecutionLogger logger, TaskRepository taskRepository, UserRepository userRepository, RegionRepository regionRepository)
+            ExecutionLogger logger, WorkflowTaskRepository taskRepository, UserRepository userRepository, RegionRepository regionRepository)
     {
         super(parent);
         this.task_ = Preconditions.checkNotNull(task);
@@ -79,7 +79,7 @@ public final class TaskContextImpl extends AbstractContextBase implements TaskCo
     }
 
     @Override
-    public TaskRepository getTaskRepository()
+    public WorkflowTaskRepository getTaskRepository()
     {
         return this.taskRepository_;
     }

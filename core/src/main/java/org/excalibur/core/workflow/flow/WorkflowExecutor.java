@@ -34,7 +34,7 @@ import org.excalibur.core.domain.repository.UserRepository;
 import org.excalibur.core.util.ThreadUtils;
 import org.excalibur.core.util.concurrent.DynamicExecutors;
 import org.excalibur.core.workflow.definition.Activity;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +49,12 @@ public class WorkflowExecutor
 //    private final AtomicBoolean started_ = new AtomicBoolean();
     private final AtomicBoolean stopped_ = new AtomicBoolean();
     private final ExecutorService executor_;
-    private final TaskRepository taskRepository_;
+    private final WorkflowTaskRepository taskRepository_;
     private final UserRepository userRepository_;
     private final RegionRepository regionRepository_;
     private final VirtualMachine node_;
 
-    public WorkflowExecutor(WorkflowContext context, TaskRepository taskRepository, UserRepository userRepository, RegionRepository regionRepository,
+    public WorkflowExecutor(WorkflowContext context, WorkflowTaskRepository taskRepository, UserRepository userRepository, RegionRepository regionRepository,
             VirtualMachine node)
     {
         this.context_ = checkNotNull(context);

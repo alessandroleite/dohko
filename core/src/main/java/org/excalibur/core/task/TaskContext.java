@@ -22,7 +22,7 @@ import org.excalibur.core.domain.repository.RegionRepository;
 import org.excalibur.core.domain.repository.UserRepository;
 import org.excalibur.core.executor.task.ExecutionContext;
 import org.excalibur.core.io.handlers.IOHandler;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 
 /**
  * Encapsulates the environment and configuration of a task running in a building environment.
@@ -51,11 +51,11 @@ public interface TaskContext extends CommonTaskContext
     <T extends Serializable> TaskType<T> getTask();
 
     /**
-     * Returns a reference to the {@link TaskRepository}.
+     * Returns a reference to the {@link WorkflowTaskRepository}.
      * 
-     * @return a reference to the {@link TaskRepository}. It might not be <code>null</code>.
+     * @return a reference to the {@link WorkflowTaskRepository}. It might not be <code>null</code>.
      */
-    TaskRepository getTaskRepository();
+    WorkflowTaskRepository getTaskRepository();
     
     /**
      * 

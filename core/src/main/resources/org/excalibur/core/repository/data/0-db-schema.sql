@@ -771,6 +771,7 @@ INSERT INTO task_status_type(id, name) VALUES(1, 'PENDING');
 INSERT INTO task_status_type(id, name) VALUES(2, 'RUNNING');
 INSERT INTO task_status_type(id, name) VALUES(3, 'FAILED');
 INSERT INTO task_status_type(id, name) VALUES(4, 'FINISHED');
+INSERT INTO task_status_type(id, name) VALUES(5, 'CANCELLED');
 
 ------------------------------------ 
 ---       Task output type       ---

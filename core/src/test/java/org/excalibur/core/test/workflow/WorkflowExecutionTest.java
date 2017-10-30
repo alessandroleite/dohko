@@ -42,7 +42,7 @@ import org.excalibur.core.workflow.flow.WorkflowBuilder;
 import org.excalibur.core.workflow.flow.WorkflowContext;
 import org.excalibur.core.workflow.flow.WorkflowExecutionStrategy;
 import org.excalibur.core.workflow.flow.WorkflowExecutor;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 import org.excalibur.core.workflow.repository.WorkflowRepository;
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ import static org.junit.Assert.*;
 public class WorkflowExecutionTest extends TestSupport
 {
     private WorkflowRepository workflowRepository_;
-    private TaskRepository taskRepository_;
+    private WorkflowTaskRepository taskRepository_;
     private InstanceRepository instanceRepository_;
     private UserRepository userRepository_;
     private RegionRepository regionRepository_;
@@ -68,7 +68,7 @@ public class WorkflowExecutionTest extends TestSupport
     {
         super.setup();
         workflowRepository_ = openRepository(WorkflowRepository.class);
-        taskRepository_ = openRepository(TaskRepository.class);
+        taskRepository_ = openRepository(WorkflowTaskRepository.class);
         instanceRepository_ = openRepository(InstanceRepository.class);
         userRepository_ = openRepository(UserRepository.class);
         regionRepository_ = openRepository(RegionRepository.class);

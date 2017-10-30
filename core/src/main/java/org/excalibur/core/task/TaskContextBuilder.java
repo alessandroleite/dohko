@@ -26,7 +26,7 @@ import org.excalibur.core.executor.Context;
 import org.excalibur.core.executor.task.ExecutionContext;
 import org.excalibur.core.io.handlers.IOHandler;
 import org.excalibur.core.task.impl.TaskContextImpl;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -37,7 +37,7 @@ public class TaskContextBuilder
     private IOHandler                        ioHandler_;
     private ExecutionLogger                  logger_;
     private ExecutionContext                 executionContext_;
-    private TaskRepository                   taskRepository_;
+    private WorkflowTaskRepository                   taskRepository_;
     private UserRepository                   userRepository_;
     private RegionRepository                 regionRepository_;
 
@@ -59,7 +59,7 @@ public class TaskContextBuilder
         return this;
     }
     
-    public TaskContextBuilder setTaskRepository(TaskRepository repository)
+    public TaskContextBuilder setTaskRepository(WorkflowTaskRepository repository)
     {
         this.taskRepository_ = repository;
         return this;

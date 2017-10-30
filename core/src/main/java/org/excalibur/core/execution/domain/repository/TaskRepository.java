@@ -44,10 +44,10 @@ public interface TaskRepository extends Closeable
     		+ " FROM task t\n";
     
     @GetGeneratedKeys
-    @SqlUpdate("INSERT into task (job_id, uuid, name, commandline) VALUES ((SELECT id FROM job WHERE lower(uuid) = lower(:jobId)), :id, :name, :commandLine)")
+    @SqlUpdate("INSERT into task (job_id, uuid, name, commandline) VALUES ( (SELECT id FROM job WHERE lower(uuid) = lower(:jobId)) , :id, :name, :commandLine)")
     Integer insert(@BindBean Application application);
     
-    @SqlBatch("INSERT into task (job_id, uuid, commandline) VALUES ((SELECT id FROM job WHERE uuid = :jobId), :id, :name, :commandLine)")
+    @SqlBatch("INSERT into task (job_id, uuid, name, commandline) VALUES ((SELECT id FROM job WHERE lower(uuid) = lower(:jobId)), :id, :name, :commandLine)")
     void insert(@BindBean Iterable<Application> applications);
     
     @SqlUpdate("DELETE FROM task WHERE lower(uuid) = lower(:taskId)")

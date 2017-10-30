@@ -25,7 +25,7 @@ import org.excalibur.core.executor.Context;
 import org.excalibur.core.executor.task.TaskExecutionService;
 import org.excalibur.core.task.TaskType;
 import org.excalibur.core.workflow.definition.Activity;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 
 /**
  * Context object passed to an {@link Activity} implementation.
@@ -58,7 +58,7 @@ public interface ActivityExecutionContext extends Context
      * 
      * @return
      */
-    TaskRepository getTaskRepository();
+    WorkflowTaskRepository getTaskRepository();
     
     /**
      * 

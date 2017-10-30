@@ -152,6 +152,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     {
 //        return applications_ == null ? new Applications(): applications_;
     	return ImmutableList.copyOf(applications_);
+//    	return Collections.unmodifiableList(applications_);
     }
     
     public ApplicationDescriptor addBlock(Block block)

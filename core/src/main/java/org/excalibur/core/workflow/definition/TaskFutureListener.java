@@ -32,7 +32,7 @@ import org.excalibur.core.util.Lists2;
 import org.excalibur.core.util.concurrent.FutureListener;
 import org.excalibur.core.workflow.domain.TaskDataDescription;
 import org.excalibur.core.workflow.domain.TaskDescriptionState;
-import org.excalibur.core.workflow.repository.TaskRepository;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository;
 
 class TaskFutureListener<T extends Serializable> implements FutureListener<TaskResult<T>>
 {
@@ -49,7 +49,7 @@ class TaskFutureListener<T extends Serializable> implements FutureListener<TaskR
     @Override
     public void futureDone(Future<TaskResult<T>> future)
     {
-        TaskRepository repository = taskContext_.getTaskRepository();
+        WorkflowTaskRepository repository = taskContext_.getTaskRepository();
         TaskDescriptionState state = new TaskDescriptionState().setStateTime(new Date());
 
         List<TaskDataDescription> outputData = new ArrayList<TaskDataDescription>();

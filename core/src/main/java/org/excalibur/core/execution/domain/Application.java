@@ -51,7 +51,7 @@ public class Application implements Serializable, Cloneable
     /**
      * Job's id
      */
-    @XmlAttribute(name="job-id", required= true)
+	@XmlAttribute(name = "job-id", required = true)
     private String jobId_;
 
     /**

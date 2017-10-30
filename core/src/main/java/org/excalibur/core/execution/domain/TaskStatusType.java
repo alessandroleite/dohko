@@ -44,7 +44,12 @@ public enum TaskStatusType
     /**
      * Task has finished
      */
-    FINISHED(4); 
+    FINISHED(4), 
+    
+    /**
+     * Task was cancelled
+     */
+    CANCELLED(5); 
 	
 	private final int id_;
 

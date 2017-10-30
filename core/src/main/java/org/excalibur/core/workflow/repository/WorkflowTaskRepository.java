@@ -30,7 +30,7 @@ import org.excalibur.core.workflow.domain.TaskDataDescription;
 import org.excalibur.core.workflow.domain.TaskDescription;
 import org.excalibur.core.workflow.domain.TaskDescriptionState;
 import org.excalibur.core.workflow.domain.WorkflowActivityDescription;
-import org.excalibur.core.workflow.repository.TaskRepository.TaskDescriptionMapper;
+import org.excalibur.core.workflow.repository.WorkflowTaskRepository.WorkflowTaskDescriptionMapper;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
@@ -44,8 +44,8 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import io.dohko.jdbi.stereotype.Repository;
 
 @Repository
-@RegisterMapper(TaskDescriptionMapper.class)
-public interface TaskRepository
+@RegisterMapper(WorkflowTaskDescriptionMapper.class)
+public interface WorkflowTaskRepository
 {
     // ///////////////////////////////////////////////////////////////////
     //                          Task methods                            //
@@ -125,7 +125,7 @@ public interface TaskRepository
     //                            Mappers                               //
     // ///////////////////////////////////////////////////////////////////
     
-    static final class TaskDescriptionMapper implements ResultSetMapper<TaskDescription>
+    static final class WorkflowTaskDescriptionMapper implements ResultSetMapper<TaskDescription>
     {
         @Override
         public TaskDescription map(int index, ResultSet r, StatementContext ctx) throws SQLException
