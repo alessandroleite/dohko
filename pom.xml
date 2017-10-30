@@ -76,6 +76,7 @@
 		<jackson-module-jaxb-annotations.version>${jackson.version}</jackson-module-jaxb-annotations.version> 
 		<jackson-dataformat-yaml.version>${jackson.version}</jackson-dataformat-yaml.version>
 		<jackson-annotations.version>${jackson.version}</jackson-annotations.version>
+		<jackson-datatype-guava.version>2.5.5</jackson-datatype-guava.version>
 
 		<commons-exec.version>1.2</commons-exec.version>
 		<computer-objects.version>1.0.0-SNAPSHOT</computer-objects.version>
@@ -512,6 +513,12 @@
 			    <artifactId>jackson-jaxrs-json-provider</artifactId>
 			    <version>${jackson.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-guava</artifactId>
+				<version>${jackson-datatype-guava.version}</version>
+		</dependency>
 
 
 			<!-- Jetty dependencies -->
