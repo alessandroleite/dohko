@@ -36,6 +36,7 @@
 		<guava.version>23.1-jre</guava.version>
 		<jscience.version>4.3.1</jscience.version>
 		<commons-lang.version>2.6</commons-lang.version>
+		<commons-lang3.version>3.4</commons-lang3.version>
 		<commons-io.version>2.4</commons-io.version>
 		<biojava.version>3.1.0-SNAPSHOT</biojava.version>
 		<jcommander.version>1.30</jcommander.version>
@@ -54,7 +55,7 @@
 		<org.eclipse.jetty.version>8.1.14.v20131031</org.eclipse.jetty.version>
 		<commons-logging.version>1.1.1</commons-logging.version>
 		<jdbi.version>2.51</jdbi.version>
-		<spring.version>3.2.8.RELEASE</spring.version>
+		<spring.version>5.0.1.RELEASE</spring.version>
 		<spring.retry.version>1.0.3.RELEASE</spring.retry.version>
 		<infinispan-core.version>6.0.2.Final</infinispan-core.version>
 		<jsch.version>0.1.50</jsch.version>
@@ -63,7 +64,7 @@
 		<sigar.version>1.6.4</sigar.version>
 		<!-- <ganymed-ssh2.version>261</ganymed-ssh2.version> -->
 		<ganymed-ssh2.version>262</ganymed-ssh2.version>
-		<slf4j-log4j12.version>1.7.24</slf4j-log4j12.version>
+		<slf4j-log4j12.version>1.7.25</slf4j-log4j12.version>
 
 		<!--<choco.version>3.1.2-SNAPSHOT</choco.version> -->
 		<choco.version>3.2.0</choco.version>
@@ -71,13 +72,17 @@
 		<clafer.choco.version>0.3.6.1</clafer.choco.version>
 
 		<commons.dbcp.version>1.4</commons.dbcp.version>
-		<jackson-module-jaxb-annotations.version>2.4.0</jackson-module-jaxb-annotations.version> <!-- 2.2.0 -->
-		<jackson-dataformat-yaml.version>2.4.0</jackson-dataformat-yaml.version>
+		<jackson.version>2.9.2</jackson.version>
+		<jackson-module-jaxb-annotations.version>${jackson.version}</jackson-module-jaxb-annotations.version> 
+		<jackson-dataformat-yaml.version>${jackson.version}</jackson-dataformat-yaml.version>
+		<jackson-annotations.version>${jackson.version}</jackson-annotations.version>
 
 		<commons-exec.version>1.2</commons-exec.version>
 		<computer-objects.version>1.0.0-SNAPSHOT</computer-objects.version>
+		<command.version>0.5-SNAPSHOT</command.version>
 		<junit.version>4.11</junit.version>
 		<jdbi-ext.version>1.0.0-SNAPSHOT</jdbi-ext.version>
+		<reflections.version>0.9.9</reflections.version>
 	</properties>
 
 	<licenses>
@@ -164,7 +169,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<modules>
+	<!-- <modules>
 		<module>aws-compute</module>
 		<module>bio</module>
 		<module>core</module>
@@ -175,7 +180,7 @@
 		<module>hybrid-overlay</module>
 		<module>overlay</module>
 		<module>services</module>
-	</modules>
+	</modules> -->
 
 	<dependencyManagement>
 		<dependencies>
@@ -255,9 +260,31 @@
 			</dependency>
 
 			<dependency>
+				<groupId>io.airlift</groupId>
+				<artifactId>command</artifactId>
+				<version>${command.version}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>io.dohko</groupId>
 				<artifactId>jdbi-ext</artifactId>
 				<version>${jdbi-ext.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+				<version>${reflections.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>guava</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- Choco -->
@@ -310,6 +337,12 @@
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
 				<version>${commons-lang.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3.version}</version>
 			</dependency>
 
 			<dependency>
@@ -437,6 +470,8 @@
 				</exclusions>
 			</dependency>
 
+			<!-- https://github.com/FasterXML/jackson-databind -->
+
 			<dependency>
 				<groupId>com.fasterxml.jackson.module</groupId>
 				<artifactId>jackson-module-jaxb-annotations</artifactId>
@@ -448,6 +483,36 @@
 				<artifactId>jackson-dataformat-yaml</artifactId>
 				<version>${jackson-dataformat-yaml.version}</version>
 			</dependency>
+
+			<dependency>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-databind</artifactId>
+			    <version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+			  <groupId>com.fasterxml.jackson.core</groupId>
+			  <artifactId>jackson-annotations</artifactId>
+			  <version>${jackson-annotations.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.jaxrs</groupId>
+				<artifactId>jackson-jaxrs-base</artifactId><version>${jackson.version}</version>
+		</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+			    <groupId>com.fasterxml.jackson.jaxrs</groupId>
+			    <artifactId>jackson-jaxrs-json-provider</artifactId>
+			    <version>${jackson.version}</version>
+			</dependency>
+
 
 			<!-- Jetty dependencies -->
 			<dependency>
@@ -461,6 +526,12 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 
@@ -497,6 +568,12 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 
