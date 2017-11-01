@@ -85,6 +85,8 @@
 		<junit.version>4.11</junit.version>
 		<jdbi-ext.version>1.0.0-SNAPSHOT</jdbi-ext.version>
 		<reflections.version>0.9.9</reflections.version>
+
+		<deploy-repo.url>file:///${env.DEFAULT_MAVEN_REPO_URL}</deploy-repo.url>
 	</properties>
 
 	<licenses>
