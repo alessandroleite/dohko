@@ -17,7 +17,7 @@
 package org.excalibur.core.execution.domain;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,6 +33,7 @@ import org.excalibur.core.util.Lists2;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import static com.google.common.collect.Lists.*;
 
@@ -43,12 +44,12 @@ import static com.google.common.collect.Lists.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="block")
 @XmlType(name="block", propOrder = {"id_", "name_", "parents_", "repeat_", "applications_"})
-public class Block implements Serializable, Cloneable, Iterable<Application> 
+public class Block implements Serializable, Cloneable, Iterable<Application>, Comparable<Block>, Comparator<Block>
 {
 	/**
 	 * Serial code version <code>serialVersionUID</code> for serialization
 	 */
-	private static final long serialVersionUID = 4417779171077762048L;
+	private static final long serialVersionUID = -2045058945696994770L;
 
 	/**
 	 * It must be unique in an application descriptor.
@@ -147,9 +148,18 @@ public class Block implements Serializable, Cloneable, Iterable<Application>
 	 * @see #addApplication(Application)
 	 * @see #removeApplication(Application)
 	 */
-	public List<Application> getApplications() 
+	public ImmutableList<Application> getApplications() 
 	{
-		return Collections.unmodifiableList(applications_);
+		return applications();
+	}
+	
+	/**
+	 * Returns the applications of this block 
+	 * @return a read-only list with the applications of this block. It is never <code>null</code>
+	 */
+	public ImmutableList<Application> applications() 
+	{
+		return ImmutableList.copyOf(applications_);
 	}
 
 	/**
@@ -193,6 +203,15 @@ public class Block implements Serializable, Cloneable, Iterable<Application>
 	public String getParents()
 	{
 		return parents_;
+	}
+	
+	/**
+	 * Returns a non-null array with the parents' id of this {@link Block} if there is any.
+	 * @return a non-null array with the parents' id of this {@link Block} if there is any.
+	 */
+	public String[] parents()
+	{
+		return getParents() != null ? getParents().split(",") : new String[0];
 	}
 
 	/**
@@ -283,5 +302,17 @@ public class Block implements Serializable, Cloneable, Iterable<Application>
 		applications.forEach(clone::addApplication);
 		
 		return clone;
+	}
+
+	@Override
+	public int compareTo(Block that) 
+	{
+		return that == null ? 1 : Comparator.<String>naturalOrder().compare(getId(), that.getId());
+	}
+
+	@Override
+	public int compare(Block o1, Block o2) 
+	{
+		return compare(o1, o2);
 	}
 }

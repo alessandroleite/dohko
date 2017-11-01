@@ -70,7 +70,7 @@ public class Application implements Serializable, Cloneable
     private final List<Precondition> preconditions_ = new ArrayList<>();
     
     @XmlElement(name = "timeout")
-    private long timeout_;
+    private Long timeout_;
     
     @XmlTransient
     private String plainText_;
@@ -245,7 +245,7 @@ public class Application implements Serializable, Cloneable
 	/**
 	 * @return the timeout
 	 */
-	public long getTimeout() 
+	public Long getTimeout() 
 	{
 		return timeout_;
 	}
@@ -253,7 +253,7 @@ public class Application implements Serializable, Cloneable
 	/**
 	 * @param timeout the timeout to set
 	 */
-	public void setTimeout(long timeout) 
+	public void setTimeout(Long timeout) 
 	{
 		this.timeout_ = timeout;
 	}

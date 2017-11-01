@@ -57,6 +57,7 @@
 		<jdbi.version>2.51</jdbi.version>
 		<spring.version>5.0.1.RELEASE</spring.version>
 		<spring.retry.version>1.0.3.RELEASE</spring.retry.version>
+		<springfox-swagger2.version>2.7.0</springfox-swagger2.version>
 		<infinispan-core.version>6.0.2.Final</infinispan-core.version>
 		<jsch.version>0.1.50</jsch.version>
 		<jsch.agentproxy.version>0.0.7</jsch.agentproxy.version>
@@ -588,6 +589,13 @@
 				<groupId>org.springframework.retry</groupId>
 				<artifactId>spring-retry</artifactId>
 				<version>${spring.retry.version}</version>
+			</dependency>
+
+			<!-- SpringFox -->
+			<dependency>
+			    <groupId>io.springfox</groupId>
+			    <artifactId>springfox-swagger2</artifactId>
+			    <version>${springfox-swagger2.version}</version>
 			</dependency>
 
 			<dependency>

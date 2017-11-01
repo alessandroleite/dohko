@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -39,23 +38,36 @@ public class TaskStatus implements Serializable, Cloneable
 	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-	private static final long serialVersionUID = -2043338274302107415L;
+	private static final long serialVersionUID = -8839224387149810271L;
 
-	@XmlAttribute(name="task-id", required = true)
+	@XmlAttribute(name="id", required = true)
 	private String taskId_;
 	
-	@XmlElement(name="task-status-type", nillable = false, required = true)
+	@XmlAttribute(name="name", required = true)
+	private String name_;
+	
+	@XmlElement(name="status", nillable = false, required = true)
 	private TaskStatusType type_;
 	
-	@XmlElement(name="date", nillable = false, required = true)
+	@XmlElement(name="datetime", nillable = false, required = true)
 	private Date date_;
 	
 	@XmlElement(name="worker")
 	private String worker_;
 	
-	@XmlTransient
-//	@XmlElement(name="pid")
+	@XmlElement(name="pid")
 	private Integer pid_;
+	
+	
+	public static TaskStatus runningTaskStatus(String id, String name)
+	{
+		return newTaskStatus(id, name, TaskStatusType.RUNNING);
+	}
+	
+	public static TaskStatus newTaskStatus(String id, String name, TaskStatusType status)
+	{
+		return new TaskStatus().setDate(new Date()).setTaskId(id).setTaskName(name).setType(status);
+	}
 	
 	
 	/**
@@ -73,6 +85,7 @@ public class TaskStatus implements Serializable, Cloneable
 	{
 		return taskId_;
 	}
+	
 	/**
 	 * @param taskId the task to set
 	 */
@@ -81,6 +94,24 @@ public class TaskStatus implements Serializable, Cloneable
 		this.taskId_ = taskId;
 		return this;
 	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getTaskName() 
+	{
+		return name_;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public TaskStatus setTaskName(String name) 
+	{
+		this.name_ = name;
+		return this;
+	}
+
 	/**
 	 * @return the type
 	 */
@@ -157,7 +188,8 @@ public class TaskStatus implements Serializable, Cloneable
 		
 		TaskStatus other = (TaskStatus) obj;
 		
-		return Objects.equal(getTaskId(), other.getTaskId()) && 
+		return Objects.equal(getTaskId(), other.getTaskId()) &&
+			   Objects.equal(getTaskName(), other.getTaskName()) &&
 			   Objects.equal(truncate(getDate(), SECOND), truncate(other.getDate(), SECOND)) && 
 			   Objects.equal(getType(), other.getType());
 	}
@@ -165,7 +197,7 @@ public class TaskStatus implements Serializable, Cloneable
 	@Override
 	public int hashCode() 
 	{
-		return Objects.hashCode(getTaskId(), truncate(getDate(), SECOND), getType());
+		return Objects.hashCode(getTaskId(), truncate(getDate(), SECOND), getType(), getTaskName());
 	}
 	
 	@Override
@@ -173,6 +205,7 @@ public class TaskStatus implements Serializable, Cloneable
 	{
 		return MoreObjects.toStringHelper(this)
 				.add("task-id", getTaskId())
+				.add("task-name", getTaskName())
 				.add("type", getType())
 				.add("date", getDate())
 				.add("pid", getPid())
@@ -192,6 +225,7 @@ public class TaskStatus implements Serializable, Cloneable
 		{
 			clone = new TaskStatus()
 					       .setDate(getDate())
+					       .setTaskName(getTaskName())
 					       .setPid(getPid())
 					       .setTaskId(getTaskId())
 					       .setType(getType())

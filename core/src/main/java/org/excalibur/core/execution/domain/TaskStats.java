@@ -57,6 +57,11 @@ public class TaskStats implements Serializable, Cloneable
 	{
 		super();
 	}
+	
+	public TaskStats(String id)
+	{
+		this.id_ = id;
+	}
 
 	public TaskStats(String id, Iterable<ProcessCpuState> cpu, Iterable<ProcessMemoryState> memory) 
 	{

@@ -32,11 +32,14 @@ import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+
+import com.google.common.base.Optional;
 
 import io.dohko.jdbi.stereotype.Repository;
 
-@Repository
+@Repository("executionJobRepository")
 @RegisterMapper(JobRowSetMapper.class)
 public interface JobRepository extends Closeable
 {
@@ -58,10 +61,12 @@ public interface JobRepository extends Closeable
     void finished(@Bind("jobId")String jobId, @Bind("finishedIn") long finishedIn);
     
     @SqlQuery(SQL_SELECT_ALL + " WHERE lower(uuid) = lower (:uuid)")
-    ApplicationDescriptor findByUUID(@Bind("uuid") String id);
+    @SingleValueResult
+    Optional<ApplicationDescriptor> findByUUID(@Bind("uuid") String id);
     
     @SqlQuery(SQL_SELECT_ALL + " WHERE j.id in (SELECT t.job_id FROM task t WHERE lower(t.uuid) = lower(:taskId))")
-    ApplicationDescriptor findJobOfTaskId(@Bind("taskId") String taskId);
+    @SingleValueResult
+    Optional<ApplicationDescriptor> findJobOfTaskId(@Bind("taskId") String taskId);
     
     @SqlQuery(SQL_SELECT_ALL + " WHERE j.finished_in is null")
     List<ApplicationDescriptor> listAllPending();

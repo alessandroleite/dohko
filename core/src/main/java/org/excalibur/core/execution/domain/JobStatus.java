@@ -34,16 +34,19 @@ import com.google.common.collect.ImmutableList;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="job-status")
-@XmlType(name = "job-status", propOrder = { "id", "tasksStatuses" })
+@XmlType(name = "job-status", propOrder = { "id", "name", "tasksStatuses" })
 public class JobStatus implements Cloneable, Serializable
 {
 	/**
 	 * Serial code version <code>serialVersionUID</code> for serialization.
 	 */
-	private static final long serialVersionUID = 6611694591616361402L;
+	private static final long serialVersionUID = 8443794836420284375L;
 
 	@XmlElement(name = "id")
 	private String id;
+	
+	@XmlElement(name = "name")
+	private String name;
 	
 	@XmlElement(name = "tasks")
 	private final List<TaskStatus> tasksStatuses = new ArrayList<>();
@@ -53,16 +56,32 @@ public class JobStatus implements Cloneable, Serializable
 		super();
 	}
 	
+	public JobStatus(String id) 
+	{
+		this.id = id;
+	}
+	
+	public JobStatus(String id, String name)
+	{
+		this(id);
+		this.name = name;
+	}
 	
 	public JobStatus(String id, Iterable<TaskStatus> statuses) 
 	{
-		this.id = id;
+		this(id, null, statuses);
+	}
+	
+	public JobStatus(String id, String name, Iterable<TaskStatus> statuses)
+	{
+		this(id, name);
 		
 		if (statuses != null)
 		{
 			addAllTaskStatus(statuses);
 		}
 	}
+	
 
 	public JobStatus addTaskStatus(TaskStatus status)
 	{
@@ -95,7 +114,23 @@ public class JobStatus implements Cloneable, Serializable
 	public JobStatus setId(String id) 
 	{
 		this.id = id;
-		
+		return this;
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getName() 
+	{
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public JobStatus setName(String name) 
+	{
+		this.name = name;
 		return this;
 	}
 
@@ -103,6 +138,11 @@ public class JobStatus implements Cloneable, Serializable
 	 * @return the tasksStatus
 	 */
 	public ImmutableList<TaskStatus> getTasksStatus() 
+	{
+		return statuses();
+	}
+	
+	public ImmutableList<TaskStatus> statuses()
 	{
 		return ImmutableList.copyOf(tasksStatuses);
 	}
@@ -139,13 +179,14 @@ public class JobStatus implements Cloneable, Serializable
 		
 		JobStatus other = (JobStatus) obj;
 		
-		return Objects.equals(getId(), other.getId());
+		return Objects.equals(getId(), other.getId()) && 
+			   Objects.equals(getName(), other.getName());
 	}
 	
 	@Override
 	public int hashCode() 
 	{
-		return Objects.hash(getId());
+		return Objects.hash(getId(), getName());
 	}
 	
 	@Override
@@ -153,6 +194,7 @@ public class JobStatus implements Cloneable, Serializable
 	{
 		return MoreObjects.toStringHelper(this)
 				.add("id", getId())
+				.add("name", getName())
 				.add("tasks", tasksStatuses)
 				.omitNullValues()
 				.toString();

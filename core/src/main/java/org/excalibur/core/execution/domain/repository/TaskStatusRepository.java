@@ -94,9 +94,16 @@ public interface TaskStatusRepository extends Closeable
 		@Override
 		public TaskStatus map(int index, ResultSet r, StatementContext ctx) throws SQLException 
 		{
+			Integer pid = r.getInt("pid");
+			
+			if (r.wasNull())
+			{
+				pid = null;
+			}
+			
 			return new TaskStatus()
 					    .setDate(r.getTimestamp("status_time"))
-					    .setPid(r.getInt("pid"))
+					    .setPid(pid)
 					    .setTaskId(r.getString("task_uuid"))
 					    .setType(TaskStatusType.valueOf(r.getInt("task_status_type_id")))
 					    .setWorker(r.getString("worker_id"));

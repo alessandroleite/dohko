@@ -36,6 +36,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import static java.util.Arrays.*;
 
@@ -79,11 +80,10 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     private final List<Cloud> clouds_ = new ArrayList<>();
 
     @XmlElement(name = "applications")
-//    private Applications applications_ = new Applications();
-    private List<Application> applications_ = new ArrayList<>();
+    private final List<Application> applications_ = new ArrayList<>();
     
     @XmlElement(name = "blocks")
-    private List<Block> blocks_ = new ArrayList<>();
+    private final List<Block> blocks_ = new ArrayList<>();
     
     @XmlElement(name = "description")
     private String description_;
@@ -123,7 +123,11 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     
     public ApplicationDescriptor addApplications(Iterable<Application> apps)
     {
-    	apps.forEach(this::addApplication);
+    	if (apps != null)
+    	{
+    		apps.forEach(this::addApplication);
+    	}
+    	
     	return this;
     }
     
@@ -150,9 +154,12 @@ public class ApplicationDescriptor implements Serializable, Cloneable
      */
     public ImmutableList<Application> getApplications()
     {
-//        return applications_ == null ? new Applications(): applications_;
+    	return applications();
+    }
+    
+    public ImmutableList<Application> applications()
+    {
     	return ImmutableList.copyOf(applications_);
-//    	return Collections.unmodifiableList(applications_);
     }
     
     public ApplicationDescriptor addBlock(Block block)
@@ -205,12 +212,25 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     	return Lists2.isInRage(index, blocks_.size()) ? Optional.of(blocks_.get(index)) : Optional.<Block>absent();
     }
     
+    
+    /**
+     * Returns the blocks of ordered by their ids.
+     * @return the blocks of this job ordered by their ids.
+     */
+    public ImmutableList<Block> blocks()
+    {
+    	List<Block> blocks = Lists.newArrayList(blocks_);
+    	Collections.sort(blocks);
+    	
+    	return ImmutableList.copyOf(blocks);
+    }
+    
     /**
 	 * @return the blocks
 	 */
-	public List<Block> getBlocks() 
+	public ImmutableList<Block> getBlocks() 
 	{
-		return Collections.unmodifiableList(blocks_);
+		return blocks();
 	}
     
     public ApplicationDescriptor addCloud(Cloud cloud)

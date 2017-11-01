@@ -35,7 +35,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import io.dohko.jdbi.stereotype.Repository;
 
-@Repository
+@Repository("executionTaskRepository")
 @RegisterMapper(TaskRepositorySetMapper.class)
 public interface TaskRepository extends Closeable
 {   

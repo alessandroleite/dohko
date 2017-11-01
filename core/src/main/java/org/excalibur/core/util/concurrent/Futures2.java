@@ -36,6 +36,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.common.util.concurrent.Uninterruptibles;
 
+import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
+
 @SuppressWarnings("unchecked")
 public final class Futures2
 {
@@ -67,7 +69,7 @@ public final class Futures2
             {
                 if (callback != null)
                 {
-                    Futures.addCallback(future, callback);
+                    Futures.addCallback(future, callback, directExecutor());
                 }
             }
         }

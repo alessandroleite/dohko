@@ -109,7 +109,7 @@ public class TaskResourceUsageRepositoryTest extends TestSupport
     public void tearDown() throws Exception 
     {
 		JobRepository jobRepository = openRepository(JobRepository.class);
-		String jobId = jobRepository.findJobOfTaskId(taskStatus_.getTaskId()).getId();
+		String jobId = jobRepository.findJobOfTaskId(taskStatus_.getTaskId()).get().getId();
 //		
 		repository_.deleteAllOfTask(taskStatus_.getTaskId());
 		openRepository(TaskStatusRepository.class).deleteAllStatusesOfTask(taskStatus_.getTaskId());

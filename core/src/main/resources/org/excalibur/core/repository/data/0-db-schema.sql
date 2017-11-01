@@ -572,19 +572,19 @@ create table if not exists job
   finished_in bigint
 );
 
-create unique index if not exists idx_job_uuid on job(uuid);
+create unique index if not exists idx_job_uuid on job(user_id, uuid);
 create index if not exists idx_job_user_id on job(user_id);
 
 create table if not exists task
 (
   id integer not null auto_increment primary key,
   job_id integer not null references job (id),
-  uuid varchar(100) not null,
+  uuid varchar(36) not null,
   name varchar(50) not null,
   commandline text not null
 );
 
-create unique index if not exists idx_task_uuid on task(uuid);
+create unique index if not exists idx_task_uuid on task(job_id, uuid);
 create index if not exists idx_task_job_id on task(job_id);
 
 create table if not exists task_status_type 
@@ -620,7 +620,7 @@ create table if not exists task_output
 (
   id integer not null auto_increment primary key,  
   task_id integer not null references task(id),
-  uuid varchar(100) not null,
+  uuid varchar(36) not null,
   task_output_type_id integer not null references task_output_type(id),
   value text
 );
