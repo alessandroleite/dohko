@@ -66,7 +66,7 @@ public interface TaskMemoryStatsRepository extends Closeable
 	
 	@SqlQuery(" SELECT id, pid, datetime, size, resident, share FROM task_mem_stats\n" + 
 	          " WHERE pid = (SELECT pid FROM task_status ts WHERE ts.task_id = (SELECT t.id FROM task t WHERE lower(t.uuid) = lower(:uuid))\n\t\t" +
-			  "             AND ts.task_status_type_id IS NOT NUll AND ts.task_status_type_id in (2, 3, 4))\n" +
+			  "             AND ts.task_status_type_id IS NOT NUll AND ts.task_status_type_id in (2, 3, 4) GROUP BY pid)\n" +
 	          " ORDER BY datetime")
 	List<ProcessMemoryState> getStatsOfTask(@Bind("uuid") String uuid);
 	

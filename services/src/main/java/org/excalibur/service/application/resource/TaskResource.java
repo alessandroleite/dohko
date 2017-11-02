@@ -25,12 +25,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.excalibur.core.execution.domain.Application;
+import org.excalibur.core.execution.domain.TaskStats;
 import org.excalibur.core.execution.domain.TaskStatus;
+import org.excalibur.core.execution.domain.repository.TaskCpuStatsRepository;
+import org.excalibur.core.execution.domain.repository.TaskMemoryStatsRepository;
 import org.excalibur.core.execution.domain.repository.TaskRepository;
 import org.excalibur.core.execution.domain.repository.TaskStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+
+import io.airlift.command.ProcessCpuState;
+import io.airlift.command.ProcessMemoryState;
 
 import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.*;
@@ -57,6 +64,13 @@ public class TaskResource
     @Autowired
     private TaskStatusRepository taskStatusRepository_;
     
+    @Autowired
+    private TaskCpuStatsRepository taskCpuStatsRepository_;
+    
+    @Autowired
+    private TaskMemoryStatsRepository taskMemoryStatsRepository_;
+    
+    
     @GET
     @Path("{taskId}")
     @Consumes({ APPLICATION_XML, APPLICATION_JSON })
@@ -75,6 +89,30 @@ public class TaskResource
     {
     	Optional<TaskStatus> status = taskStatusRepository_.getLastStatusOfTask(taskId);
     	return buildResponse(status.orNull());
+    }
+    
+    @GET
+    @Path("{taskId}/stats")
+    public Response stats(@PathParam("taskId") String taskId)
+    {
+    	Response response;
+    	
+    	if (!Strings.isNullOrEmpty(taskId))
+    	{
+    		response = status(FORBIDDEN).build();
+    	}
+    	
+    	List<ProcessCpuState> cpuStats = taskCpuStatsRepository_.getStatsOfTask(taskId);
+    	List<ProcessMemoryState> memStats = taskMemoryStatsRepository_.getStatsOfTask(taskId);
+    	
+    	if (cpuStats.isEmpty() && memStats.isEmpty())
+    	{
+    		response = status(NOT_FOUND).build();
+    	}
+    	
+    	response = ok().entity(new TaskStats(taskId, cpuStats, memStats)).build();
+    	
+    	return response;
     }
     
     @GET

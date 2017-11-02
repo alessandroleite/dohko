@@ -51,6 +51,10 @@ public interface TaskStatusRepository extends Closeable
 	@GetGeneratedKeys
 	Integer insert(@BindBean TaskStatus status);
 	
+	@SqlUpdate("UPDATE task_status SET PID = :pid WHERE task_id = (SELECT t.id FROM task t WHERE LOWER(t.uuid) = lower(:taskId)) AND \n"+ 
+	           "task_status_type_id in (2, 3, 4)")
+	void updateTaskPid(@Bind("taskId") String taskId, @Bind("pid") Long pid);
+	
 	@SqlBatch("INSERT INTO task_status (task_id, task_status_type_id, status_time, worker_id, pid) \n" + 
             " VALUES ((SELECT id FROM task WHERE lower(uuid) = :taskId), :type.id, :date, :worker, :pid)")
 	void insert(@BindBean Iterable<TaskStatus> statuses);

@@ -44,10 +44,10 @@ import io.dohko.jdbi.stereotype.Repository;
 public interface TaskCpuStatsRepository extends Closeable 
 {
 	@GetGeneratedKeys
-	@SqlUpdate("INSERT INTO task_cpu_stats (datetime, pid, percent, sys, user, total) VALUES (:datetime, :pid, :percent, :sys, :user, :total")
+	@SqlUpdate("INSERT INTO task_cpu_stats (datetime, pid, percent, sys, user, total) VALUES (:datetime, :pid, :percent, :sys, :user, :total)")
 	Integer insert(@BindBean ProcessCpuState stats);
 	
-	@SqlBatch("INSERT INTO task_cpu_stats (pid, datetime, percent, sys, user, total) VALUES (:pid, :datetime, :percent, :sys, :user, :total")
+	@SqlBatch("INSERT INTO task_cpu_stats (pid, datetime, percent, sys, user, total) VALUES (:pid, :datetime, :percent, :sys, :user, :total)")
 	void insert(@BindBean Iterable<ProcessCpuState> statses);
 	
 	@SingleValueResult
@@ -69,15 +69,16 @@ public interface TaskCpuStatsRepository extends Closeable
 	@SqlQuery("SELECT id, pid, datetime, percent, sys, user, total FROM task_cpu_stats WHERE pid = :pid ORDER BY datetime")
 	List<ProcessCpuState> getStats(@Bind("pid")long pid);
 	
+
 	@SqlQuery("SELECT id, pid, datetime, percent, sys, user, total FROM task_cpu_stats " +
 			" WHERE pid = (SELECT pid FROM task_status ts WHERE ts.task_id = :taskId AND task_status_type_id IS NOT NUll AND task_status_type_id in (2, 3, 4))" +
 			" ORDER BY datetime")
 	List<ProcessCpuState> getStatsOfTask(@Bind("taskId") long taskId);
 	
-	@SqlQuery("SELECT id, pid, datetime, percent, sys, user, total FROM task_cpu_stats " +
-			" WHERE pid = (SELECT pid FROM task_status ts WHERE ts.task_id = (SELECT t.id FROM task t WHERE lower(t.uuid) = lower(:uuid)) " +
-			"              AND task_status_type_id IS NOT NUll AND task_status_type_id in (2, 3, 4))" +
-			" ORDER BY datetime")
+	@SqlQuery("SELECT id, pid, datetime, percent, sys, user, total FROM task_cpu_stats\n" +
+			  " WHERE pid = (SELECT pid FROM task_status ts WHERE ts.task_id = (SELECT id FROM task t WHERE lower(t.uuid) = lower(:uuid))\n" +
+			  "              AND task_status_type_id IS NOT NUll AND task_status_type_id in (2, 3, 4) GROUP BY pid)\n" +
+			  " ORDER BY datetime")
 	List<ProcessCpuState> getStatsOfTask(@Bind("uuid") String uuid);
 	
 	class TaskCpuStatsMapper implements ResultSetMapper<ProcessCpuState> 
