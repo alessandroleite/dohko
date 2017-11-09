@@ -489,9 +489,14 @@ public class ApplicationDescriptor implements Serializable, Cloneable
      * 
 	 * @return the preconditions a read-only view of the preconditions.
 	 */
-	public List<Precondition> getPreconditions() 
+	public ImmutableList<Precondition> getPreconditions() 
 	{
-		return Collections.unmodifiableList(preconditions_);
+		return ImmutableList.copyOf(preconditions_);
+	}
+	
+	public ImmutableList<Precondition> preconditions()
+	{
+		return getPreconditions();
 	}
 
 	@Override
@@ -508,7 +513,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
             return true;
         }
         
-        if (!(obj instanceof ApplicationDescriptor))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
