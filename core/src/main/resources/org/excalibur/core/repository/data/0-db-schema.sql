@@ -320,8 +320,8 @@ create table if not exists instance_tag
   tag_value varchar(255) not null
 );
 
-create index idx_instance_tag_inst_id on instance_tag (instance_id);
-create index idx_instance_tag_name on instance_tag (tag_name);
+create index if not exists idx_instance_tag_inst_id on instance_tag (instance_id);
+create index if not exists idx_instance_tag_name on instance_tag (tag_name);
 
 create table if not exists script_statement
 (
@@ -418,7 +418,7 @@ create index if not exists  idx_spot_req_own on spot_instance_offer (owner_id);
 create index if not exists  idx_spot_req_region on spot_instance_offer (region_id);
 create index if not exists  idx_spot_req_provider on spot_instance_offer (provider_id);
 
-create table spot_instance_offer_status
+create table if not exists spot_instance_offer_status
 (
   id integer not null auto_increment primary key,
   spot_instance_offer_id integer not null references spot_instance_offer (id),
@@ -445,7 +445,7 @@ create table if not exists workflow
 
 create index if not exists  idx_workflow_user_id on workflow(user_id);
 
-create table workflow_activity
+create table if not exists workflow_activity
 (
   id integer not null auto_increment primary key,
   activity_id integer not null,  
@@ -467,9 +467,9 @@ create table if not exists workflow_activity_state_history
   message text
 );
 
-create index idx_workflow_activity_state on workflow_activity_state_history (workflow_activity_id);
+create index if not exists idx_workflow_activity_state on workflow_activity_state_history (workflow_activity_id);
 
-create table workflow_activity_task
+create table if not exists workflow_activity_task
 (
   id integer not null auto_increment primary key,
   workflow_activity_id integer not null references workflow_activity(id),  
@@ -656,10 +656,10 @@ create table if not exists task_cpu_stats
 --  task_id integer not null references task (id),
   datetime timestamp not null,
   pid long not null,
-  percent long not null,
-  sys long not null, 
-  user long not null,
-  total long not null
+  percent numeric(8,6) not null,
+  sys numeric(8,6) not null, 
+  user numeric(8,6) not null,
+  total numeric(8,6) not null
 );
 
 --create index  idx_task_cpu_stats_task on task_cpu_stats(task_id);
@@ -672,9 +672,9 @@ create table if not exists task_mem_stats
 --  task_id integer not null references task(id),
   datetime timestamp not null,
   pid long not null,
-  resident long not null,
-  share long not null,
-  size long not null
+  resident numeric(8,6) not null,
+  share numeric(8,6) not null,
+  size numeric(8,6) not null
 );
 
 --create index if not exists idx_task_mem_stats_task on task_mem_stats(task_id);
