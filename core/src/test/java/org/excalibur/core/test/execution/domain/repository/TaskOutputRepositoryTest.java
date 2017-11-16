@@ -16,8 +16,6 @@
  */
 package org.excalibur.core.test.execution.domain.repository;
 
-import static java.lang.System.currentTimeMillis;
-
 import java.io.IOException;
 
 import org.excalibur.core.execution.domain.Application;
@@ -29,15 +27,16 @@ import org.excalibur.core.execution.domain.repository.TaskRepository;
 import org.excalibur.core.test.TestSupport;
 import org.junit.Test;
 
-import static java.util.UUID.*;
-
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import ch.vorburger.exec.ManagedProcessException;
 
-import static org.excalibur.core.execution.domain.TaskOutputType.*;
-
+import static java.lang.System.currentTimeMillis;
+import static java.util.UUID.randomUUID;
+import static org.excalibur.core.execution.domain.TaskOutputType.SYSOUT;
 import static org.junit.Assert.*;
+
 
 public class TaskOutputRepositoryTest extends TestSupport
 {
@@ -49,7 +48,6 @@ public class TaskOutputRepositoryTest extends TestSupport
     {
         super.setup();
         taskOutputRepository_ = openRepository(TaskOutputRepository.class);
-        
         
         ApplicationDescriptor job = new ApplicationDescriptor()
         		.setId(randomUUID().toString())
@@ -100,5 +98,26 @@ public class TaskOutputRepositoryTest extends TestSupport
     	assertEquals(sysout, taskOutputRepository_.getById(sysout.getId()));
     	
     	taskOutputRepository_.delete(sysout.getId());
+    }
+    
+    @Test
+    public void must_return_only_one_output_per_task ()
+    {
+    	Application task2 = task.clone().setId(randomUUID().toString()).setName("task2");
+    	openRepository(TaskRepository.class).insert(task2);
+    	
+    	TaskOutput output1 = new TaskOutput().setTaskId(task.getId()).setType(SYSOUT).setValue(1).setId(randomUUID().toString());
+    	TaskOutput output2 = new TaskOutput().setTaskId(task2.getId()).setType(SYSOUT).setValue(2).setId(randomUUID().toString());
+    	
+    	taskOutputRepository_.insert(Lists.newArrayList(output1, output2));
+    	
+    	Iterable<TaskOutput> taskOutputs = taskOutputRepository_.getAllOutputsOfTask(task.getId());
+    	assertEquals(1, Iterables.size(taskOutputs));
+    	assertEquals(output1, Iterables.getFirst(taskOutputs, null));
+    	
+    	Iterable<TaskOutput> task2Outputs = taskOutputRepository_.getAllOutputsOfTask(task2.getId());
+    	assertEquals(1, Iterables.size(task2Outputs));
+    	assertEquals(output2, Iterables.getFirst(task2Outputs, null));
+    	
     }
 }

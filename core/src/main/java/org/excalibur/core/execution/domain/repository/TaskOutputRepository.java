@@ -57,17 +57,18 @@ public interface TaskOutputRepository extends Closeable
 	@SqlUpdate("DELETE FROM task_output WHERE id = :id")
 	void delete(@Bind("id") Integer id);
 	
-	@SqlQuery(" SELECT ot.uuid, (SELECT t.uuid FROM task t WHERE lower(t.id) = lower(ot.task_id)) as task_id,\n" + 
-	          " task_output_type_id as type_id, value \n" +
-	          " FROM task_output ot \n" + 
+	@SqlQuery(" SELECT ot.uuid, t.uuid as task_id, task_output_type_id as type_id, value \n" +
+	          " FROM task_output ot \n" +
+			  " JOIN task t ON t.id = ot.task_id" + 
 	          " WHERE lower(ot.uuid) = lower(:uuid) \n")
 	TaskOutput getById(@Bind("uuid")String id);
 	
 	@Nonnull
-	@SqlQuery(" SELECT ot.uuid, (SELECT t.uuid FROM task t WHERE lower(t.uuid) = lower(:taskId)) as task_id,\n" + 
-	          " task_output_type_id as type_id, value \n" +
-	          " FROM task_output ot \n" + 
-	          " ORDER BY ot.id \n")
+	@SqlQuery("SELECT ot.uuid, t.uuid as task_id, ot.task_output_type_id as type_id, value\n" +
+			  "FROM task_output ot \n"+
+			  " JOIN task t ON ot.task_id = t.id \n"+
+			  " WHERE lower(t.uuid) = lower (:taskId) \n "+ 
+			  " ORDER BY ot.id")
 	Iterable<TaskOutput> getAllOutputsOfTask(@Nonnull @Bind("taskId") String taskId);
 		
 	class TaskOutputRowMapper implements ResultSetMapper<TaskOutput> 

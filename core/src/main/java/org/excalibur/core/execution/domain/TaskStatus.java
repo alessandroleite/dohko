@@ -214,7 +214,7 @@ public class TaskStatus implements Serializable, Cloneable
 	}
 	
 	@Override
-	protected TaskStatus clone()  
+	public TaskStatus clone()  
 	{
 		TaskStatus clone;
 		try 

@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.excalibur.core.execution.domain.TaskStatus;
 import org.excalibur.core.execution.domain.TaskStatusType;
@@ -70,26 +69,27 @@ public interface TaskStatusRepository extends Closeable
 	 * @return A non-null {@link List} with the existing statuses of the given task. 
 	 * An empty {@link List} means that the task is unknown or invalid.
 	 */
-	@SqlQuery("SELECT task_id, (SELECT t.uuid FROM task t WHERE t.id = ts.task_id and lower(t.uuid) = lower(:taskId)) as task_uuid, \n" + 
-	          " task_status_type_id, status_time, worker_id, pid \n" + 
+	@SqlQuery("SELECT task_id, t.uuid as task_uuid, t.name as task_name, task_status_type_id, status_time, worker_id, pid \n" +			
 			  " FROM task_status ts\n" + 
-	          "ORDER BY status_time\n")
+	          " JOIN task t ON t.id = ts.task_id AND lower(t.uuid) = lower(:taskId) \n" +
+	          "ORDER BY ts.task_status_type_id, status_time \n")
 	@Nonnull
 	List<TaskStatus> getAllStatusesOfTask(@Bind("taskId") String taskId);
 	
 	/**
-	 * Returns the last known status of a given task.
+	 * Returns the last known status of a given task. Absent value means unknown task's status.
 	 * @param taskId id of the task to return its last status
-	 * @return the last status of the given task. It may be <code>null</code>
+	 * @return the last status of the given task.
 	 */
-	@Nullable
+	@Nonnull
 	@SingleValueResult
-	@SqlQuery("SELECT (SELECT t.uuid FROM task t WHERE t.id = ts.task_id and lower(t.uuid) = lower(:taskId)) as task_uuid, \n" + 
-	          " task_id, task_status_type_id, status_time, worker_id, pid \n" + 
-			  " FROM task_status ts\n" + 
+	@SqlQuery("SELECT t.uuid as task_uuid, t.name as task_name, task_id, task_status_type_id, status_time, worker_id, pid \n" + 
+			  " FROM task_status ts\n" +
+	          " JOIN task t ON t.id = ts.task_id and lower(t.uuid) = lower(:taskId)\n" +
 	          "WHERE \n" +
-			  " ts.task_id = (SELECT t.id FROM task t WHERE lower(t.uuid) = lower(:taskId)) AND \n" + 
-	          " ts.status_time = (SELECT MAX(status_time) FROM task_status tsm WHERE tsm.task_id = ts.task_id)")
+//			  " ts.task_id = (SELECT t.id FROM task t WHERE lower(t.uuid) = lower(:taskId)) AND \n" + 
+	          " ts.status_time = (SELECT MAX(status_time) FROM task_status tsm WHERE tsm.task_id = ts.task_id) AND \n" +
+			  " ts.task_status_type_id = (SELECT max(task_status_type_id) FROM task_status tsm WHERE tsm.task_id = ts.task_id)")
 	Optional<TaskStatus> getLastStatusOfTask(@Bind("taskId") String taskId);
 	
 	class TaskStatusRepositorySetMapper implements ResultSetMapper<TaskStatus> 
@@ -109,6 +109,7 @@ public interface TaskStatusRepository extends Closeable
 					    .setDate(r.getTimestamp("status_time"))
 					    .setPid(pid)
 					    .setTaskId(r.getString("task_uuid"))
+					    .setTaskName(r.getString("task_name"))
 					    .setType(TaskStatusType.valueOf(r.getInt("task_status_type_id")))
 					    .setWorker(r.getString("worker_id"));
 		}

@@ -58,16 +58,17 @@ import static java.lang.String.format;
 public class TestSupport
 {
 	protected static DB db;
-	private static int dbport;
-	private static String dbname;
-	protected BasicDataSource ds;
+	protected static int dbport;
+	protected static String dbname;
+	protected static BasicDataSource ds;
+	
     protected DBI dbi;
     protected User user;     
     protected Zone zone;
     
     private static final java.util.Random random = new java.util.Random();
     
-    protected final Logger LOG = LoggerFactory.getLogger(this.getClass().getName());
+    protected final static Logger LOG = LoggerFactory.getLogger(TestSupport.class.getName());
     
     @BeforeClass
     public static void newEmbeddedDB() throws ManagedProcessException
@@ -88,6 +89,9 @@ public class TestSupport
 //    	final String dbname = getProperty("org.excalibur.database.name", "dohko");
     	
 //    	startEmbeddedDB(dbport, dbname);
+    	db.run(format("drop database %s", dbname));
+    	db.createDB(dbname);
+    	
     	createAndConfigureDatasource(dbport, dbname);
 //    	addVMShutdownHook();
         
