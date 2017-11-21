@@ -73,32 +73,27 @@ public interface Activity
      * <p>
      * <strong>Notice:</strong> This method can only be called before the activity starts.
      * 
-     * @param child
-     *            A child of this {@link Activity}. Must not be <code>null</code> nor a self-reference.
-     * @throws IllegalStateException
-     *             If this {@link Activity} had already started, finished or failed.
+     * @param child a child of this {@link Activity}. Must not be <code>null</code> nor a self-reference
+     * @throws IllegalStateException if this {@link Activity} had already started, finished or failed.
      * @see #getState()
      */
     void addChild(Activity child);
 
     /**
-     * Returns the id of this activity.
-     * 
-     * @return The id of this activity.
+     * Returns the id of this activity
+     * @return the id of this activity
      */
     Integer getId();
 
     /**
-     * Returns the label of this activity.
-     * 
-     * @return The label of this activity.
+     * Returns the label of this activity
+     * @return The label of this activity
      */
     String getLabel();
 
     /**
-     * Returns the description of this {@link Activity}. In other words, the data about the activity.
-     * 
-     * @return the description of this {@link Activity}. In other words, the data about the activity.
+     * Returns the description of this {@link Activity}. In other words, the data about the activity
+     * @return the description of this {@link Activity}. In other words, the data about the activity
      */
     WorkflowActivityDescription getDescription();
 
@@ -110,31 +105,25 @@ public interface Activity
 
     /**
      * Stops the activity, setting the status to {@link Transitions#STOPPED}.
-     * 
-     * @param context
-     *            The activity execution context.
+     * @param context the activity execution context.
      */
     void stop(ActivityExecutionContext context);
 
     /**
      * Registers a listener to be notified when the state changes.
-     * 
-     * @param listeners
-     *            The listener to notify when the state changes. <code>null</code> values are ignored.
+     * @param listeners listener to notify when the state changes. <code>null</code> values are ignored.
      */
     void register(WorkflowActivityStateListener... listeners);
 
     /**
-     * Returns the number of children of this activity.
-     * 
-     * @return the number of children.
+     * Returns the number of children of this activity
+     * @return the number of children
      */
     int getNumberOfChildren();
 
     /**
-     * Returns the number of parents of this activity.
-     * 
-     * @return the number of parents.
+     * Returns the number of parents of this activity
+     * @return the number of parents
      */
     int getNumberOfParents();
 
@@ -152,15 +141,13 @@ public interface Activity
     boolean isReadyToExecute();
 
     /**
-     * Returns <code>true</code> if this is a start activity. In other words, the return is <code>null</code> if there is no parent for this activity.
-     * 
+     * Returns <code>true</code> if this is a start activity. In other words, the return is <code>false</code> if there is no parent for this activity.
      * @return <code>true</code> if there is no parent for this task.
      */
     boolean isStart();
 
     /**
-     * Returns <code>true</code> if this is the last activity.
-     * 
+     * Returns <code>true</code> if this is the last activity
      * @return <code>true</code> if this is the last task, otherwise <code>false</code>.
      */
     boolean isLastActivity();

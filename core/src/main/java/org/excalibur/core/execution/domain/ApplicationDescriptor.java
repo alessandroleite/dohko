@@ -46,13 +46,13 @@ import static org.excalibur.core.util.CloneIterableFunction.*;
 @XmlRootElement(name = "application-descriptor")
 @XmlType(name = "application-descriptor", propOrder = { 
 		"id_", "name_", "description_", "user_", "requirements_", "preconditions_", "clouds_", "applications_", "blocks_",
-        "createdIn_", "finishedIn_", "onFinished_" })
+        "createdIn_", "finishedIn_", "cpuTime_", "onFinished_" })
 public class ApplicationDescriptor implements Serializable, Cloneable
 {
 	/**
 	 * Serial code version <code>serialVersionUID</code> for serialization.
 	 */
-	private static final long serialVersionUID = 1759115607404731621L;
+	private static final long serialVersionUID = -4285700082857398784L;
 
     @XmlTransient
     private Integer internalId;
@@ -93,6 +93,9 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     
     @XmlElement(name = "execution-finished-in")
     private Long finishedIn_;
+    
+    @XmlElement(name = "cpu-time")
+    private Long cpuTime_;
     
     @XmlTransient
     private String plainText_;
@@ -475,6 +478,23 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     }
 
     /**
+	 * @return the cpuTime
+	 */
+	public Long getCpuTime() 
+	{
+		return cpuTime_;
+	}
+
+	/**
+	 * @param cpuTime the cpuTime to set
+	 */
+	public ApplicationDescriptor setCpuTime(Long cpuTime) 
+	{
+		this.cpuTime_ = cpuTime;
+		return this;
+	}
+
+	/**
      * @param plainText the plainText to set
      */
     public ApplicationDescriptor setPlainText(String plainText)

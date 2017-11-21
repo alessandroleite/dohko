@@ -17,7 +17,9 @@
 package org.excalibur.core.execution.domain;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,29 +28,56 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.excalibur.core.util.YesNoEnum;
-
 import com.google.common.base.MoreObjects;
-
-import static com.google.common.base.Objects.*;
+import com.google.common.base.Strings;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "file")
-@XmlType(name = "file", propOrder = { "name_", "path_", "generated_" })
+@XmlType(name = "file", propOrder = { "name_", "source_", "dest_", "checksum_", "generated_"})
 public class AppData implements Serializable, Comparable<AppData>, Cloneable
 {
-    /**
+	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-    private static final long serialVersionUID = -6486674085608485490L;
+	private static final long serialVersionUID = 2108053982461520523L;
 
     @XmlElement(name = "name", required = true, nillable = false)
     private String name_;
-
-    @XmlElement(name = "path", required = true, nillable = false)
-    private String path_;
+    
+    @XmlElement(name = "source")
+    private String source_;
+    
+    @XmlElement(name = "dest", required = true, nillable = false)
+    private String dest_;
+    
+    @XmlElement(name = "checksum")
+    private String checksum_;
 
     @XmlElement(name = "generated", required = true, nillable = false)
     private YesNoEnum generated_ = YesNoEnum.NO;
+    
+    public AppData()
+    {
+    	super();
+    }
+    
+    public static AppData newAppData()
+    {
+    	return new AppData();
+    }
+    
+    public static AppData newAppData(String name, String source, String dest)
+    {
+    	return new AppData()
+    			.setName(name)
+    			.setSource(source)
+    			.setPath(dest);
+    }
+    
+    public Optional<URI> getSourceURI()
+    {
+    	return Strings.isNullOrEmpty(source_) ? Optional.empty() : Optional.of(URI.create(source_));
+    }
 
     /**
      * @return the name
@@ -59,34 +88,90 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
     }
 
     /**
-     * @param name
-     *            the name to set
+     * @param name the name to set
      */
     public AppData setName(String name)
     {
         this.name_ = name;
         return this;
     }
+    
 
     /**
+	 * @return the dest
+	 */
+	public String getDest() 
+	{
+		return dest_;
+	}
+
+	/**
+	 * @param dest the dest to set
+	 */
+	public AppData setDest(String dest) 
+	{
+		this.dest_ = dest;
+		return this;
+	}
+
+	/**
      * @return the path
+     * @deprecated replaced by {@link #getDest()}
      */
+    @Deprecated
     public String getPath()
     {
-        return path_;
+        return getDest();
     }
 
     /**
-     * @param path
-     *            the path to set
+     * @param path the path to set
+     * @deprecated replaced by {@link #setDest(String)}
      */
+    @Deprecated
     public AppData setPath(String path)
     {
-        this.path_ = path;
+        setDest(path);
         return this;
     }
+    
 
     /**
+	 * @return the source
+	 */
+	public String getSource() 
+	{
+		return source_;
+	}
+
+	/**
+	 * @param source the source to set
+	 */
+	public AppData setSource(String source) 
+	{
+		this.source_ = source;
+		return this;
+	}
+	
+
+	/**
+	 * @return the checksum
+	 */
+	public String getChecksum() 
+	{
+		return checksum_;
+	}
+
+	/**
+	 * @param checksum the checksum to set
+	 */
+	public AppData setChecksum(String checksum) 
+	{
+		this.checksum_ = checksum;
+		return this;
+	}
+
+	/**
      * @return the generated
      */
     public YesNoEnum getGenerated()
@@ -95,8 +180,7 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
     }
 
     /**
-     * @param generated
-     *            the generated to set
+     * @param generated the generated to set
      */
     public AppData setGenerated(YesNoEnum generated)
     {
@@ -111,11 +195,10 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
     }
     
     
-    
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.getName(), this.getPath(), this.getGenerated());
+        return Objects.hash(this.getName());
     }
 
     @Override
@@ -126,40 +209,47 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
             return true;
         }
         
-        if (!(obj instanceof AppData))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
         
         AppData other = (AppData) obj;
         
-        return equal(this.getName(), other.getName()) && equal(this.getPath(), other.getPath()) && equal(this.getGenerated(), other.getGenerated());
+        return Objects.equals(this.getName(), other.getName());
     }
 
     @Override
     public AppData clone() 
     {
-        Object cloned;
+    	AppData clone;
         
         try
         {
-            cloned = super.clone();
+            clone = (AppData) super.clone();
         }
         catch (CloneNotSupportedException e)
         {
-            cloned = new AppData().setGenerated(this.getGenerated()).setName(this.getName()).setPath(this.getPath());
+            clone = new AppData()
+            		.setChecksum(getChecksum())
+            		.setGenerated(getGenerated())
+            		.setName(getName())
+            		.setDest(getDest())
+            		.setSource(getSource());
         }
         
-        return (AppData) cloned;
+        return clone;
     }
     
     @Override
     public String toString()
     {
         return MoreObjects.toStringHelper(this)
-                .add("name", this.getName())
-                .add("path", this.getPath())
-                .add("isGenerated", this.getGenerated())
+                .add("name", getName())
+                .add("source", getSource())
+                .add("dest", getDest())
+                .add("checksum", getChecksum())
+                .add("isGenerated", getGenerated())
                 .omitNullValues()
                 .toString();
     }

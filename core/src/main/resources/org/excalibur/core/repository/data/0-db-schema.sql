@@ -569,7 +569,8 @@ create table if not exists job
   name varchar(100) not null,
   description text not null,
   created_in bigint not null,
-  finished_in bigint
+  finished_in bigint,
+  elapsed_time bigint
 );
 
 create unique index if not exists idx_job_uuid on job(user_id, uuid);
@@ -622,7 +623,8 @@ create table if not exists task_output
   task_id integer not null references task(id),
   uuid varchar(36) not null,
   task_output_type_id integer not null references task_output_type(id),
-  value text
+  value text not null, 
+  checksum varchar(64)
 );
 
 create unique index if not exists idx_task_output_uuid on task_output (uuid);
@@ -672,9 +674,9 @@ create table if not exists task_mem_stats
 --  task_id integer not null references task(id),
   datetime timestamp not null,
   pid long not null,
-  resident numeric(8,6) not null,
-  share numeric(8,6) not null,
-  size numeric(8,6) not null
+  resident double not null,
+  share double not null,
+  size double not null
 );
 
 --create index if not exists idx_task_mem_stats_task on task_mem_stats(task_id);

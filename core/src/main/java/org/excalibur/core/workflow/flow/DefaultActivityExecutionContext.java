@@ -45,6 +45,7 @@ public class DefaultActivityExecutionContext implements ActivityExecutionContext
     private final UserRepository    userRepository_;
     private final RegionRepository  regionRepository_;
     private final VirtualMachine    node_;
+    private final TaskExecutionService   executor_;
 
     public DefaultActivityExecutionContext(Context parentContext, Activity activity, 
             WorkflowTaskRepository taskRepository, UserRepository userRepository, RegionRepository regionRepository,
@@ -56,6 +57,8 @@ public class DefaultActivityExecutionContext implements ActivityExecutionContext
         this.userRepository_ = checkNotNull(userRepository);
         this.regionRepository_ = checkNotNull(regionRepository);
         this.node_ = checkNotNull(machine);
+        
+        this.executor_ = new SingleTaskExecutorService();
 
         createTasks();
     }
@@ -96,7 +99,7 @@ public class DefaultActivityExecutionContext implements ActivityExecutionContext
     @Override
     public TaskExecutionService getTaskExecutionService()
     {
-        return new SingleTaskExecutorService();
+        return executor_;
     }
 
     @Override

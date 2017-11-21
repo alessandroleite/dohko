@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
 
-import static org.excalibur.core.workflow.definition.Activity.Transitions.FAILED;
 import static org.excalibur.core.workflow.definition.Activity.Transitions.READY;
 
 public class WorkflowExecutionStrategy

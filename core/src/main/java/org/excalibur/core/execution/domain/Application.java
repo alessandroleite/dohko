@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application")
@@ -64,7 +65,7 @@ public class Application implements Serializable, Cloneable
     private String commandLine_;
 
     @XmlElement(name = "files")
-    private final List<AppData> files_ = new ArrayList<AppData>();
+    private final List<AppData> files_ = new ArrayList<>();
     
     @XmlElement(name = "preconditions")
     private final List<Precondition> preconditions_ = new ArrayList<>();
@@ -85,11 +86,11 @@ public class Application implements Serializable, Cloneable
         this.id_ = id;
     }
 
-    public Application addData(AppData appData)
+    public Application addData(AppData data)
     {
-        if (appData != null)
+        if (data != null && !files_.contains(data))
         {
-            this.files_.add(appData);
+            files_.add(data);
         }
 
         return this;
@@ -126,7 +127,7 @@ public class Application implements Serializable, Cloneable
 
     public Application setData(AppData appData)
     {
-        return this.addData(appData);
+        return addData(appData);
     }
 
     public Application removeData(AppData appData)
@@ -190,9 +191,9 @@ public class Application implements Serializable, Cloneable
     /**
      * @return the files
      */
-    public List<AppData> getFiles()
+    public ImmutableList<AppData> getFiles()
     {
-        return Collections.unmodifiableList(files_);
+        return ImmutableList.copyOf(files_);
     }
     
     /**

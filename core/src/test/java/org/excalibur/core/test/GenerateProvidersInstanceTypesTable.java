@@ -18,25 +18,12 @@ package org.excalibur.core.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 
 import org.excalibur.core.cloud.api.InstanceType;
 import org.excalibur.core.cloud.api.InstanceTypes;
-import org.excalibur.core.cloud.api.Platform;
-import org.excalibur.core.domain.User;
 import org.excalibur.core.domain.repository.InstanceTypeRepository;
-import org.excalibur.core.execution.domain.ApplicationExecDescription;
-import org.excalibur.core.execution.domain.FailureAction;
-import org.excalibur.core.execution.domain.ScriptStatement;
-import org.excalibur.core.execution.domain.repository.ApplicationDescriptionRepository;
-import org.excalibur.core.execution.domain.repository.ScriptStatementRepository;
-import org.excalibur.core.io.utils.IOUtils2;
-import org.excalibur.core.util.YesNoEnum;
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.junit.Before;
-import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 
 public class GenerateProvidersInstanceTypesTable extends TestSupport

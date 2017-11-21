@@ -40,13 +40,16 @@ public class JobStatus implements Cloneable, Serializable
 	/**
 	 * Serial code version <code>serialVersionUID</code> for serialization.
 	 */
-	private static final long serialVersionUID = 8443794836420284375L;
+	private static final long serialVersionUID = -9064695652064259527L;
 
 	@XmlElement(name = "id")
 	private String id;
 	
 	@XmlElement(name = "name")
 	private String name;
+	
+	@XmlElement(name = "cpu-time")
+	private Long cpuTime;
 	
 	@XmlElement(name = "tasks")
 	private final List<TaskStatus> tasksStatuses = new ArrayList<>();
@@ -133,6 +136,23 @@ public class JobStatus implements Cloneable, Serializable
 		this.name = name;
 		return this;
 	}
+	
+	/**
+	 * @return the cpuTime
+	 */
+	public Long getCpuTime() 
+	{
+		return cpuTime;
+	}
+
+	/**
+	 * @param cpuTime the cpuTime to set
+	 */
+	public JobStatus setCpuTime(Long cpuTime) 
+	{
+		this.cpuTime = cpuTime;
+		return this;
+	}
 
 	/**
 	 * @return the tasksStatus
@@ -158,7 +178,7 @@ public class JobStatus implements Cloneable, Serializable
 		} 
 		catch (CloneNotSupportedException e) 
 		{
-			clone = new JobStatus(id, CloneIterableFunction.cloneIterable(tasksStatuses));
+			clone = new JobStatus(id, CloneIterableFunction.cloneIterable(tasksStatuses)).setCpuTime(getCpuTime());
 		}
 		
 		return clone;

@@ -27,7 +27,6 @@ import org.excalibur.core.task.TaskState;
 import org.excalibur.core.task.TaskType;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

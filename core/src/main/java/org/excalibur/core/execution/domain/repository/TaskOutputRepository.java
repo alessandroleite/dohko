@@ -17,6 +17,7 @@
 package org.excalibur.core.execution.domain.repository;
 
 import java.io.Closeable;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -35,6 +36,9 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import com.google.common.base.Strings;
+import com.google.common.hash.Hashing;
+
 import io.dohko.jdbi.stereotype.Repository;
 
 @Repository
@@ -42,13 +46,13 @@ import io.dohko.jdbi.stereotype.Repository;
 public interface TaskOutputRepository extends Closeable 
 {
 	@Nonnull
-	@SqlUpdate("INSERT INTO task_output (uuid, task_id, task_output_type_id, value) \n" + 
-               "VALUES (:id, (SELECT id FROM task t WHERE lower(t.uuid) = lower(:taskId) ), :type.id, :value) ")
+	@SqlUpdate("INSERT INTO task_output (uuid, task_id, task_output_type_id, value, checksum) \n" + 
+               "VALUES (:id, (SELECT id FROM task t WHERE lower(t.uuid) = lower(:taskId) ), :type.id, :value, :checksum) ")
 	@GetGeneratedKeys
 	Integer insert(@Nonnull @BindBean TaskOutput result);
 	
-	@SqlBatch("INSERT INTO task_output (uuid, task_id, task_output_type_id, value) \n" + 
-            "VALUES (:id, (SELECT id FROM task t WHERE lower(t.uuid) = lower(:taskId)), :type.id, value) ")
+	@SqlBatch("INSERT INTO task_output (uuid, task_id, task_output_type_id, value, checksum) \n" + 
+            "VALUES (:id, (SELECT id FROM task t WHERE lower(t.uuid) = lower(:taskId)), :type.id, :value, :checksum) ")
 	void insert(@Nonnull @BindBean Iterable<TaskOutput> results);
 	
 	@SqlUpdate("DELETE FROM task_output WHERE uuid = :id")
@@ -57,14 +61,14 @@ public interface TaskOutputRepository extends Closeable
 	@SqlUpdate("DELETE FROM task_output WHERE id = :id")
 	void delete(@Bind("id") Integer id);
 	
-	@SqlQuery(" SELECT ot.uuid, t.uuid as task_id, task_output_type_id as type_id, value \n" +
+	@SqlQuery(" SELECT ot.uuid, t.uuid as task_id, task_output_type_id as type_id, value, checksum \n" +
 	          " FROM task_output ot \n" +
 			  " JOIN task t ON t.id = ot.task_id" + 
 	          " WHERE lower(ot.uuid) = lower(:uuid) \n")
 	TaskOutput getById(@Bind("uuid")String id);
 	
 	@Nonnull
-	@SqlQuery("SELECT ot.uuid, t.uuid as task_id, ot.task_output_type_id as type_id, value\n" +
+	@SqlQuery("SELECT ot.uuid, t.uuid as task_id, ot.task_output_type_id as type_id, value, checksum\n" +
 			  "FROM task_output ot \n"+
 			  " JOIN task t ON ot.task_id = t.id \n"+
 			  " WHERE lower(t.uuid) = lower (:taskId) \n "+ 
@@ -76,11 +80,27 @@ public interface TaskOutputRepository extends Closeable
 		@Override
 		public TaskOutput map(int index, ResultSet r, StatementContext ctx) throws SQLException 
 		{
+			String checksum = r.getString("checksum");
+			
+			if (r.wasNull())
+			{
+				String value = r.getString("value");
+				
+				if (!r.wasNull() && !Strings.isNullOrEmpty(value))
+				{
+					if (Strings.isNullOrEmpty(checksum) && !Strings.isNullOrEmpty(value))
+					{
+						checksum = Hashing.sha256().hashString(value, StandardCharsets.UTF_8).toString();
+					}
+				}
+			}
+			
 			return new TaskOutput()
 					.setId(r.getString("uuid"))
 					.setTaskId(r.getString("task_id"))
 					.setType(TaskOutputType.valueOf(r.getInt("type_id")))
-					.setValue(r.getString("value"));
+					.setValue(r.getString("value"))
+					.setChecksum(checksum);
 		}
 	}
 }

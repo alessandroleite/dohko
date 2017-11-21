@@ -62,6 +62,14 @@ public interface TaskStatusRepository extends Closeable
 	void deleteAllStatusesOfTask(@Bind("taskId") String taskId);
 	
 	
+	@SqlQuery("SELECT task_id, t.uuid as task_uuid, t.name as task_name, task_status_type_id, status_time, worker_id, pid \n" +			
+			  " FROM task_status ts\n" + 
+	          " JOIN task t ON t.id = ts.task_id AND lower(t.uuid) = lower(:taskId) \n" +
+			  " WHERE \n" + 
+	          "   task_status_type_id = :type.id\n")
+	Optional<TaskStatus> getStatusOfTask(@Bind("taskId") String taskId, @Bind("type") TaskStatusType type);
+	
+	
 	/**
 	 * Returns the statuses of a given task. The returned set is never <code>null</code>. Therefore, it might be empty. An
 	 * empty set means that the task is invalid or unknown by the system.

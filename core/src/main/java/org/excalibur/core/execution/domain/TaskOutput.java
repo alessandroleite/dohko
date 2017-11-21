@@ -52,6 +52,9 @@ public class TaskOutput implements Serializable, Cloneable
 	@XmlElement(name="value")
 	private Serializable value;
 	
+	@XmlElement(name="checksum")
+	private String checksum;
+	
 	public TaskOutput()
 	{
 		super();
@@ -135,6 +138,25 @@ public class TaskOutput implements Serializable, Cloneable
 		this.value = value;
 		return this;
 	}
+	
+	
+	/**
+	 * @return the checksum
+	 */
+	public String getChecksum() 
+	{
+		return checksum;
+	}
+
+
+	/**
+	 * @param checksum the checksum to set
+	 */
+	public TaskOutput setChecksum(String checksum) 
+	{
+		this.checksum = checksum;
+		return this;
+	}
 
 
 	@Override
@@ -152,7 +174,8 @@ public class TaskOutput implements Serializable, Cloneable
 					.setId(getId())
 					.setTaskId(getTaskId())
 					.setType(getType())
-					.setValue((Serializable) new Mirror().on(getType()).invoke().method("clone").withoutArgs());
+					.setValue((Serializable) new Mirror().on(getType()).invoke().method("clone").withoutArgs())
+					.setChecksum(getChecksum());
 		}
 
 		return clone;
@@ -191,6 +214,7 @@ public class TaskOutput implements Serializable, Cloneable
 				.add("id", getId())
 				.add("task-id", getTaskId())
 				.add("type", getType())
+				.add("output-checksum", getChecksum())
 				.omitNullValues()
 				.toString();
 	}

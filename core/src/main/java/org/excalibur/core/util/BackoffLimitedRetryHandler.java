@@ -21,8 +21,6 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Throwables;
-
 /**
  * Allow replayable request to be retried a limited number of times, and impose an exponential back-off delay before returning.
  * <p>
@@ -96,7 +94,8 @@ public class BackoffLimitedRetryHandler
         }
         catch (InterruptedException e)
         {
-            Throwables.propagate(e);
+        	AnyThrow.throwUncheked(e);
+//            Throwables.propagateIfPossible(e, RuntimeException.class);
         }
     }
 }
