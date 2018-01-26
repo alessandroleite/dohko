@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.excalibur.core.Identifiable;
 import org.excalibur.core.cloud.api.Cloud;
 import org.excalibur.core.domain.User;
 import org.excalibur.core.util.Lists2;
@@ -36,6 +37,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import static java.util.Arrays.*;
@@ -47,12 +49,12 @@ import static org.excalibur.core.util.CloneIterableFunction.*;
 @XmlType(name = "application-descriptor", propOrder = { 
 		"id_", "name_", "description_", "user_", "requirements_", "preconditions_", "clouds_", "applications_", "blocks_",
         "createdIn_", "finishedIn_", "cpuTime_", "onFinished_" })
-public class ApplicationDescriptor implements Serializable, Cloneable
+public class ApplicationDescriptor implements Serializable, Cloneable, Identifiable<String>
 {
 	/**
 	 * Serial code version <code>serialVersionUID</code> for serialization.
 	 */
-	private static final long serialVersionUID = -4285700082857398784L;
+	private static final long serialVersionUID = -6024521229169439933L;
 
     @XmlTransient
     private Integer internalId;
@@ -91,9 +93,11 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     @XmlElement(name = "submitted-in", nillable = false, required = true)
     private Long createdIn_;
     
+    @Deprecated
     @XmlElement(name = "execution-finished-in")
     private Long finishedIn_;
     
+    @Deprecated
     @XmlElement(name = "cpu-time")
     private Long cpuTime_;
     
@@ -285,6 +289,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     /**
      * @return the id
      */
+    @Override
     public String getId()
     {
         return id_;
@@ -463,6 +468,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     /**
      * @return the finishedIn
      */
+    @Deprecated
     public Long getFinishedIn()
     {
         return finishedIn_;
@@ -471,6 +477,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     /**
      * @param finishedIn the finishedIn to set
      */
+    @Deprecated
     public ApplicationDescriptor setFinishedIn(Long finishedIn)
     {
         this.finishedIn_ = finishedIn;
@@ -480,6 +487,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     /**
 	 * @return the cpuTime
 	 */
+    @Deprecated
 	public Long getCpuTime() 
 	{
 		return cpuTime_;
@@ -488,6 +496,7 @@ public class ApplicationDescriptor implements Serializable, Cloneable
 	/**
 	 * @param cpuTime the cpuTime to set
 	 */
+    @Deprecated
 	public ApplicationDescriptor setCpuTime(Long cpuTime) 
 	{
 		this.cpuTime_ = cpuTime;
@@ -589,4 +598,16 @@ public class ApplicationDescriptor implements Serializable, Cloneable
     	
     	return clone;
     }
+
+	public ImmutableMap<String, Block> getBlocksMap() 
+	{
+		ImmutableMap.Builder<String, Block> result = ImmutableMap.<String, Block>builder();
+		
+		getBlocks().forEach(b -> 
+		{
+			result.put(b.getId(), b);
+		});
+		
+		return result.build();
+	}
 }

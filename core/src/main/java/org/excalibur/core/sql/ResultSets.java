@@ -14,24 +14,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package org.excalibur.core.validator;
+package org.excalibur.core.sql;
 
-public class ValidationResult<T>
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Optional;
+
+public class ResultSets 
 {
-    private final T result_;
-
-    public ValidationResult(T type)
-    {
-        this.result_ = type;
-    }
-
-    public T get()
-    {
-        return result_;
-    }
-    
-	public static <V> ValidationResult<V> newValidationResult(V result) 
+	public static Optional<String> readString(String name, ResultSet rs) throws SQLException
 	{
-		return new ValidationResult<V>(result);
+		String value = rs.getString(name);
+		return rs.wasNull() ? Optional.empty(): Optional.of(value);
 	}
 }

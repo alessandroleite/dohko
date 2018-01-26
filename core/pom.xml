@@ -43,28 +43,22 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- <dependency>
-		    <groupId>com.wix</groupId>
-		    <artifactId>wix-embedded-mysql</artifactId>
-		    <scope>test</scope>
-		</dependency> -->
+		<!-- <dependency> <groupId>com.wix</groupId> <artifactId>wix-embedded-mysql</artifactId> 
+			<scope>test</scope> </dependency> -->
 
-		<!-- <dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <scope>test</scope>
-		</dependency> -->
+		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+			<scope>test</scope> </dependency> -->
 
 		<dependency>
-		    <groupId>org.mariadb.jdbc</groupId>
-		    <artifactId>mariadb-java-client</artifactId>
-		    <scope>test</scope>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-		    <groupId>ch.vorburger.mariaDB4j</groupId>
-		    <artifactId>mariaDB4j</artifactId>
-		    <scope>test</scope>
+			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<artifactId>mariaDB4j</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -164,20 +158,18 @@
 
 		<!-- compile -->
 
-		<!-- <dependency>
-			<groupId>computer-objects</groupId>
-			<artifactId>computer-objects</artifactId>
-		</dependency> -->
-		
+		<!-- <dependency> <groupId>computer-objects</groupId> <artifactId>computer-objects</artifactId> 
+			</dependency> -->
+
 		<dependency>
-		   <groupId>io.airlift</groupId>
-		   <artifactId>command</artifactId>
-		   <exclusions>
-		   	  <exclusion>
+			<groupId>io.airlift</groupId>
+			<artifactId>command</artifactId>
+			<exclusions>
+				<exclusion>
 					<groupId>org.apache.bval</groupId>
 					<artifactId>bval-jsr303</artifactId>
 				</exclusion>
-		   </exclusions>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -401,5 +393,21 @@
 			<artifactId>dropbox-core-sdk</artifactId>
 			<version>${dropbox.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-guava</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>

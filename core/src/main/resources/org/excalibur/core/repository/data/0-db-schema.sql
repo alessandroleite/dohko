@@ -310,7 +310,7 @@ create table if not exists instance_disk
   check (is_boot in ('Y', 'N'))
 );
 
-create unique index if not exists  idx_instance_disk_uk on instance_disk(instance_id, disk_id);
+create unique index if not exists idx_instance_disk_uk on instance_disk(instance_id, disk_id);
 
 create table if not exists instance_tag
 (
@@ -548,7 +548,7 @@ create table if not exists jid_account
  owner_id integer not null references user (id), 
  jid varchar(200) not null, 
  domain varchar(180) not null, 
- passwd varchar(32) not null, 
+ passwd varchar(200) not null, 
  name varchar(160),
  status char(1) not null default 'A',
  created_in timestamp default current_timestamp,
@@ -565,24 +565,39 @@ create table if not exists job
 (
   id integer not null auto_increment primary key,
   user_id integer not null references user (id),
-  uuid varchar(100) not null,
+  uuid varchar(36) not null,
   name varchar(100) not null,
   description text not null,
   created_in bigint not null,
-  finished_in bigint,
-  elapsed_time bigint
+  raw JSON
 );
 
 create unique index if not exists idx_job_uuid on job(user_id, uuid);
 create index if not exists idx_job_user_id on job(user_id);
 
+create table if not exists group_job_task
+(
+  id integer unsigned not null auto_increment primary key, 
+  job_id integer not null references job (id),
+  uuid varchar(36) not null, 
+  name varchar(100) not null,
+  repeats integer default 0 not null,
+  parents text,
+  raw_description text
+);
+
+create unique index if not exists idx_group_job_task on group_job_task(job_id, uuid);
+create index if not exists idx_group_job_task_job_id on group_job_task(job_id);
+
 create table if not exists task
 (
   id integer not null auto_increment primary key,
   job_id integer not null references job (id),
+  group_id integer unsigned references group_job_task (id),
   uuid varchar(36) not null,
   name varchar(50) not null,
-  commandline text not null
+  commandline text not null, 
+  parents text
 );
 
 create unique index if not exists idx_task_uuid on task(job_id, uuid);
@@ -651,7 +666,6 @@ create index if not exists idx_tk_resource_usage_tk on task_resource_usage (task
 create index if not exists idx_tk_resource_usage_rt on task_resource_usage (resource_type_id);
 create unique index if not exists idx_tk_resource_usage_uq on task_resource_usage (task_id, resource_type_id, pid, datetime);
 
-
 create table if not exists task_cpu_stats
 (
   id integer not null auto_increment primary key,
@@ -680,7 +694,30 @@ create table if not exists task_mem_stats
 );
 
 --create index if not exists idx_task_mem_stats_task on task_mem_stats(task_id);
---create unique if not exists index idx_task_mem_stats_pid on task_mem_stats(pid, datetime);
+--create unique index if not exists idx_task_mem_stats_pid on task_mem_stats(pid, datetime);
+
+create table if not exists package
+(
+  id integer not null auto_increment primary key,
+  name varchar(25) not null,
+  version varchar(11) not null,
+  architecture varchar(7) not null,
+  description text,
+  platforms JSON not null,
+  dependencies JSON
+);
+
+create unique index if not exists idx_package_name_version on package (name, version);
+
+create table if not exists artifact
+(
+  id integer not null auto_increment primary key,
+  name varchar(25) not null,
+  version varchar(11) not null,
+  description JSON not null
+);
+
+create unique index if not exists idx_artifact_name_version on artifact (name, version);
 
 create table if not exists metric_type 
 (

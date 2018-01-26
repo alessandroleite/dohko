@@ -17,25 +17,30 @@
 package org.excalibur.core.execution.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.excalibur.core.Identifiable;
 import org.excalibur.core.util.CloneIterableFunction;
 import org.excalibur.core.util.Lists2;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-
-import static com.google.common.collect.Lists.*;
 
 /**
  * A {@link Block} represents a set of tasks that might be executed in any order. Therefore, the ordering of a block must be respected.  
@@ -43,16 +48,16 @@ import static com.google.common.collect.Lists.*;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="block")
-@XmlType(name="block", propOrder = {"id_", "name_", "parents_", "repeat_", "applications_"})
-public class Block implements Serializable, Cloneable, Iterable<Application>, Comparable<Block>, Comparator<Block>
+@XmlType(name = "block", propOrder = { "id_", "name_", "parents_", "repeat_", "jobId_", "applications_" })
+public class Block implements Serializable, Cloneable, Iterable<Application>, Comparable<Block>, Comparator<Block>, Identifiable<String>
 {
 	/**
 	 * Serial code version <code>serialVersionUID</code> for serialization
 	 */
-	private static final long serialVersionUID = -2045058945696994770L;
+	private static final long serialVersionUID = 1044116344574286559L;
 
 	/**
-	 * It must be unique in an application descriptor.
+	 * It must be unique in the application descriptor.
 	 */
 	@XmlElement(name = "id", required = true)
 	private String id_;
@@ -60,18 +65,20 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 	@XmlElement(name = "name")
 	private String name_;
 	
-	/**
-	 * A comma separated value of the parents' ids. 
-	 */
-	@XmlElement(name="parents", required = false, nillable = true)
-	private String parents_;
+	@XmlElement(name="parents")
+	private final List<String> parents_ = new ArrayList<>();
 	
+	@XmlElement(name="repeat", required = false, defaultValue = "1")
+	private Integer repeat_ = 1;
 	
-	@XmlElement(name="repeat", required = false, defaultValue = "0")
-	private Integer repeat_;
+	@XmlAttribute(name = "job-id")
+	private String jobId_;
 	
 	@XmlElement(name="applications")
-	private final List<Application> applications_ = newArrayList();
+	private final List<Application> applications_ = new ArrayList<>();
+	
+	@XmlTransient
+	private String plainText_;
 	
 	public Block()
 	{
@@ -161,13 +168,29 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 	{
 		return ImmutableList.copyOf(applications_);
 	}
+	
+	public Block addParent(String parent)
+	{
+		if (!Strings.isNullOrEmpty(parent))
+		{
+			parents_.add(parent);
+		}
+		
+		return this;
+	}
 
 	/**
 	 * @return the id
 	 */
+	@Override
 	public String getId() 
 	{
 		return id_;
+	}
+	
+	public String id()
+	{
+		return this.id_;
 	}
 
 	/**
@@ -187,6 +210,11 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 	{
 		return name_;
 	}
+	
+	public String name()
+	{
+		return name_;
+	}
 
 	/**
 	 * @param name the name to set
@@ -200,9 +228,14 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 	/**
 	 * @return the parents
 	 */
-	public String getParents()
+	public ImmutableList<String> getParents()
 	{
-		return parents_;
+		return ImmutableList.copyOf(parents_);
+	}
+	
+	public String getParentNames()
+	{
+		return Joiner.on(",").join(getParents());
 	}
 	
 	/**
@@ -211,15 +244,35 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 	 */
 	public String[] parents()
 	{
-		return getParents() != null ? getParents().split(",") : new String[0];
+		List<String> parents = getParents(); 
+		return parents.toArray(new String[parents.size()]);
+	}
+	
+	public boolean hasParents()
+	{
+		return !parents_.isEmpty();
 	}
 
 	/**
 	 * @param parents the parents to set
 	 */
-	public Block setParents(String parents) 
+	public Block setParents(List<String> parents) 
 	{
-		this.parents_ = parents;
+		if (parents != null)
+		{
+			parents.forEach(this::addParent);
+		}
+		
+		return this;
+	}
+	
+	public Block setParents(String[] parents)
+	{
+		if (parents != null)
+		{
+			setParents(Arrays.asList(parents));
+		}
+		
 		return this;
 	}
 	
@@ -240,6 +293,42 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 		return this;
 	}
 	
+	/**
+	 * @return the jobId
+	 */
+	public String getJobId() 
+	{
+		return jobId_;
+	}
+
+	/**
+	 * @param jobId the jobId to set
+	 */
+	public Block setJobId(String jobId) 
+	{
+		this.jobId_ = jobId;
+		return this;
+	}
+	
+	
+
+	/**
+	 * @return the plainText
+	 */
+	public String getPlainText() 
+	{
+		return plainText_;
+	}
+
+	/**
+	 * @param plainText the plainText to set
+	 */
+	public Block setPlainText(String plainText) 
+	{
+		this.plainText_ = plainText;
+		return this;
+	}
+
 	@Override
 	public Iterator<Application> iterator() 
 	{
@@ -249,7 +338,7 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 	@Override
 	public int hashCode() 
 	{
-		return Objects.hashCode(getName(), getId(), getParents());
+		return Objects.hashCode(getName(), getId(), getParents(), getJobId());
 	}
 	
 	@Override
@@ -268,7 +357,8 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 		Block other = (Block) obj;
 		
 		return Objects.equal(getId(), other.getId()) && 
-			   Objects.equal(getParents(), getParents());
+			   Objects.equal(getParents(), getParents()) &&
+			   Objects.equal(getJobId(), other.getJobId());
 	}
 	
 	@Override
@@ -277,8 +367,10 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 		return MoreObjects.toStringHelper(this)
 				       .add("id", getId())
 				       .add("name", getName())
-				       .add("parents", getParents())
+				       .add("parents", Joiner.on(",").join(getParents()).toString())
 				       .add("repeat", getRepeat())
+				       .add("job-id", getJobId())
+				       .add("plain-text", getPlainText())
 				       .omitNullValues()
 				       .toString();
 	}
@@ -294,7 +386,7 @@ public class Block implements Serializable, Cloneable, Iterable<Application>, Co
 		} 
 		catch (CloneNotSupportedException e) 
 		{
-			clone = new Block().setId(getId()).setName(getName()).setRepeat(getRepeat()).setParents(getParents());
+			clone = new Block().setId(getId()).setName(getName()).setRepeat(getRepeat()).setParents(getParents()).setJobId(getJobId()).setPlainText(getPlainText());
 		}
 		
 		clone.applications_.clear();

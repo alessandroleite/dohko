@@ -14,24 +14,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package org.excalibur.core.validator;
+package org.excalibur.core.util;
 
-public class ValidationResult<T>
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+
+public class Instants 
 {
-    private final T result_;
-
-    public ValidationResult(T type)
-    {
-        this.result_ = type;
-    }
-
-    public T get()
-    {
-        return result_;
-    }
-    
-	public static <V> ValidationResult<V> newValidationResult(V result) 
+	private Instants() 
+	{ 
+		throw new UnsupportedOperationException();
+	}
+	
+	public static Instant now(ZoneId zone)
 	{
-		return new ValidationResult<V>(result);
+		return Instant.now().atZone(zone).toInstant();
+	}
+	
+	public static Instant nowUTC()
+	{
+		return now(ZoneOffset.UTC);
 	}
 }

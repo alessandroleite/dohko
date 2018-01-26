@@ -70,6 +70,26 @@ public final class SystemUtils2
     {
         return getIntegerProperty(name, null);
     }
+    
+    public static Long getLongProperty(String name, Long defaultValue)
+    {
+    	String value = getProperty(name, defaultValue == null ? null : defaultValue.toString());
+    	Long result = defaultValue;
+    	
+    	
+    	if (!isNullOrEmpty(value))
+    	{
+    		try
+    		{
+    			result = Long.parseLong(value);
+    		}
+    		catch(NumberFormatException nfe)
+    		{
+    			LOGGER.error("Value [{}] is not a Long value {} for property [{}]!", value, name, nfe.getMessage(), nfe);
+    		}    		
+    	}
+    	return result;
+    }
 
     public static String getProperty(String name, String defaultValue)
     {

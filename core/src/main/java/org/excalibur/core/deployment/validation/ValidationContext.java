@@ -17,7 +17,6 @@
 package org.excalibur.core.deployment.validation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -27,6 +26,8 @@ import org.excalibur.core.Identifiable;
 import org.excalibur.core.task.CommonContext;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public class ValidationContext implements CommonContext
 {
@@ -37,13 +38,13 @@ public class ValidationContext implements CommonContext
         return REGISTRY.get();
     }
 
-    static boolean isRegistered(Identifiable<?> value)
+    public static boolean isRegistered(Identifiable<?> value)
     {
         Map<Object, Identifiable<?>> m = getRegistry();
         return m != null && m.containsKey(value.getId());
     }
 
-    static void register(Identifiable<?> value)
+    public static void register(Identifiable<?> value)
     {
         if (value != null)
         {
@@ -56,7 +57,7 @@ public class ValidationContext implements CommonContext
         }
     }
 
-    static void unregister(Identifiable<?> value)
+    public static void unregister(Identifiable<?> value)
     {
         if (value != null)
         {
@@ -82,11 +83,11 @@ public class ValidationContext implements CommonContext
         this.isCyclic_ = true;
     }
 
-    public <T> Map<String, ?> getData()
+    public <T> ImmutableMap<String, ?> getData()
     {
         synchronized (lock_)
         {
-            return Collections.unmodifiableMap(this.data_);
+            return ImmutableMap.copyOf(this.data_);
         }
     }
 
@@ -126,17 +127,19 @@ public class ValidationContext implements CommonContext
         }
     }
 
-    public List<String> getErrors()
+    public ImmutableList<String> getErrors()
     {
-        List<String> errors;
+    	ImmutableList<String> errors;
+        
         synchronized (lock_)
         {
-            errors = Collections.unmodifiableList(this.errors_);
+            errors = ImmutableList.copyOf(errors_);
         }
+        
         return errors;
     }
 
-    public void put(String key, Object data)
+    public void put(final String key, final Object data)
     {
         if (!Strings.isNullOrEmpty(key))
         {

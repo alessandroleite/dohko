@@ -25,9 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.excalibur.core.io.BigFileReader;
 import org.excalibur.core.util.AnyThrow;
+
+import com.google.common.base.Strings;
 
 public final class Files
 {
@@ -138,5 +141,16 @@ public final class Files
         {
             AnyThrow.throwUncheked(e);
         }
+    }
+    
+    public static String expandHomePrefixReference(String path)
+    {
+    
+    	if (!Strings.isNullOrEmpty(path) && '~' == FilenameUtils.getPrefix(path.trim()).charAt(0))
+    	{
+    		return path.trim().replaceFirst("^~",System.getProperty("user.home"));
+    	}
+    	
+    	return path;
     }
 }

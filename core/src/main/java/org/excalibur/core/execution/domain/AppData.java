@@ -86,6 +86,16 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
     {
         return name_;
     }
+    
+    /**
+     * Returns the name of the file
+     * @return name of the file
+     * @see #getName()
+     */
+    public String name()
+    {
+    	return getName();
+    }
 
     /**
      * @param name the name to set
@@ -103,6 +113,11 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
 	public String getDest() 
 	{
 		return dest_;
+	}
+	
+	public String dest()
+	{
+		return getDest();
 	}
 
 	/**
@@ -143,6 +158,11 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
 	{
 		return source_;
 	}
+	
+	public String source()
+	{
+		return getSource();
+	}
 
 	/**
 	 * @param source the source to set
@@ -160,6 +180,11 @@ public class AppData implements Serializable, Comparable<AppData>, Cloneable
 	public String getChecksum() 
 	{
 		return checksum_;
+	}
+	
+	public String checksum() 
+	{
+		return getChecksum();
 	}
 
 	/**

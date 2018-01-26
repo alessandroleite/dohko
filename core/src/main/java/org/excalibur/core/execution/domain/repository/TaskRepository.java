@@ -24,6 +24,7 @@ import java.util.List;
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.repository.TaskRepository.TaskRepositorySetMapper;
 import org.excalibur.core.repository.bind.BindBean;
+import org.excalibur.core.sql.ResultSets;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
@@ -40,7 +41,7 @@ import io.dohko.jdbi.stereotype.Repository;
 public interface TaskRepository extends Closeable
 {   
     String SQL_SELECT_ALL = "SELECT (SELECT j.uuid FROM job j WHERE j.id = t.job_id) as job_uuid, \n "
-    		+ " t.job_id, t.uuid as task_uuid, t.name as task_name, t.commandline as task_commandline \n"
+    		+ " t.job_id, t.uuid as task_uuid, t.name as task_name, t.commandline as task_commandline, t.parents, t.group_name\n"
     		+ " FROM task t\n";
     
     @GetGeneratedKeys
@@ -65,11 +66,14 @@ public interface TaskRepository extends Closeable
         @Override
         public Application map(int index, ResultSet r, StatementContext ctx) throws SQLException
         {
+        	String parents = ResultSets.readString("parents", r).orElse("");
+        	
             return new Application()
             		.setCommandLine(r.getString("task_commandline"))
                     .setId(r.getString("task_uuid"))
                     .setJobId(r.getString("job_uuid"))
-                    .setName(r.getString("task_name"));
+                    .setName(r.getString("task_name"))
+                    .addParents(parents.split(","));
         }
     }
 }

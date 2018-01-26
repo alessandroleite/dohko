@@ -19,7 +19,6 @@ package org.excalibur.core.execution.domain.repository;
 import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.excalibur.core.domain.User;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
@@ -43,25 +42,25 @@ import io.dohko.jdbi.stereotype.Repository;
 @RegisterMapper(JobRowSetMapper.class)
 public interface JobRepository extends Closeable
 {
-    String SQL_SELECT_ALL = " SELECT j.user_id, u.username, j.uuid, j.description, j.name as job_name, j.created_in, j.finished_in, j.elapsed_time as cpu_time\n" +
+    String SQL_SELECT_ALL = " SELECT j.user_id, u.username, j.uuid, j.description, j.name as job_name, j.created_in, raw\n" +
              " FROM job j\n" +
              " JOIN user u ON u.id = j.user_id\n";
 
     @GetGeneratedKeys
-    @SqlUpdate("INSERT into job (user_id, name, uuid, description, created_in, finished_in, elapsed_time) VALUES ((SELECT u.id FROM user u WHERE lower(username) = lower(:user.username)), :name, :id, :description, :createdIn, :finishedIn, :cpuTime)")
+    @SqlUpdate("INSERT into job (user_id, name, uuid, description, created_in, raw) VALUES ((SELECT u.id FROM user u WHERE lower(username) = lower(:user.username)), :name, :id, :description, :createdIn, :plainText)")
     Integer insert(@BindBean ApplicationDescriptor job);
     
-    @SqlBatch("INSERT into job (user_id, name, uuid, description, created_in, finished_in, elapsed_time) VALUES ((SELECT u.id FROM user u WHERE lower(username) = lower(:user.username)), :name, :id, :description, :createdIn, :finishedIn, :cpuTime)")
+    @SqlBatch("INSERT into job (user_id, name, uuid, description, created_in, raw) VALUES ((SELECT u.id FROM user u WHERE lower(username) = lower(:user.username)), :name, :id, :description, :createdIn, :plainText)")
     void insert(@BindBean Iterable<ApplicationDescriptor> jobs);
     
     @SqlUpdate("DELETE FROM job WHERE lower(uuid) = lower(:id)")
     void delete(@Bind("id") String id);
     
-    @SqlUpdate("UPDATE job SET finished_in = :finishedIn WHERE uuid = :jobId AND finished_in IS NULL")
-    void finished(@Bind("jobId")String jobId, @Bind("finishedIn") long finishedIn);
+//    @SqlUpdate("UPDATE job SET finished_in = :finishedIn WHERE uuid = :jobId AND finished_in IS NULL")
+//    void finished(@Bind("jobId")String jobId, @Bind("finishedIn") long finishedIn);
     
-    @SqlUpdate("UPDATE job SET finished_in = :finishedIn, elapsed_time = :cputime WHERE uuid = :jobId AND finished_in IS NULL AND elapsed_time IS NULL")
-	void finished(@Bind("jobId") String jobId, @Bind("finishedIn") long finishedIn, @Bind("cputime") long elapsedCpuTime);
+//    @SqlUpdate("UPDATE job SET finished_in = :finishedIn, elapsed_time = :cputime WHERE uuid = :jobId AND finished_in IS NULL AND elapsed_time IS NULL")
+//	void finished(@Bind("jobId") String jobId, @Bind("finishedIn") long finishedIn, @Bind("cputime") long elapsedCpuTime);
     
     @SqlQuery(SQL_SELECT_ALL + " WHERE lower(uuid) = lower (:uuid)")
     @SingleValueResult
@@ -71,38 +70,28 @@ public interface JobRepository extends Closeable
     @SingleValueResult
     Optional<ApplicationDescriptor> findJobOfTaskId(@Bind("taskId") String taskId);
     
-    @SqlQuery(SQL_SELECT_ALL + " WHERE j.finished_in is null")
-    List<ApplicationDescriptor> listAllPending();
+//    @SqlQuery(SQL_SELECT_ALL + " WHERE j.finished_in is null")
+//    List<ApplicationDescriptor> listAllPending();
     
     static class JobRowSetMapper implements ResultSetMapper<ApplicationDescriptor>
     {
         @Override
         public ApplicationDescriptor map(int index, ResultSet r, StatementContext ctx) throws SQLException
         {
-        	Long finishedIn = r.getLong("finished_in");
+        	String raw = r.getString("raw");
         	
         	if (r.wasNull())
         	{
-        		finishedIn = null;
-        	}
-        	
-        	Long cpuTime = r.getLong("cpu_time");
-        	
-        	if (r.wasNull())
-        	{
-        		cpuTime = null;
+        		raw = null;
         	}
         	
             return new ApplicationDescriptor()
-            		.setCpuTime(cpuTime)
                     .setCreatedIn(r.getLong("created_in"))
                     .setDescription(r.getString("description"))
-                    .setFinishedIn(finishedIn)
                     .setId(r.getString("uuid"))
                     .setName(r.getString("job_name"))
-                    .setPlainText(r.getString("description"))
+                    .setPlainText(raw)
                     .setUser(new User().setId(r.getInt("user_id")).setUsername(r.getString("username")));
         }
     }
-
 }

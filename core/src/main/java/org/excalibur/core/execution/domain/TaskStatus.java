@@ -17,6 +17,7 @@
 package org.excalibur.core.execution.domain;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,6 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.excalibur.core.util.Instants;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -76,6 +79,21 @@ public class TaskStatus implements Serializable, Cloneable
 	public TaskStatus() 
 	{
 		super();
+	}
+	
+	public static TaskStatus newTaskStatus()
+	{
+		return new TaskStatus();
+	}
+	
+	public static TaskStatus newTaskStatus(Instant instant, TaskStatusType type)
+	{
+		return newTaskStatus().setDate(new Date(instant.toEpochMilli())).setType(type);
+	}
+	
+	public static TaskStatus newPendingTaskStatus(String id, String name)
+	{
+		return newTaskStatus(Instants.nowUTC(), TaskStatusType.PENDING).setTaskId(id).setTaskName(name);
 	}
 	
 	/**

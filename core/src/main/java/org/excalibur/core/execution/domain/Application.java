@@ -30,18 +30,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.excalibur.core.Identifiable;
+import org.excalibur.core.util.CloneIterableFunction;
+
+import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "application")
 @XmlType(name = "application", propOrder = {"id_", "jobId_", "name_", "commandLine_", "preconditions_", "files_" })
-public class Application implements Serializable, Cloneable
+public class Application implements Serializable, Cloneable, Identifiable<String>
 {
 	/**
      * Serial code version <code>serialVersionUID</code> for serialization.
      */
-	private static final long serialVersionUID = 125677774085729082L;
+	private static final long serialVersionUID = -4544987511384140652L;
 
 	/**
      * Opaque application's id
@@ -73,8 +78,14 @@ public class Application implements Serializable, Cloneable
     @XmlElement(name = "timeout")
     private Long timeout_;
     
+    @XmlElement(name = "parents")
+    private final List<String> parents_ = new ArrayList<>();
+    
     @XmlTransient
     private String plainText_;
+    
+    @XmlTransient
+    private String blockId_;
     
     public Application()
     {
@@ -137,9 +148,32 @@ public class Application implements Serializable, Cloneable
         return this;
     }
     
+    public Application addParent(String parent)
+    {
+    	if (!Strings.isNullOrEmpty(parent))
+    	{
+    		parents_.add(parent);
+    	}
+    	
+    	return this;
+    }
+    
+    public Application addParents(String ...parents)
+    {
+    	if (parents != null)
+    	{
+    		for (String parent: parents)
+    		{
+    			addParent(parent);
+    		}
+    	}
+    	return this;
+    }
+    
     /**
      * @return the id
      */
+    @Override
     public String getId()
     {
         return id_;
@@ -254,31 +288,72 @@ public class Application implements Serializable, Cloneable
 	/**
 	 * @param timeout the timeout to set
 	 */
-	public void setTimeout(Long timeout) 
+	public Application setTimeout(Long timeout) 
 	{
 		this.timeout_ = timeout;
+		return this;
+	}
+
+	/**
+	 * @return the parents
+	 */
+	public ImmutableList<String> getParents() 
+	{
+		return ImmutableList.copyOf(parents_);
+	}
+	
+	public ImmutableList<String> parents()
+	{
+		return getParents();
+	}
+	
+	public boolean hasParents()
+	{
+		return !parents_.isEmpty();
+	}
+	
+	/**
+	 * @return the blockId
+	 */
+	public String getBlockId() 
+	{
+		return blockId_;
+	}
+
+	/**
+	 * @param blockId the blockId to set
+	 */
+	public Application setBlockId(String blockId) 
+	{
+		this.blockId_ = blockId;
+		return this;
 	}
 
 	@Override
     public Application clone()
     {
-        Object cloned;
+        Application clone;
 
         try
         {
-            cloned = super.clone();
+            clone = (Application) super.clone();
         }
         catch (CloneNotSupportedException e)
         {
-            cloned = new Application()
-                    .addAll(getFiles())
-                    .setCommandLine(commandLine_)
+            clone = new Application()
+            		.setBlockId(getBlockId())
+                    .setCommandLine(getCommandLine())
                     .setId(getId())
                     .setName(getName())
-                    .setJobId(getJobId());
+                    .setJobId(getJobId())
+                    .setPlainText(getPlainText());
         }
+        
+        final ImmutableList<AppData> files = getFiles();
+        clone.files_.clear();
+        clone.addAll(new CloneIterableFunction<AppData>().apply(files));
 
-        return (Application) cloned;
+        return clone;
     }
 
     @Override
@@ -289,6 +364,9 @@ public class Application implements Serializable, Cloneable
                 .add("name", getName())
                 .add("command-line", getCommandLine())
                 .add("files", files_)
+                .add("timeout", getTimeout())
+                .add("parents", Joiner.on(",").join(getParents()))
+                .add("blockId", getBlockId())
                 .omitNullValues()
                 .toString();
     }

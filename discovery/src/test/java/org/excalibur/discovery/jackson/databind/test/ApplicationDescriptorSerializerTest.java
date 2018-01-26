@@ -19,6 +19,7 @@ package org.excalibur.discovery.jackson.databind.test;
 import java.io.IOException;
 
 import org.excalibur.core.domain.User;
+import org.excalibur.core.execution.domain.AppData;
 import org.excalibur.core.execution.domain.Application;
 import org.excalibur.core.execution.domain.ApplicationDescriptor;
 import org.excalibur.core.execution.domain.Block;
@@ -39,10 +40,13 @@ public class ApplicationDescriptorSerializerTest
 	@Test
 	public void must_serialize_a_minimal_application_descriptor () throws IOException
 	{
+		Application echo = new Application().setName("echo").setCommandLine("echo 'hello world'");
+		echo.addData(new AppData().setName("reana-spl").setPath("/opt/reana-spl").setSource("https://github.com/SPLMC/scalabilityAnalysis/raw/master/assets/reana-spl.jar"));
+		
 		ApplicationDescriptor toSerialize = new ApplicationDescriptor()
 				.setName("test")
 				.setUser(new User().setUsername("Alice"))
-				.addApplication(new Application().setName("echo").setCommandLine("echo 'hello world'"));
+				.addApplication(echo);
 		
 		String json = mapper.writeValueAsString(toSerialize);
 		assertNotNull(json);
